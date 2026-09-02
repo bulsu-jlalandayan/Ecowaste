@@ -8,14 +8,14 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Manage and assign incoming waste logistics.</p>
 </div>
 <div class="flex gap-sm">
-<button class="flex items-center gap-xs px-lg py-2 bg-surface border border-outline-variant rounded text-on-surface font-title-md text-title-md hover:bg-surface-container-high transition-colors shadow-sm">
-<span class="material-symbols-outlined text-[18px]">map</span>
-                        Map View
+<button id="export-requests-btn" class="flex items-center gap-xs px-lg py-2 bg-surface border border-outline-variant rounded text-on-surface font-title-md text-title-md hover:bg-surface-container-high transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export
                     </button>
 </div>
 </div>
 <!-- Filters & Controls Bar -->
-<div class="bg-surface border border-outline-variant rounded shadow-[0px_1px_3px_rgba(0,0,0,0.05)] p-md flex flex-wrap gap-md items-center justify-between">
+<div class="bg-surface border border-outline-variant rounded-xl shadow-card p-md flex flex-wrap gap-md items-center justify-between">
 <div class="flex items-center gap-md">
 <label class="font-label-md text-label-md text-on-surface-variant">Search</label>
 <div class="relative">
@@ -48,7 +48,7 @@
 </div>
 </div>
 <!-- Data Table Container -->
-<div class="bg-surface border border-outline-variant rounded shadow-[0px_1px_3px_rgba(0,0,0,0.05)] overflow-hidden flex-1 flex flex-col">
+<div class="bg-surface border border-outline-variant rounded-xl shadow-card overflow-hidden flex-1 flex flex-col">
 <div class="overflow-x-auto flex-1">
 <table class="w-full text-left border-collapse">
 <thead class="bg-surface-container-low border-b border-outline-variant sticky top-0 z-10">
@@ -69,6 +69,7 @@
 <!-- Pagination Footer -->
 <div class="p-sm px-md border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between">
 <span id="request-count" class="font-body-sm text-body-sm text-on-surface-variant">Showing 0 requests</span>
+<div id="request-pagination" class="flex gap-2"></div>
 </div>
 </div>
 </div>
@@ -82,7 +83,7 @@
     "Unassigned": "bg-error-container text-on-error-container border border-[#ffb4ab]",
     "Scheduled": "bg-secondary-fixed text-on-secondary-fixed border border-secondary-fixed-dim",
     "In Transit": "bg-surface-tint/10 text-surface-tint border border-surface-tint/20",
-    "Completed": "bg-[#dcfce7] text-[#166534] border border-[#ceead6]"
+    "Completed": "bg-status-success text-status-success-text border border-status-success-border"
   };
 
   var TYPE_ICON = {
@@ -92,10 +93,17 @@
     "Organic": "eco"
   };
 
-  var allRequests = [];
+var allRequests = [];
   var searchTerm = "";
   var statusFilter = "";
   var typeFilter = "";
+  var requestPage = 1;
+
+  var incomingTerm = sessionStorage.getItem("eco_search_term");
+  if (incomingTerm) {
+    searchTerm = incomingTerm;
+    sessionStorage.removeItem("eco_search_term");
+  }
 
   async function load() {
     allRequests = await D.list("collection_requests",
@@ -104,51 +112,80 @@
     render();
   }
 
-  function render() {
-    var rows = window.EcoWasteUI.filterList(allRequests, searchTerm,
+  function filtered() {
+    return window.EcoWasteUI.filterList(allRequests, searchTerm,
       ["location", "zone", "request_number"],
       { status: statusFilter, waste_type: typeFilter });
+  }
+
+  function render() {
+    var rows = filtered();
     var tbody = document.getElementById("request-tbody");
     if (!tbody) return;
-    if (!rows.length) {
+    var page = window.EcoWasteUI.paginate(rows, requestPage, 10);
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="p-sm pl-md pr-md text-on-surface-variant" colspan="7">No collection requests found.</td></tr>';
-      return;
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (r) {
+        var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
+        var icon = TYPE_ICON[r.waste_type] || "category";
+        var collectorCell = "";
+        var actionCell = "";
+        if (r.status === "Unassigned" || !r.collector_name) {
+          collectorCell = '<td class="p-sm text-on-surface-variant italic font-body-sm text-body-sm">Pending Allocation</td>';
+          actionCell = '<button class="px-md py-1.5 bg-primary text-on-primary rounded font-title-md text-title-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm" data-action="assign" data-id="' + r.id + '">Assign</button>';
+        } else {
+          var initials = D.esc(D.initials(r.collector_name));
+          collectorCell = '<td class="p-sm"><div class="flex items-center gap-2">' +
+            '<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-[10px] font-bold text-on-surface-variant">' + initials + '</div>' +
+            '<span class="font-title-md text-title-md">' + D.esc(r.collector_name) + '</span>' +
+            '</div></td>';
+          actionCell = '<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors rounded hover:bg-surface-container-highest" data-action="menu" data-id="' + r.id + '"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>';
+        }
+        var tr = document.createElement("tr");
+        tr.className = "border-b border-surface-container-highest table-row-hover transition-colors";
+        tr.innerHTML =
+          '<td class="p-sm pl-md font-mono-md text-mono-md font-bold text-on-surface-variant">' + D.esc(r.request_number) + '</td>' +
+          '<td class="p-sm">' +
+            '<div class="font-title-md text-title-md">' + D.esc(r.location) + '</div>' +
+            '<div class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(r.zone || "") + '</div>' +
+          '</td>' +
+          '<td class="p-sm"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md">' +
+            '<span class="material-symbols-outlined text-[14px]">' + icon + '</span>' + D.esc(r.waste_type) + '</span></td>' +
+          '<td class="p-sm text-on-surface-variant">' + D.esc(D.fmtDate(r.requested_at)) + '</td>' +
+          '<td class="p-sm"><span class="inline-flex px-2 py-1 rounded font-label-md text-label-md ' + badge + '">' + D.esc(r.status) + '</span></td>' +
+          collectorCell +
+          '<td class="p-sm pr-md text-right">' + actionCell + '</td>';
+        tbody.appendChild(tr);
+      });
     }
-    tbody.innerHTML = "";
-    rows.forEach(function (r) {
-      var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
-      var icon = TYPE_ICON[r.waste_type] || "category";
-      var collectorCell = "";
-      var actionCell = "";
-      if (r.status === "Unassigned" || !r.collector_name) {
-        collectorCell = '<td class="p-sm text-on-surface-variant italic font-body-sm text-body-sm">Pending Allocation</td>';
-        actionCell = '<button class="px-md py-1.5 bg-primary text-on-primary rounded font-title-md text-title-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm" data-action="assign" data-id="' + r.id + '">Assign</button>';
-      } else {
-        var initials = D.esc(D.initials(r.collector_name));
-        collectorCell = '<td class="p-sm"><div class="flex items-center gap-2">' +
-          '<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-[10px] font-bold text-on-surface-variant">' + initials + '</div>' +
-          '<span class="font-title-md text-title-md">' + D.esc(r.collector_name) + '</span>' +
-          '</div></td>';
-        actionCell = '<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors rounded hover:bg-surface-container-highest" data-action="menu" data-id="' + r.id + '"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>';
-      }
-      var tr = document.createElement("tr");
-      tr.className = "border-b border-surface-container-highest table-row-hover transition-colors";
-      tr.innerHTML =
-        '<td class="p-sm pl-md font-mono-md text-mono-md font-bold text-on-surface-variant">' + D.esc(r.request_number) + '</td>' +
-        '<td class="p-sm">' +
-          '<div class="font-title-md text-title-md">' + D.esc(r.location) + '</div>' +
-          '<div class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(r.zone || "") + '</div>' +
-        '</td>' +
-        '<td class="p-sm"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md">' +
-          '<span class="material-symbols-outlined text-[14px]">' + icon + '</span>' + D.esc(r.waste_type) + '</span></td>' +
-        '<td class="p-sm text-on-surface-variant">' + D.esc(D.fmtDate(r.requested_at)) + '</td>' +
-        '<td class="p-sm"><span class="inline-flex px-2 py-1 rounded font-label-md text-label-md ' + badge + '">' + D.esc(r.status) + '</span></td>' +
-        collectorCell +
-        '<td class="p-sm pr-md text-right">' + actionCell + '</td>';
-      tbody.appendChild(tr);
-    });
     var count = document.getElementById("request-count");
-    if (count) count.textContent = "Showing 1 to " + rows.length + " of " + rows.length + " requests";
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + " to " + page.end + " of " + page.total + " requests" : "Showing 0 requests";
+    }
+    var nav = document.getElementById("request-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { requestPage = p; render(); } });
+    }
+  }
+
+  var exportBtn = document.getElementById("export-requests-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      var rows = filtered().map(function (r) {
+        return {
+          request_number: r.request_number,
+          location: r.location,
+          zone: r.zone || "",
+          waste_type: r.waste_type,
+          status: r.status,
+          collector_name: r.collector_name || "",
+          requested_at: D.fmtDate(r.requested_at)
+        };
+      });
+      D.exportCSV("ecowaste_collection_requests.csv", ["request_number", "location", "zone", "waste_type", "status", "collector_name", "requested_at"], rows);
+    });
   }
 
   function findRequest(id) {
@@ -252,12 +289,14 @@
   var searchEl = document.getElementById("request-search");
   var statusFilterEl = document.getElementById("request-status-filter");
   var typeFilterEl = document.getElementById("request-type-filter");
-  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; render(); });
-  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; render(); });
-  if (typeFilterEl) typeFilterEl.addEventListener("change", function () { typeFilter = this.value; render(); });
+if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; requestPage = 1; render(); });
+  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; requestPage = 1; render(); });
+  if (typeFilterEl) typeFilterEl.addEventListener("change", function () { typeFilter = this.value; requestPage = 1; render(); });
 
   load().catch(function (err) {
     console.error("EcoWaste collection request data failed to load:", err);
   });
 })();
 </script>
+
+

@@ -6,21 +6,19 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant mt-xs">Comprehensive overview of waste generation and recycling efficiency.</p>
 </div>
 <div class="flex gap-sm">
-<button class="flex items-center gap-sm px-lg py-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-sm">
-<span class="material-symbols-outlined text-sm">calendar_month</span>
-                        This Year
-                        <span class="material-symbols-outlined text-sm">arrow_drop_down</span>
-</button>
-<button class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-DEFAULT font-label-md text-label-md hover:bg-primary/90 transition-colors shadow-sm">
+<select id="trend-year-filter" class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-lg py-sm text-primary font-label-md text-label-md hover:bg-surface-container-low transition-colors shadow-sm focus:outline-none focus:border-primary cursor-pointer">
+<option value="all">All Years</option>
+</select>
+<button id="export-trends-btn" class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-DEFAULT font-label-md text-label-md hover:bg-primary/90 transition-colors shadow-sm">
 <span class="material-symbols-outlined text-sm">download</span>
-                        Export PDF
+                        Export Data
                     </button>
 </div>
 </div>
 <!-- Metrics Overview (Bento Grid) -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
 <!-- Card 1 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card relative overflow-hidden group">
 <div class="absolute -right-8 -top-8 w-32 h-32 bg-primary-container/20 rounded-full blur-2xl group-hover:bg-primary-container/30 transition-colors"></div>
 <div class="flex justify-between items-start mb-md relative z-10">
 <div>
@@ -40,7 +38,7 @@
 </div>
 </div>
 <!-- Card 2 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card relative overflow-hidden group">
 <div class="absolute -right-8 -top-8 w-32 h-32 bg-secondary-container/20 rounded-full blur-2xl group-hover:bg-secondary-container/30 transition-colors"></div>
 <div class="flex justify-between items-start mb-md relative z-10">
 <div>
@@ -52,7 +50,7 @@
 </div>
 </div>
 <div class="flex items-center gap-xs relative z-10">
-<span class="flex items-center font-label-md text-label-md text-[#166534] bg-[#dcfce7]/50 px-xs py-0.5 rounded-sm">
+<span class="flex items-center font-label-md text-label-md text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
                             8.5%
                         </span>
@@ -64,19 +62,19 @@
 </div>
 </div>
 <!-- Card 3 -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card relative overflow-hidden group">
 <div class="absolute -right-8 -top-8 w-32 h-32 bg-tertiary-container/20 rounded-full blur-2xl group-hover:bg-tertiary-container/30 transition-colors"></div>
 <div class="flex justify-between items-start mb-md relative z-10">
 <div>
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">CO2 Emissions Avoided</p>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs">892 <span class="font-title-md text-title-md text-on-surface-variant">MT</span></h2>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs"><span id="co2-value">—</span> <span class="font-title-md text-title-md text-on-surface-variant">MT</span></h2>
 </div>
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-tertiary">
 <span class="material-symbols-outlined">co2</span>
 </div>
 </div>
 <div class="flex items-center gap-xs relative z-10">
-<span class="flex items-center font-label-md text-label-md text-[#166534] bg-[#dcfce7]/50 px-xs py-0.5 rounded-sm">
+<span class="flex items-center font-label-md text-label-md text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
                             12.1%
                         </span>
@@ -87,8 +85,8 @@
 <!-- Charts Section (Main Bento Area) -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg mb-xl">
 <!-- Main Area Chart: Volume Over Time -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col lg:col-span-2 overflow-hidden">
-<div class="p-lg border-b border-surface-container-highest flex justify-between items-center bg-[#f1f5f9]/30">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-card flex flex-col lg:col-span-2 overflow-hidden">
+<div class="p-lg border-b border-surface-container-highest flex justify-between items-center bg-status-tableheader/30">
 <div>
 <h3 class="font-title-lg text-title-lg text-on-surface">Waste Volume vs Recycled</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Monthly tracking (Tons)</p>
@@ -109,8 +107,8 @@
 </div>
 </div>
 <!-- Secondary Chart: Efficiency Gauge -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col overflow-hidden">
-<div class="p-lg border-b border-surface-container-highest bg-[#f1f5f9]/30">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-card flex flex-col overflow-hidden">
+<div class="p-lg border-b border-surface-container-highest bg-status-tableheader/30">
 <h3 class="font-title-lg text-title-lg text-on-surface">Recycling Efficiency</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Current Month Goal: 45%</p>
 </div>
@@ -125,26 +123,23 @@
 <!-- Lower Section: Regional & Year over Year -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-xl">
 <!-- Regional Distribution Bar Chart -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col overflow-hidden">
-<div class="p-lg border-b border-surface-container-highest flex justify-between items-center bg-[#f1f5f9]/30">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-card flex flex-col overflow-hidden">
+<div class="p-lg border-b border-surface-container-highest flex justify-between items-center bg-status-tableheader/30">
 <h3 class="font-title-lg text-title-lg text-on-surface">Regional Distribution</h3>
-<button class="text-primary hover:text-primary/80">
-<span class="material-symbols-outlined">more_vert</span>
-</button>
 </div>
 <div class="p-lg flex-1 relative min-h-[300px]">
 <canvas class="w-full h-full" id="regionalChart" width="576" height="252" style="display: block; box-sizing: border-box; height: 252px; width: 576px;"></canvas>
 </div>
 </div>
 <!-- Year-over-Year Comparison Table -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col overflow-hidden">
-<div class="p-lg border-b border-surface-container-highest bg-[#f1f5f9]/30">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-card flex flex-col overflow-hidden">
+<div class="p-lg border-b border-surface-container-highest bg-status-tableheader/30">
 <h3 class="font-title-lg text-title-lg text-on-surface">Year-over-Year Reduction Metrics</h3>
 </div>
 <div class="flex-1 overflow-x-auto">
 <table class="w-full text-left border-collapse">
 <thead>
-<tr class="bg-[#f1f5f9] text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<tr class="bg-status-tableheader text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
 <th class="p-md font-medium border-b border-surface-container-highest">Category</th>
 <th class="p-md font-medium border-b border-surface-container-highest text-right">2023 (Tons)</th>
 <th class="p-md font-medium border-b border-surface-container-highest text-right">2024 (Tons)</th>
@@ -157,7 +152,7 @@
 <td class="p-md py-sm text-right">850.5</td>
 <td class="p-md py-sm text-right">795.2</td>
 <td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-[#166534] bg-[#dcfce7]/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
+<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
 <span class="material-symbols-outlined text-[14px]">arrow_downward</span> 6.5%
                                         </span>
 </td>
@@ -167,7 +162,7 @@
 <td class="p-md py-sm text-right">410.2</td>
 <td class="p-md py-sm text-right">450.6</td>
 <td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-[#166534] bg-[#dcfce7]/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
+<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span> 9.8%
                                         </span>
 </td>
@@ -177,7 +172,7 @@
 <td class="p-md py-sm text-right">320.0</td>
 <td class="p-md py-sm text-right">305.5</td>
 <td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-[#166534] bg-[#dcfce7]/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
+<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
 <span class="material-symbols-outlined text-[14px]">arrow_downward</span> 4.5%
                                         </span>
 </td>
@@ -211,30 +206,94 @@
             var surfaceHighest = '#e5e1e4';
             var onSurfaceVariant = '#4a4455';
 
-            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var CO2_FACTOR = 0.94; // metric tons CO2e avoided per ton recycled (EPA-derived assumption)
 
             // Chart.js Default Settings
             Chart.defaults.font.family = "'Hanken Grotesk', sans-serif";
             Chart.defaults.color = onSurfaceVariant;
             Chart.defaults.scale.grid.color = surfaceHighest;
 
-            async function load() {
-                var volume = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
-                var regional = await D.list("regional_stats", "region,waste_tons", "waste_tons.desc");
-                var yoy = await D.list("yoy_metrics", "category,tons_2023,tons_2024");
+            var volumeData = [];
+            var regionalData = [];
+            var yoyData = [];
+            var currentYear = "all";
 
-                var labels = volume.map(function (r) { return MONTHS[(Number(r.month) - 1) % 12]; });
-                var totalData = volume.map(function (r) { return Number(r.total_waste_tons) || 0; });
-                var recycledData = volume.map(function (r) { return Number(r.recycled_tons) || 0; });
+            async function load() {
+                volumeData = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
+                regionalData = await D.list("regional_stats", "region,waste_tons", "waste_tons.desc");
+                yoyData = await D.list("yoy_metrics", "category,tons_2023,tons_2024");
+
+                populateYearFilter();
+                applyYear();
+                renderRegionalChart(regionalData);
+                renderYoy(yoyData);
+            }
+
+            function populateYearFilter() {
+                var sel = document.getElementById("trend-year-filter");
+                if (!sel) return;
+                var years = [];
+                volumeData.forEach(function (r) {
+                    var y = String(r.year);
+                    if (years.indexOf(y) === -1) years.push(y);
+                });
+                years.sort().reverse();
+                years.forEach(function (y) {
+                    var opt = document.createElement("option");
+                    opt.value = y;
+                    opt.textContent = y;
+                    sel.appendChild(opt);
+                });
+                sel.addEventListener("change", function () {
+                    currentYear = sel.value;
+                    applyYear();
+                });
+            }
+
+            function filteredVolume() {
+                if (currentYear === "all") return volumeData;
+                return volumeData.filter(function (r) { return String(r.year) === currentYear; });
+            }
+
+            function applyYear() {
+                var vol = filteredVolume();
+                var labels = vol.map(function (r) { return MONTHS[(Number(r.month) - 1) % 12]; });
+                var totalData = vol.map(function (r) { return Number(r.total_waste_tons) || 0; });
+                var recycledData = vol.map(function (r) { return Number(r.recycled_tons) || 0; });
 
                 var totalTons = totalData.reduce(function (a, b) { return a + b; }, 0);
                 var recycledTons = recycledData.reduce(function (a, b) { return a + b; }, 0);
                 var rate = totalTons > 0 ? (recycledTons / totalTons) * 100 : 0;
 
                 setKpis(totalTons, rate);
+                var co2El = document.getElementById("co2-value");
+                if (co2El) co2El.textContent = D.fmtNum(Math.round(recycledTons * CO2_FACTOR * 10) / 10);
                 renderVolumeChart(labels, totalData, recycledData);
-                renderRegionalChart(regional);
-                renderYoy(yoy);
+            }
+
+            function exportTrends() {
+                var lines = [];
+                var vol = filteredVolume();
+                lines.push("SECTION,Monthly Collection Volume,,,,");
+                lines.push("Year,Month,Total Waste (Tons),Recycled (Tons),,");
+                vol.forEach(function (r) {
+                    lines.push([D.csvCell(r.year), D.csvCell(r.month), D.csvCell(r.total_waste_tons), D.csvCell(r.recycled_tons), D.csvCell(""), D.csvCell("")].join(","));
+                });
+                lines.push("SECTION,Regional Distribution,,,,");
+                lines.push("Region,Waste (Tons),,,,");
+                regionalData.forEach(function (r) {
+                    lines.push([D.csvCell(r.region), D.csvCell(r.waste_tons), D.csvCell(""), D.csvCell(""), D.csvCell(""), D.csvCell("")].join(","));
+                });
+                lines.push("SECTION,Year over Year,,,,");
+                lines.push("Category,2023 (Tons),2024 (Tons),Change %,,");
+                yoyData.forEach(function (r) {
+                    var a = Number(r.tons_2023) || 0;
+                    var b = Number(r.tons_2024) || 0;
+                    var diff = a > 0 ? ((b - a) / a) * 100 : 0;
+                    lines.push([D.csvCell(r.category), D.csvCell(a), D.csvCell(b), D.csvCell(diff.toFixed(1) + "%"), D.csvCell(""), D.csvCell("")].join(","));
+                });
+                D.exportBlob("ecowaste_trends_data.csv", lines.join("\r\n"), "text/csv;charset=utf-8;");
             }
 
             function setKpis(totalTons, rate) {
@@ -367,7 +426,7 @@
                     var isBad = up && r.category === 'Hazardous';
                     var badge = isBad
                         ? 'text-error bg-error-container/50'
-                        : 'text-[#166534] bg-[#dcfce7]/50';
+                        : 'text-status-success-text bg-status-success/50';
                     var tr = document.createElement("tr");
                     tr.className = "hover:bg-surface-container-lowest transition-colors";
                     tr.innerHTML =
@@ -382,8 +441,15 @@
                 });
             }
 
-            load().catch(function (err) {
+load().catch(function (err) {
                 console.error("EcoWaste trends data failed to load:", err);
             });
+
+            var exportTrendsBtn = document.getElementById("export-trends-btn");
+            if (exportTrendsBtn) {
+                exportTrendsBtn.addEventListener("click", exportTrends);
+            }
         })();
     </script>
+
+

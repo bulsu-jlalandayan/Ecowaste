@@ -6,7 +6,7 @@
 <p class="font-body-md text-body-md text-on-surface-variant">Manage residents, collectors, and system access.</p>
 </div>
 <div class="flex items-center gap-sm">
-<button class="px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT font-title-md text-title-md text-on-surface-variant hover:bg-surface-container-highest transition-colors flex items-center gap-xs shadow-sm">
+<button id="export-users-btn" class="px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT font-title-md text-title-md text-on-surface-variant hover:bg-surface-container-highest transition-colors flex items-center gap-xs shadow-sm">
 <span class="material-symbols-outlined text-[18px]">download</span>
                     Export
                 </button>
@@ -17,7 +17,7 @@
 </div>
 </div>
 <!-- Content Area - Card Container -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-card overflow-hidden">
 <!-- Toolbar / Filters -->
 <div class="p-lg border-b border-outline-variant bg-surface flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md">
 <!-- Tabs -->
@@ -49,7 +49,7 @@
 <div class="overflow-x-auto table-scroll">
 <table class="w-full text-left border-collapse min-w-[800px]">
 <thead>
-<tr class="bg-[#f1f5f9] border-b border-outline-variant font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
+<tr class="bg-status-tableheader border-b border-outline-variant font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
 <th class="p-sm pl-lg w-[300px]">User</th>
 <th class="p-sm w-[150px]">Role</th>
 <th class="p-sm w-[150px]">Status</th>
@@ -73,7 +73,7 @@
 </td>
 <td class="p-sm">Resident</td>
 <td class="p-sm">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span>
 </td>
 <td class="p-sm text-on-surface-variant">Today, 10:24 AM</td>
 <td class="p-sm pr-lg text-right">
@@ -100,7 +100,7 @@
 </td>
 <td class="p-sm">Collector</td>
 <td class="p-sm">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span>
 </td>
 <td class="p-sm text-on-surface-variant">Yesterday, 4:30 PM</td>
 <td class="p-sm pr-lg text-right">
@@ -145,18 +145,7 @@
 <!-- Pagination -->
 <div class="p-md border-t border-outline-variant bg-surface flex justify-between items-center">
 <p id="user-count" class="font-body-sm text-body-sm text-on-surface-variant">Showing 0 users</p>
-<div class="flex items-center gap-xs">
-<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-highest disabled:opacity-50" disabled="">
-<span class="material-symbols-outlined text-[18px]">chevron_left</span>
-</button>
-<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-title-sm">1</button>
-<button class="w-8 h-8 flex items-center justify-center rounded border border-transparent text-on-surface hover:bg-surface-container-highest font-title-sm">2</button>
-<button class="w-8 h-8 flex items-center justify-center rounded border border-transparent text-on-surface hover:bg-surface-container-highest font-title-sm">3</button>
-<span class="px-1 text-on-surface-variant">...</span>
-<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-highest">
-<span class="material-symbols-outlined text-[18px]">chevron_right</span>
-</button>
-</div>
+<div id="user-pagination" class="flex gap-xs"></div>
 </div>
 </div>
 <script>
@@ -171,14 +160,21 @@
     return "Resident";
   }
 
-  var allUsers = [];
+var allUsers = [];
   var searchTerm = "";
   var roleFilter = "";
   var statusFilter = "";
+  var userPage = 1;
 
   async function load() {
     allUsers = await D.list("profiles", "id,full_name,email,role,status,last_active_at", "created_at.desc");
     renderUsers();
+  }
+
+  var incomingTerm = sessionStorage.getItem("eco_search_term");
+  if (incomingTerm) {
+    searchTerm = incomingTerm;
+    sessionStorage.removeItem("eco_search_term");
   }
 
   function filtered() {
@@ -192,42 +188,65 @@
     var users = filtered();
     var tbody = document.getElementById("user-tbody");
     if (!tbody) return;
-    if (!users.length) {
+    var page = window.EcoWasteUI.paginate(users, userPage, 10);
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="p-sm pl-lg py-sm text-on-surface-variant" colspan="5">No users found.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = "";
-    users.forEach(function (u) {
-      var fullName = u.full_name || "Unknown User";
-      var email = u.email || "";
-      var initials = D.esc(D.initials(fullName));
-      var active = u.status !== "Inactive";
-      var badge = active
-        ? 'bg-green-100 text-green-800'
-        : 'bg-surface-variant text-on-surface-variant';
-      var tr = document.createElement("tr");
-      tr.className = "hover:bg-surface-container-low transition-colors group";
-      tr.innerHTML =
-        '<td class="p-sm pl-lg py-sm">' +
-          '<div class="flex items-center gap-md">' +
-            '<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-title-md">' + initials + '</div>' +
-            '<div>' +
-              '<div class="font-title-md text-title-md">' + D.esc(fullName) + '</div>' +
-              '<div class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(email) + '</div>' +
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (u) {
+        var fullName = u.full_name || "Unknown User";
+        var email = u.email || "";
+        var initials = D.esc(D.initials(fullName));
+        var active = u.status !== "Inactive";
+        var badge = active
+          ? 'bg-status-success text-status-success-text'
+          : 'bg-surface-variant text-on-surface-variant';
+        var tr = document.createElement("tr");
+        tr.className = "hover:bg-surface-container-low transition-colors group";
+        tr.innerHTML =
+          '<td class="p-sm pl-lg py-sm">' +
+            '<div class="flex items-center gap-md">' +
+              '<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-title-md">' + initials + '</div>' +
+              '<div>' +
+                '<div class="font-title-md text-title-md">' + D.esc(fullName) + '</div>' +
+                '<div class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(email) + '</div>' +
+              '</div>' +
             '</div>' +
-          '</div>' +
-        '</td>' +
-        '<td class="p-sm">' + roleLabel(u.role) + '</td>' +
-        '<td class="p-sm"><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[11px] font-bold ' + badge + '">' + (active ? "Active" : "Inactive") + '</span></td>' +
-        '<td class="p-sm text-on-surface-variant">' + D.esc(u.last_active_at ? D.fmtDate(u.last_active_at) : "Never") + '</td>' +
-        '<td class="p-sm pr-lg text-right whitespace-nowrap">' +
-          '<button class="p-xs text-on-surface-variant hover:text-primary transition-colors" data-action="edit" data-id="' + u.id + '" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>' +
-          '<button class="p-xs text-on-surface-variant hover:text-error transition-colors" data-action="toggle-status" data-id="' + u.id + '" title="' + (active ? "Deactivate" : "Reactivate") + '"><span class="material-symbols-outlined text-[20px]">' + (active ? "block" : "check_circle") + '</span></button>' +
-        '</td>';
-      tbody.appendChild(tr);
-    });
+          '</td>' +
+          '<td class="p-sm">' + roleLabel(u.role) + '</td>' +
+          '<td class="p-sm"><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[11px] font-bold ' + badge + '">' + (active ? "Active" : "Inactive") + '</span></td>' +
+          '<td class="p-sm text-on-surface-variant">' + D.esc(u.last_active_at ? D.fmtDate(u.last_active_at) : "Never") + '</td>' +
+          '<td class="p-sm pr-lg text-right whitespace-nowrap">' +
+            '<button class="p-xs text-on-surface-variant hover:text-primary transition-colors" data-action="edit" data-id="' + u.id + '" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>' +
+            '<button class="p-xs text-on-surface-variant hover:text-error transition-colors" data-action="toggle-status" data-id="' + u.id + '" title="' + (active ? "Deactivate" : "Reactivate") + '"><span class="material-symbols-outlined text-[20px]">' + (active ? "block" : "check_circle") + '</span></button>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
+    }
     var count = document.getElementById("user-count");
-    if (count) count.textContent = "Showing 1 to " + users.length + " of " + users.length + " users";
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + " to " + page.end + " of " + page.total + " users" : "Showing 0 users";
+    }
+    var nav = document.getElementById("user-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { userPage = p; renderUsers(); } });
+    }
+  }
+
+  var exportBtn = document.getElementById("export-users-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      var rows = filtered().map(function (u) {
+        return {
+          full_name: u.full_name || "",
+          email: u.email || "",
+          role: roleLabel(u.role),
+          status: u.status || "",
+          last_active_at: u.last_active_at ? D.fmtDate(u.last_active_at) : ""
+        };
+      });
+      D.exportCSV("ecowaste_users.csv", ["full_name", "email", "role", "status", "last_active_at"], rows);
+    });
   }
 
   var tbody = document.getElementById("user-tbody");
@@ -297,11 +316,12 @@
   var searchEl = document.getElementById("user-search");
   var statusFilterEl = document.getElementById("user-status-filter");
   var tabButtons = document.querySelectorAll("[data-role-filter]");
-  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; renderUsers(); });
-  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; renderUsers(); });
+if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; userPage = 1; renderUsers(); });
+  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; userPage = 1; renderUsers(); });
   tabButtons.forEach(function (tab) {
     tab.addEventListener("click", function () {
       roleFilter = tab.getAttribute("data-role-filter");
+      userPage = 1;
       tabButtons.forEach(function (t) {
         if (t === tab) {
           t.classList.add("bg-surface-container-lowest", "shadow-sm", "text-primary");
@@ -353,3 +373,5 @@
   });
 })();
 </script>
+
+

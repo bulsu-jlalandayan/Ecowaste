@@ -6,6 +6,10 @@
 <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage and track processed materials across facilities.</p>
 </div>
 <div class="flex gap-md">
+<button id="export-records-btn" class="bg-surface-container-lowest text-on-surface border border-outline-variant font-label-md text-label-md px-lg py-2 rounded flex items-center gap-2 hover:bg-surface-container-highest transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+                        Export
+                    </button>
 <button id="add-record-btn" class="bg-primary text-on-primary font-label-md text-label-md px-lg py-2 rounded flex items-center gap-2 hover:bg-secondary transition-colors shadow-sm">
 <span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
                         Manual Log
@@ -15,7 +19,7 @@
 <!-- Bento Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg mb-lg">
 <!-- Summary Card - Total Recycled -->
-<div class="lg:col-span-4 bg-surface-container-lowest border border-surface-variant rounded-xl p-lg shadow-[0_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-shadow">
+<div class="lg:col-span-4 bg-surface-container-lowest border border-surface-variant rounded-xl p-lg shadow-card relative overflow-hidden group hover:shadow-card-hover transition-shadow">
 <div class="absolute top-0 right-0 p-lg opacity-10 group-hover:opacity-20 transition-opacity">
 <span class="material-symbols-outlined text-8xl text-primary" data-icon="recycling">recycling</span>
 </div>
@@ -26,7 +30,7 @@
 <span class="font-body-lg text-body-lg text-on-surface-variant mb-1">kg</span>
 </div>
 <div class="flex items-center gap-2">
-<span class="bg-[#e6f4ea] text-[#137333] px-2 py-1 rounded font-label-md text-label-md flex items-center gap-1">
+<span class="bg-status-onroute text-status-onroute-text px-2 py-1 rounded font-label-md text-label-md flex items-center gap-1">
 <span class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
                                 12.5%
                             </span>
@@ -35,7 +39,7 @@
 </div>
 </div>
 <!-- Material Breakdown (Placeholder for charts/stats) -->
-<div class="lg:col-span-8 bg-surface-container-lowest border border-surface-variant rounded-xl p-lg shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-center">
+<div class="lg:col-span-8 bg-surface-container-lowest border border-surface-variant rounded-xl p-lg shadow-card flex flex-col justify-center">
 <h3 class="font-title-md text-title-md text-on-surface-variant mb-lg">Material Breakdown</h3>
 <div class="flex flex-wrap gap-md justify-between items-end h-full">
 <div class="flex-1 min-w-[100px]">
@@ -78,7 +82,7 @@
 </div>
 </div>
 <!-- Data Table Section -->
-<div class="bg-surface-container-lowest border border-surface-variant rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl shadow-card overflow-hidden flex flex-col">
 <!-- Table Toolbar -->
 <div class="p-md border-b border-surface-variant flex flex-col sm:flex-row justify-between items-center gap-md bg-surface">
 <div class="flex items-center gap-md w-full sm:w-auto flex-wrap">
@@ -93,7 +97,7 @@
 <option value="metal">Metal</option>
 <option value="glass">Glass</option>
 </select>
-<div class="relative">
+<div class="relative w-full sm:w-52">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]" data-icon="filter_list">filter_list</span>
 <select id="record-facility-filter" class="w-full sm:w-52 pl-10 pr-8 py-1.5 bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer">
 <option value="">All Facilities</option>
@@ -104,27 +108,28 @@
 </select>
 </div>
 </div>
-<div class="flex items-center gap-sm text-on-surface-variant font-body-sm text-body-sm">
-<span id="record-count">Showing 0 logs</span>
-</div>
 </div>
 <!-- Table Container -->
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse min-w-[800px]">
 <thead>
-<tr class="bg-[#f1f5f9] border-b border-surface-variant">
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Log ID</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Date &amp; Time</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Material Type</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Weight (kg)</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Facility Name</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9]">Status</th>
-<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-[#f1f5f9] text-right">Actions</th>
+<tr class="bg-status-tableheader border-b border-surface-variant">
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Log ID</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Date &amp; Time</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Material Type</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Weight (kg)</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Facility Name</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader">Status</th>
+<th class="py-3 px-md font-label-md text-label-md text-on-surface-variant font-semibold sticky top-0 bg-status-tableheader text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="record-tbody" class="font-body-md text-body-md text-on-surface">
 </tbody>
 </table>
+</div>
+<div class="p-md border-t border-surface-variant bg-surface flex items-center justify-between">
+<span id="record-count" class="font-body-sm text-body-sm text-on-surface-variant">Showing 0 logs</span>
+<div id="record-pagination" class="flex gap-2"></div>
 </div>
 </div>
 <script>
@@ -134,9 +139,9 @@
   if (!D || !localStorage.getItem("sb-access-token")) return;
 
   var STATUS_BADGE = {
-    "Verified": "bg-[#e6f4ea] text-[#137333] border border-[#ceead6]",
-    "Pending Audit": "bg-[#fef7e0] text-[#b06000] border border-[#fde293]",
-    "Discrepancy": "bg-[#fce8e6] text-[#c5221f] border border-[#fad2cf]"
+    "Verified": "bg-status-onroute text-status-onroute-text border border-status-onroute-border",
+    "Pending Audit": "bg-status-pending text-status-pending-text border border-status-pending-border",
+    "Discrepancy": "bg-status-error-soft text-status-error-soft-text border border-status-error-soft-border"
   };
 
   var MATERIAL_ICON = {
@@ -171,10 +176,11 @@
     if (el) el.style.width = Math.max(pct, 3).toFixed(1) + "%";
   }
 
-  var allRecords = [];
+var allRecords = [];
   var searchTerm = "";
   var materialFilter = "";
   var facilityFilter = "";
+  var recordPage = 1;
 
   async function load() {
     allRecords = await D.list("recycling_records",
@@ -183,17 +189,23 @@
     render();
   }
 
-  function render() {
+  function filtered() {
     var rows = window.EcoWasteUI.filterList(allRecords, searchTerm,
       ["material_type", "facility", "log_number"],
       { facility: facilityFilter });
     if (materialFilter) {
       rows = rows.filter(function (r) { return materialGroup(r.material_type) === materialFilter; });
     }
+    return rows;
+  }
+
+  function render() {
+    var allRows = filtered();
+    var page = window.EcoWasteUI.paginate(allRows, recordPage, 10);
 
     var totals = { plastic: 0, paper: 0, metal: 0, glass: 0, other: 0 };
     var grand = 0;
-    rows.forEach(function (r) {
+    allRows.forEach(function (r) {
       var w = Number(r.weight_kg) || 0;
       totals[materialGroup(r.material_type)] += w;
       grand += w;
@@ -212,36 +224,59 @@
 
     var tbody = document.getElementById("record-tbody");
     if (!tbody) return;
-    if (!rows.length) {
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="py-2 px-md text-on-surface-variant" colspan="7">No recycling records found.</td></tr>';
-      return;
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (r) {
+        var group = materialGroup(r.material_type);
+        var icon = MATERIAL_ICON[group] || "recycling";
+        var boxClass = MATERIAL_BAR_CLASS[group] || "bg-surface-variant";
+        var iconColor = group === "metal" ? "text-tertiary" : group === "glass" ? "text-on-surface-variant" : group === "paper" ? "text-secondary" : "text-primary";
+        var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
+        var tr = document.createElement("tr");
+        tr.className = "border-b border-surface-variant hover:bg-surface-container-low transition-colors group";
+        tr.innerHTML =
+          '<td class="py-2 px-md font-mono-md text-primary">#' + D.esc(r.log_number) + '</td>' +
+          '<td class="py-2 px-md text-on-surface-variant">' + D.esc(D.fmtDate(r.recorded_at)) + '</td>' +
+          '<td class="py-2 px-md"><div class="flex items-center gap-2">' +
+            '<div class="w-6 h-6 rounded flex items-center justify-center ' + boxClass + ' ' + iconColor + '">' +
+            '<span class="material-symbols-outlined text-[14px]">' + icon + '</span></div>' +
+            D.esc(r.material_type) + '</div></td>' +
+          '<td class="py-2 px-md font-semibold">' + D.esc(D.fmtNum(r.weight_kg)) + '</td>' +
+          '<td class="py-2 px-md text-on-surface-variant">' + D.esc(r.facility || "—") + '</td>' +
+          '<td class="py-2 px-md"><span class="px-2 py-1 rounded font-label-md text-label-md ' + badge + '">' + D.esc(r.status) + '</span></td>' +
+          '<td class="py-2 px-md text-right">' +
+            '<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded hover:bg-surface-container" data-action="menu" data-id="' + r.id + '"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
     }
-    tbody.innerHTML = "";
-    rows.forEach(function (r) {
-      var group = materialGroup(r.material_type);
-      var icon = MATERIAL_ICON[group] || "recycling";
-      var boxClass = MATERIAL_BAR_CLASS[group] || "bg-surface-variant";
-      var iconColor = group === "metal" ? "text-tertiary" : group === "glass" ? "text-on-surface-variant" : group === "paper" ? "text-secondary" : "text-primary";
-      var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
-      var tr = document.createElement("tr");
-      tr.className = "border-b border-surface-variant hover:bg-surface-container-low transition-colors group";
-      tr.innerHTML =
-        '<td class="py-2 px-md font-mono-md text-primary">#' + D.esc(r.log_number) + '</td>' +
-        '<td class="py-2 px-md text-on-surface-variant">' + D.esc(D.fmtDate(r.recorded_at)) + '</td>' +
-        '<td class="py-2 px-md"><div class="flex items-center gap-2">' +
-          '<div class="w-6 h-6 rounded flex items-center justify-center ' + boxClass + ' ' + iconColor + '">' +
-          '<span class="material-symbols-outlined text-[14px]">' + icon + '</span></div>' +
-          D.esc(r.material_type) + '</div></td>' +
-        '<td class="py-2 px-md font-semibold">' + D.esc(D.fmtNum(r.weight_kg)) + '</td>' +
-        '<td class="py-2 px-md text-on-surface-variant">' + D.esc(r.facility || "—") + '</td>' +
-        '<td class="py-2 px-md"><span class="px-2 py-1 rounded font-label-md text-label-md ' + badge + '">' + D.esc(r.status) + '</span></td>' +
-        '<td class="py-2 px-md text-right">' +
-          '<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded hover:bg-surface-container" data-action="menu" data-id="' + r.id + '"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>' +
-        '</td>';
-      tbody.appendChild(tr);
-    });
     var count = document.getElementById("record-count");
-    if (count) count.textContent = "Showing 1-" + rows.length + " of " + rows.length + " logs";
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + "-" + page.end + " of " + page.total + " logs" : "Showing 0 logs";
+    }
+    var nav = document.getElementById("record-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { recordPage = p; render(); } });
+    }
+  }
+
+  var exportBtn = document.getElementById("export-records-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      var rows = filtered().map(function (r) {
+        return {
+          log_number: r.log_number,
+          recorded_at: D.fmtDate(r.recorded_at),
+          material_type: r.material_type,
+          weight_kg: r.weight_kg,
+          facility: r.facility || "",
+          status: r.status
+        };
+      });
+      D.exportCSV("ecowaste_recycling_records.csv", ["log_number", "recorded_at", "material_type", "weight_kg", "facility", "status"], rows);
+    });
   }
 
   function findRecord(id) {
@@ -363,9 +398,9 @@
   var searchEl = document.getElementById("record-search");
   var materialFilterEl = document.getElementById("record-material-filter");
   var facilityFilterEl = document.getElementById("record-facility-filter");
-  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; render(); });
-  if (materialFilterEl) materialFilterEl.addEventListener("change", function () { materialFilter = this.value; render(); });
-  if (facilityFilterEl) facilityFilterEl.addEventListener("change", function () { facilityFilter = this.value; render(); });
+if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; recordPage = 1; render(); });
+  if (materialFilterEl) materialFilterEl.addEventListener("change", function () { materialFilter = this.value; recordPage = 1; render(); });
+  if (facilityFilterEl) facilityFilterEl.addEventListener("change", function () { facilityFilter = this.value; recordPage = 1; render(); });
 
   var addBtn = document.getElementById("add-record-btn");
   if (addBtn) addBtn.addEventListener("click", openAdd);
@@ -375,3 +410,5 @@
   });
 })();
 </script>
+
+

@@ -13,7 +13,7 @@
 <!-- Dashboard Bento Grid Metrics -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
 <!-- Metric Card 1 -->
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-primary/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]" data-icon="groups">groups</span>
 </div>
@@ -26,7 +26,7 @@
 </div>
 </div>
 <!-- Metric Card 2 -->
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-secondary/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]" data-icon="route">route</span>
 </div>
@@ -36,7 +36,7 @@
 </div>
 </div>
 <!-- Metric Card 3 -->
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-error/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]" data-icon="warning">warning</span>
 </div>
@@ -48,7 +48,7 @@
 </div>
 </div>
 <!-- Main Data Section -->
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-card flex flex-col">
 <!-- Table Toolbar -->
 <div class="p-md border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-md bg-surface-container-low/50">
 <div class="relative w-full sm:w-72">
@@ -67,7 +67,7 @@
 <span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
                             Filter
                         </button>
-<button class="flex-1 sm:flex-none flex items-center justify-center gap-sm px-md py-2 border border-outline-variant rounded-DEFAULT text-on-surface hover:bg-surface-container transition-colors font-title-md text-title-md">
+<button id="export-collectors-btn" class="flex-1 sm:flex-none flex items-center justify-center gap-sm px-md py-2 border border-outline-variant rounded-DEFAULT text-on-surface hover:bg-surface-container transition-colors font-title-md text-title-md">
 <span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
                             Export
                         </button>
@@ -108,8 +108,8 @@
 </div>
 </td>
 <td class="py-sm px-md">
-<span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-[#e6f4ea] text-[#137333] font-label-md text-label-md">
-<span class="w-1.5 h-1.5 rounded-full bg-[#137333]"></span>
+<span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-status-onroute text-status-onroute-text font-label-md text-label-md">
+<span class="w-1.5 h-1.5 rounded-full bg-status-onroute-text"></span>
                                         On Route
                                     </span>
 </td>
@@ -207,18 +207,7 @@
 <!-- Pagination -->
 <div class="p-md border-t border-outline-variant flex items-center justify-between text-body-sm text-on-surface-variant bg-surface-container-low/30">
 <div id="collector-count">Showing 0 entries</div>
-<div class="flex items-center gap-xs">
-<button class="p-1 rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
-<span class="material-symbols-outlined text-[20px]" data-icon="chevron_left">chevron_left</span>
-</button>
-<button class="w-8 h-8 rounded bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center">1</button>
-<button class="w-8 h-8 rounded hover:bg-surface-variant font-title-md text-title-md flex items-center justify-center transition-colors">2</button>
-<button class="w-8 h-8 rounded hover:bg-surface-variant font-title-md text-title-md flex items-center justify-center transition-colors">3</button>
-<span class="px-1">...</span>
-<button class="p-1 rounded hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span>
-</button>
-</div>
+<div id="collector-pagination" class="flex gap-xs"></div>
 </div>
 </div>
 <div class="mt-xl text-center pb-xl">
@@ -231,12 +220,12 @@
   if (!D || !localStorage.getItem("sb-access-token")) return;
 
   var STATUS_BADGE = {
-    "On Route": "bg-[#e6f4ea] text-[#137333]",
+    "On Route": "bg-status-onroute text-status-onroute-text",
     "Off Duty": "bg-surface-variant text-on-surface-variant",
     "Vehicle Issue": "bg-error-container text-on-error-container"
   };
   var STATUS_DOT = {
-    "On Route": "bg-[#137333]",
+    "On Route": "bg-status-onroute-text",
     "Off Duty": "bg-on-surface-variant",
     "Vehicle Issue": "bg-error"
   };
@@ -253,9 +242,10 @@
     if (el) el.textContent = value;
   }
 
-  var allCollectors = [];
+var allCollectors = [];
   var searchTerm = "";
   var statusFilter = "";
+  var collectorPage = 1;
 
   async function load() {
     allCollectors = await D.list("collectors",
@@ -267,48 +257,76 @@
     render();
   }
 
-  function render() {
-    var rows = window.EcoWasteUI.filterList(allCollectors, searchTerm,
+  function filtered() {
+    return window.EcoWasteUI.filterList(allCollectors, searchTerm,
       ["full_name", "collector_number", "vehicle_name", "district"],
       { status: statusFilter });
+  }
+
+  function render() {
+    var rows = filtered();
     var tbody = document.getElementById("collector-tbody");
     if (!tbody) return;
-    if (!rows.length) {
+    var page = window.EcoWasteUI.paginate(rows, collectorPage, 10);
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="py-sm px-md text-on-surface-variant" colspan="6">No collectors yet.</td></tr>';
-      return;
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (c) {
+        var initials = D.esc(D.initials(c.full_name));
+        var badge = STATUS_BADGE[c.status] || "bg-surface-variant text-on-surface-variant";
+        var dot = STATUS_DOT[c.status] || "bg-on-surface-variant";
+        var rowStatus = c.status === "Vehicle Issue" ? "bg-error-container/10" : "";
+        var tr = document.createElement("tr");
+        tr.className = "hover:bg-surface-container-lowest/50 transition-colors group " + rowStatus;
+        tr.innerHTML =
+          '<td class="py-sm px-md">' +
+            '<div class="flex items-center gap-md">' +
+              '<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-title-md text-title-md">' + initials + '</div>' +
+              '<div><p class="font-title-md text-title-md text-on-surface">' + D.esc(c.full_name) + '</p>' +
+              '<p class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(c.district || "") + '</p></div>' +
+            '</div>' +
+          '</td>' +
+          '<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">' + D.esc(c.collector_number) + '</td>' +
+          '<td class="py-sm px-md"><div class="flex items-center gap-xs text-on-surface">' +
+            '<span class="material-symbols-outlined text-[16px] text-on-surface-variant">local_shipping</span>' +
+            '<span class="font-body-md text-body-md">' + D.esc(c.vehicle_name || "—") + ' (' + D.esc(c.vehicle_type || "—") + ')</span>' +
+            '</div></td>' +
+          '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' +
+            '<span class="w-1.5 h-1.5 rounded-full ' + dot + '"></span>' + D.esc(c.status) + '</span></td>' +
+          '<td class="py-sm px-md"><div class="flex items-center gap-xs text-primary">' +
+            '<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>' +
+            '<span class="font-title-md text-title-md">' + (c.rating !== null ? D.esc(c.rating) : "—") + '</span>' +
+            '</div></td>' +
+          '<td class="py-sm px-md text-right"><button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="menu" data-id="' + c.id + '"><span class="material-symbols-outlined">more_vert</span></button></td>';
+        tbody.appendChild(tr);
+      });
     }
-    tbody.innerHTML = "";
-    rows.forEach(function (c) {
-      var initials = D.esc(D.initials(c.full_name));
-      var badge = STATUS_BADGE[c.status] || "bg-surface-variant text-on-surface-variant";
-      var dot = STATUS_DOT[c.status] || "bg-on-surface-variant";
-      var rowStatus = c.status === "Vehicle Issue" ? "bg-error-container/10" : "";
-      var tr = document.createElement("tr");
-      tr.className = "hover:bg-surface-container-lowest/50 transition-colors group " + rowStatus;
-      tr.innerHTML =
-        '<td class="py-sm px-md">' +
-          '<div class="flex items-center gap-md">' +
-            '<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-title-md text-title-md">' + initials + '</div>' +
-            '<div><p class="font-title-md text-title-md text-on-surface">' + D.esc(c.full_name) + '</p>' +
-            '<p class="font-body-sm text-body-sm text-on-surface-variant">' + D.esc(c.district || "") + '</p></div>' +
-          '</div>' +
-        '</td>' +
-        '<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">' + D.esc(c.collector_number) + '</td>' +
-        '<td class="py-sm px-md"><div class="flex items-center gap-xs text-on-surface">' +
-          '<span class="material-symbols-outlined text-[16px] text-on-surface-variant">local_shipping</span>' +
-          '<span class="font-body-md text-body-md">' + D.esc(c.vehicle_name || "—") + ' (' + D.esc(c.vehicle_type || "—") + ')</span>' +
-          '</div></td>' +
-        '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' +
-          '<span class="w-1.5 h-1.5 rounded-full ' + dot + '"></span>' + D.esc(c.status) + '</span></td>' +
-        '<td class="py-sm px-md"><div class="flex items-center gap-xs text-primary">' +
-          '<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>' +
-          '<span class="font-title-md text-title-md">' + (c.rating !== null ? D.esc(c.rating) : "—") + '</span>' +
-          '</div></td>' +
-        '<td class="py-sm px-md text-right"><button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="menu" data-id="' + c.id + '"><span class="material-symbols-outlined">more_vert</span></button></td>';
-      tbody.appendChild(tr);
-    });
     var count = document.getElementById("collector-count");
-    if (count) count.textContent = "Showing 1 to " + rows.length + " of " + rows.length + " entries";
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + " to " + page.end + " of " + page.total + " entries" : "Showing 0 entries";
+    }
+    var nav = document.getElementById("collector-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { collectorPage = p; render(); } });
+    }
+  }
+
+  var exportBtn = document.getElementById("export-collectors-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      var rows = filtered().map(function (c) {
+        return {
+          full_name: c.full_name || "",
+          collector_number: c.collector_number || "",
+          district: c.district || "",
+          vehicle: c.vehicle_name ? c.vehicle_name + " (" + (c.vehicle_type || "") + ")" : "",
+          status: c.status || "",
+          rating: c.rating !== null && c.rating !== undefined ? c.rating : ""
+        };
+      });
+      D.exportCSV("ecowaste_collectors.csv", ["full_name", "collector_number", "district", "vehicle", "status", "rating"], rows);
+    });
   }
 
   function findCollector(id) {
@@ -408,8 +426,8 @@
 
   var searchEl = document.getElementById("collector-search");
   var statusFilterEl = document.getElementById("collector-status-filter");
-  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; render(); });
-  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; render(); });
+if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; collectorPage = 1; render(); });
+  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; collectorPage = 1; render(); });
 
   var addBtn = document.getElementById("add-collector-btn");
   if (addBtn) {
@@ -449,3 +467,6 @@
   });
 })();
 </script>
+
+
+

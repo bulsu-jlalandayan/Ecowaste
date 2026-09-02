@@ -10,7 +10,7 @@ Add New Category
 </button>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-primary/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]">category</span>
 </div>
@@ -19,7 +19,7 @@ Add New Category
 <span id="total-categories-value" class="font-display-lg text-display-lg text-on-surface">—</span>
 </div>
 </div>
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-secondary/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]">recycling</span>
 </div>
@@ -28,7 +28,7 @@ Add New Category
 <span id="recyclable-value" class="font-display-lg text-display-lg text-on-surface">—</span>
 </div>
 </div>
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-card relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-lg text-error/10 group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-[64px]">warning</span>
 </div>
@@ -38,7 +38,7 @@ Add New Category
 </div>
 </div>
 </div>
-<div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col overflow-hidden">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-card flex flex-col overflow-hidden">
 <div id="category-toolbar" class="p-md border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-md bg-surface-container-low/50">
 <div class="relative w-full sm:w-72">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
@@ -57,6 +57,10 @@ Add New Category
 <option value="Active">Active</option>
 <option value="Inactive">Inactive</option>
 </select>
+<button id="export-categories-btn" class="flex-1 sm:flex-none flex items-center justify-center gap-sm px-md py-2 border border-outline-variant rounded-DEFAULT text-on-surface hover:bg-surface-container transition-colors font-title-md text-title-md">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Export
+                </button>
 </div>
 </div>
 <div class="overflow-x-auto">
@@ -75,7 +79,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">General Waste</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md">Landfill</span></td>
 <td class="py-sm px-md text-on-surface-variant">Standard collection</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -84,9 +88,9 @@ Add New Category
 </tr>
 <tr class="hover:bg-surface-container-lowest/50 transition-colors group">
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Organic</td>
-<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-[#e6f4ea] text-[#137333] font-label-md text-label-md">Compostable</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-status-onroute text-status-onroute-text font-label-md text-label-md">Compostable</span></td>
 <td class="py-sm px-md text-on-surface-variant">Composting facility</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -97,7 +101,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Plastic</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md">Recyclable</span></td>
 <td class="py-sm px-md text-on-surface-variant">Sorting & recycling</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -108,7 +112,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Paper</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md">Recyclable</span></td>
 <td class="py-sm px-md text-on-surface-variant">Pulping & recycling</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -119,7 +123,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Metal</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md">Recyclable</span></td>
 <td class="py-sm px-md text-on-surface-variant">Smelting & reforming</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -130,7 +134,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Glass</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md">Recyclable</span></td>
 <td class="py-sm px-md text-on-surface-variant">Crushing & melting</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -141,7 +145,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">E-Waste</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md">Hazardous</span></td>
 <td class="py-sm px-md text-on-surface-variant">Specialized facility</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -152,7 +156,7 @@ Add New Category
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">Batteries</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md">Hazardous</span></td>
 <td class="py-sm px-md text-on-surface-variant">Chemical recovery</td>
-<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-label-md text-[11px] font-bold">Active</span></td>
+<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-success text-status-success-text font-label-md text-[11px] font-bold">Active</span></td>
 <td class="py-sm px-md text-right">
 <button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -164,16 +168,7 @@ Add New Category
 </div>
 <div class="p-md border-t border-outline-variant flex items-center justify-between text-body-sm text-on-surface-variant bg-surface-container-low/30">
 <div id="category-count">Showing 0 entries</div>
-<div class="flex items-center gap-xs">
-<button class="p-1 rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
-<span class="material-symbols-outlined text-[20px]">chevron_left</span>
-</button>
-<button class="w-8 h-8 rounded bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center">1</button>
-<button class="w-8 h-8 rounded hover:bg-surface-variant font-title-md text-title-md flex items-center justify-center transition-colors">2</button>
-<button class="p-1 rounded hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[20px]">chevron_right</span>
-</button>
-</div>
+<div id="category-pagination" class="flex gap-xs"></div>
 </div>
 </div>
 <script>
@@ -184,7 +179,7 @@ Add New Category
 
   var TYPE_BADGE = {
     "Landfill": "bg-surface-variant text-on-surface-variant",
-    "Compostable": "bg-[#e6f4ea] text-[#137333]",
+    "Compostable": "bg-status-onroute text-status-onroute-text",
     "Recyclable": "bg-secondary-fixed text-primary",
     "Hazardous": "bg-error-container text-on-error-container"
   };
@@ -194,10 +189,11 @@ Add New Category
     if (el) el.textContent = value;
   }
 
-  var allCats = [];
+var allCats = [];
   var searchTerm = "";
   var typeFilter = "";
   var statusFilter = "";
+  var catPage = 1;
 
   async function load() {
     allCats = await D.list("waste_categories", "id,name,type,disposal_method,status", "name.asc");
@@ -207,34 +203,62 @@ Add New Category
     render();
   }
 
-  function render() {
-    var cats = window.EcoWasteUI.filterList(allCats, searchTerm, ["name", "disposal_method"], {
+  function filtered() {
+    return window.EcoWasteUI.filterList(allCats, searchTerm, ["name", "disposal_method"], {
       type: typeFilter,
       status: statusFilter
     });
+  }
+
+  function render() {
+    var cats = filtered();
     var tbody = document.getElementById("category-tbody");
     if (!tbody) return;
-    if (!cats.length) {
+    var page = window.EcoWasteUI.paginate(cats, catPage, 10);
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="py-sm px-md text-on-surface-variant" colspan="5">No waste categories yet.</td></tr>';
-      return;
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (c) {
+        var badge = TYPE_BADGE[c.type] || "bg-surface-variant text-on-surface-variant";
+        var active = c.status !== "Inactive";
+        var statusBadge = active ? 'bg-status-success text-status-success-text' : 'bg-surface-variant text-on-surface-variant';
+        var tr = document.createElement("tr");
+        tr.className = "hover:bg-surface-container-lowest/50 transition-colors group";
+        tr.innerHTML =
+          '<td class="py-sm px-md font-title-md text-title-md text-on-surface">' + D.esc(c.name) + '</td>' +
+          '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' + D.esc(c.type) + '</span></td>' +
+          '<td class="py-sm px-md text-on-surface-variant">' + D.esc(c.disposal_method || "—") + '</td>' +
+          '<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[11px] font-bold ' + statusBadge + '">' + (active ? "Active" : "Inactive") + '</span></td>' +
+          '<td class="py-sm px-md text-right whitespace-nowrap">' +
+            '<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="edit" data-id="' + c.id + '" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>' +
+            '<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" data-action="delete" data-id="' + c.id + '" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
     }
-    tbody.innerHTML = "";
-    cats.forEach(function (c) {
-      var badge = TYPE_BADGE[c.type] || "bg-surface-variant text-on-surface-variant";
-      var active = c.status !== "Inactive";
-      var statusBadge = active ? 'bg-green-100 text-green-800' : 'bg-surface-variant text-on-surface-variant';
-      var tr = document.createElement("tr");
-      tr.className = "hover:bg-surface-container-lowest/50 transition-colors group";
-      tr.innerHTML =
-        '<td class="py-sm px-md font-title-md text-title-md text-on-surface">' + D.esc(c.name) + '</td>' +
-        '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' + D.esc(c.type) + '</span></td>' +
-        '<td class="py-sm px-md text-on-surface-variant">' + D.esc(c.disposal_method || "—") + '</td>' +
-        '<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[11px] font-bold ' + statusBadge + '">' + (active ? "Active" : "Inactive") + '</span></td>' +
-        '<td class="py-sm px-md text-right whitespace-nowrap">' +
-          '<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="edit" data-id="' + c.id + '" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>' +
-          '<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" data-action="delete" data-id="' + c.id + '" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
-        '</td>';
-      tbody.appendChild(tr);
+    var count = document.getElementById("category-count");
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + " to " + page.end + " of " + page.total + " entries" : "Showing 0 entries";
+    }
+    var nav = document.getElementById("category-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { catPage = p; render(); } });
+    }
+  }
+
+  var exportBtn = document.getElementById("export-categories-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+      var rows = filtered().map(function (c) {
+        return {
+          name: c.name || "",
+          type: c.type || "",
+          disposal_method: c.disposal_method || "",
+          status: c.status || ""
+        };
+      });
+      D.exportCSV("ecowaste_waste_categories.csv", ["name", "type", "disposal_method", "status"], rows);
     });
   }
 
@@ -301,9 +325,9 @@ Add New Category
   var searchEl = document.getElementById("category-search");
   var typeFilterEl = document.getElementById("category-type-filter");
   var statusFilterEl = document.getElementById("category-status-filter");
-  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; render(); });
-  if (typeFilterEl) typeFilterEl.addEventListener("change", function () { typeFilter = this.value; render(); });
-  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; render(); });
+if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; catPage = 1; render(); });
+  if (typeFilterEl) typeFilterEl.addEventListener("change", function () { typeFilter = this.value; catPage = 1; render(); });
+  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; catPage = 1; render(); });
 
   var addBtn = document.getElementById("add-category-btn");
   if (addBtn) {
@@ -345,3 +369,6 @@ Add New Category
   });
 })();
 </script>
+
+
+

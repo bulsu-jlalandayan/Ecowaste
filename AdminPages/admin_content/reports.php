@@ -6,7 +6,7 @@
 <!-- Bento Grid Layout for Report Generation Generators -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
 <!-- Report Generator Card 1: Collection Efficiency -->
-<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group">
 <div class="absolute -right-6 -top-6 w-32 h-32 bg-primary-fixed rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
 <div class="relative z-10">
 <div class="w-12 h-12 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center mb-4">
@@ -39,7 +39,7 @@
 </div>
 </div>
 <!-- Report Generator Card 2: Resident Participation -->
-<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group">
 <div class="absolute -right-6 -top-6 w-32 h-32 bg-secondary-fixed rounded-full opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
 <div class="relative z-10">
 <div class="w-12 h-12 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center mb-4">
@@ -72,7 +72,7 @@
 </div>
 </div>
 <!-- Report Generator Card 3: Environmental Impact -->
-<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group">
 <div class="absolute -right-6 -top-6 w-32 h-32 bg-primary-fixed-dim rounded-full opacity-30 group-hover:scale-150 transition-transform duration-500"></div>
 <div class="relative z-10">
 <div class="w-12 h-12 rounded-lg bg-surface-tint text-on-primary flex items-center justify-center mb-4">
@@ -106,7 +106,7 @@
 </div>
 </div>
 <!-- Recently Generated Reports Table -->
-<div class="bg-surface border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="bg-surface border border-outline-variant rounded-xl shadow-card overflow-hidden flex flex-col">
 <div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
 <h3 class="font-title-lg text-title-lg text-on-surface">Recently Generated Reports</h3>
 </div>
@@ -124,6 +124,10 @@
 <tbody id="reports-tbody" class="font-body-sm text-body-sm text-on-surface">
 </tbody>
 </table>
+</div>
+<div class="p-md border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+<span id="reports-count" class="font-body-sm text-body-sm text-on-surface-variant">Showing 0 reports</span>
+<div id="reports-pagination" class="flex gap-2"></div>
 </div>
 </div>
 <script>
@@ -143,35 +147,48 @@
     "Environmental": "Environmental"
   };
 
+var allReports = [];
+  var reportsPage = 1;
+  var CO2_FACTOR = 0.94; // metric tons CO2e avoided per ton recycled (EPA-derived assumption)
+
   async function load() {
-    var rows = await D.list("reports", "id,report_name,type,generated_at,generated_by", "generated_at.desc");
-    render(rows);
+    allReports = await D.list("reports", "id,report_name,type,generated_at,generated_by", "generated_at.desc");
+    render();
   }
 
-  function render(rows) {
+  function render() {
     var tbody = document.getElementById("reports-tbody");
     if (!tbody) return;
-    if (!rows.length) {
+    var page = window.EcoWasteUI.paginate(allReports, reportsPage, 10);
+    if (!page.rows.length) {
       tbody.innerHTML = '<tr><td class="py-2 px-4 text-on-surface-variant" colspan="5">No reports generated yet.</td></tr>';
-      return;
+    } else {
+      tbody.innerHTML = "";
+      page.rows.forEach(function (r) {
+        var badge = TYPE_BADGE[r.type] || "bg-surface-variant text-on-surface-variant";
+        var tr = document.createElement("tr");
+        tr.className = "border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group";
+        tr.innerHTML =
+          '<td class="py-2 px-4 flex items-center gap-2">' +
+            '<span class="material-symbols-outlined text-primary text-base">description</span>' +
+            '<span class="font-medium">' + D.esc(r.report_name) + '</span></td>' +
+          '<td class="py-2 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ' + badge + '">' + D.esc(TYPE_LABEL[r.type] || r.type) + '</span></td>' +
+          '<td class="py-2 px-4 text-on-surface-variant">' + D.esc(D.fmtDate(r.generated_at)) + '</td>' +
+          '<td class="py-2 px-4">' + D.esc(r.generated_by || "—") + '</td>' +
+          '<td class="py-2 px-4 text-right">' +
+            '<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container-highest rounded-md transition-colors" data-action="delete" data-id="' + r.id + '" title="Delete report"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
     }
-    tbody.innerHTML = "";
-    rows.forEach(function (r) {
-      var badge = TYPE_BADGE[r.type] || "bg-surface-variant text-on-surface-variant";
-      var tr = document.createElement("tr");
-      tr.className = "border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group";
-      tr.innerHTML =
-        '<td class="py-2 px-4 flex items-center gap-2">' +
-          '<span class="material-symbols-outlined text-primary text-base">description</span>' +
-          '<span class="font-medium">' + D.esc(r.report_name) + '</span></td>' +
-        '<td class="py-2 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ' + badge + '">' + D.esc(TYPE_LABEL[r.type] || r.type) + '</span></td>' +
-        '<td class="py-2 px-4 text-on-surface-variant">' + D.esc(D.fmtDate(r.generated_at)) + '</td>' +
-        '<td class="py-2 px-4">' + D.esc(r.generated_by || "—") + '</td>' +
-        '<td class="py-2 px-4 text-right">' +
-          '<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container-highest rounded-md transition-colors" data-action="delete" data-id="' + r.id + '" title="Delete report"><span class="material-symbols-outlined text-sm">delete</span></button>' +
-        '</td>';
-      tbody.appendChild(tr);
-    });
+    var count = document.getElementById("reports-count");
+    if (count) {
+      count.textContent = page.total ? "Showing " + page.start + " to " + page.end + " of " + page.total + " reports" : "Showing 0 reports";
+    }
+    var nav = document.getElementById("reports-pagination");
+    if (nav) {
+      window.EcoWasteUI.paginateButtons(nav, { page: page.page, pages: page.pages, onPage: function (p) { reportsPage = p; render(); } });
+    }
   }
 
   function selectValue(id, fallback) {
@@ -179,7 +196,7 @@
     return el ? el.value : fallback;
   }
 
-  function reportName(type) {
+function reportName(type) {
     var parts = [];
     if (type === "Collection") {
       parts.push("Collection Efficiency");
@@ -196,33 +213,158 @@
     return parts.join(" — ");
   }
 
+  function rangeDays(range) {
+    if (range === "Last Quarter") return 90;
+    if (range === "Year to Date" || range === "Custom Range") return 365;
+    return 30;
+  }
+
+  function withinDays(iso, days) {
+    if (!iso) return false;
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return false;
+    return (Date.now() - d.getTime()) <= days * 86400000;
+  }
+
+  function flatMetrics(metrics) {
+    var out = [];
+    Object.keys(metrics).forEach(function (k) {
+      var v = metrics[k];
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        Object.keys(v).forEach(function (k2) { out.push({ metric: k + " — " + k2, value: v[k2] }); });
+      } else {
+        out.push({ metric: k, value: v });
+      }
+    });
+    return out;
+  }
+
+  async function computeCollection() {
+    var rangeLabel = selectValue("collection-range", "Last 30 Days");
+    var zoneLabel = selectValue("collection-zone", "All Zones");
+    var requests = await D.list("collection_requests",
+      "id,request_number,location,zone,waste_type,status,requested_at,collector_name", "requested_at.desc");
+    var windowEnd = Date.now();
+    var windowStart = windowEnd - rangeDays(rangeLabel) * 86400000;
+    requests = requests.filter(function (r) {
+      var t = new Date(r.requested_at).getTime();
+      return t >= windowStart && t <= windowEnd;
+    });
+    if (zoneLabel && zoneLabel !== "All Zones") {
+      requests = requests.filter(function (r) {
+        return String(r.zone || "").toLowerCase().indexOf(zoneLabel.toLowerCase()) > -1;
+      });
+    }
+    var byStatus = {};
+    var byZone = {};
+    requests.forEach(function (r) {
+      byStatus[r.status] = (byStatus[r.status] || 0) + 1;
+      byZone[(r.zone || "Unzoned")] = (byZone[(r.zone || "Unzoned")] || 0) + 1;
+    });
+    var completed = byStatus["Completed"] || 0;
+    var assigned = requests.filter(function (r) { return r.collector_name; }).length;
+    return {
+      range: rangeLabel,
+      zone: zoneLabel,
+      total_requests: requests.length,
+      assigned: assigned,
+      unassigned: byStatus["Unassigned"] || 0,
+      completed: completed,
+      completion_rate_pct: requests.length ? Math.round((completed / requests.length) * 1000) / 10 : 0,
+      by_status: byStatus,
+      by_zone: byZone
+    };
+  }
+
+  async function computeParticipation() {
+    var rangeLabel = selectValue("participation-range", "Last 30 Days");
+    var segmentLabel = selectValue("participation-segment", "All Users");
+    var profiles = await D.list("profiles", "id,full_name,email,role,status,created_at,last_active_at", "created_at.asc");
+    var available = profiles.slice();
+    if (segmentLabel === "New Signups (30d)") {
+      available = available.filter(function (p) { return withinDays(p.created_at, 30); });
+    } else if (segmentLabel === "Highly Active") {
+      available = available.filter(function (p) { return withinDays(p.last_active_at, 7); });
+    }
+    var roles = { "resident": 0, "collector": 0, "admin": 0 };
+    available.forEach(function (p) {
+      if (roles[p.role] !== undefined) roles[p.role]++;
+    });
+    var newSignups = profiles.filter(function (p) { return withinDays(p.created_at, rangeDays(rangeLabel)); }).length;
+    return {
+      range: rangeLabel,
+      segment: segmentLabel,
+      total_users: available.length,
+      total_accounts_ever: profiles.length,
+      new_signups_in_range: newSignups,
+      active_users: available.filter(function (p) { return p.status === "Active"; }).length,
+      inactive_users: available.filter(function (p) { return p.status === "Inactive"; }).length,
+      by_role: roles
+    };
+  }
+
+  async function computeEnvironmental() {
+    var periodLabel = selectValue("environment-period", "2023 Annual");
+    var metricLabel = selectValue("environment-metric", "Comprehensive");
+    var volume = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
+    var records = await D.list("recycling_records", "weight_kg,status", null, "limit=1000");
+    var totalWaste = 0, recycled = 0;
+    volume.forEach(function (r) {
+      totalWaste += Number(r.total_waste_tons) || 0;
+      recycled += Number(r.recycled_tons) || 0;
+    });
+    var recordKg = 0;
+    records.forEach(function (r) { recordKg += Number(r.weight_kg) || 0; });
+    var diversionRate = totalWaste > 0 ? Math.round((recycled / totalWaste) * 1000) / 10 : 0;
+    return {
+      period: periodLabel,
+      metric_focus: metricLabel,
+      total_waste_tons: totalWaste,
+      recycled_tons: recycled,
+      diversion_rate_pct: diversionRate,
+      co2_avoided_mt: Math.round(recycled * CO2_FACTOR * 10) / 10,
+      recycling_records_kg: Math.round(recordKg),
+      co2_factor_used_mt_per_ton: CO2_FACTOR
+    };
+  }
+
   function generate(type) {
     window.EcoWasteUI.confirm({
       title: "Generate " + type + " report?",
-      message: reportName(type) + " will be added to the report list.",
+      message: reportName(type) + " will be computed from live data and downloaded.",
       confirmLabel: "Generate"
     }).then(function (ok) {
       if (!ok) return;
-      var uid = D.currentUserId();
-      var maybeName = Promise.resolve("");
-      if (uid) {
-        maybeName = D.request("/rest/v1/profiles?select=full_name&id=eq." + uid)
-          .then(function (profiles) {
-            return profiles && profiles.length ? profiles[0].full_name : "";
-          })
-          .catch(function () { return ""; });
-      }
-      maybeName.then(function (genBy) {
-        return D.add("reports", {
-          report_name: reportName(type) + " - " + new Date().toLocaleString(),
+      var name = reportName(type) + " - " + new Date().toLocaleString();
+      var compute = type === "Collection" ? computeCollection()
+        : type === "Participation" ? computeParticipation()
+        : computeEnvironmental();
+      compute.then(function (metrics) {
+        var stamp = new Date().toISOString().slice(0, 10);
+        D.exportJSON("ecowaste_" + type.toLowerCase() + "_report_" + stamp + ".json", {
+          report_name: name,
           type: type,
-          generated_by: genBy || "Admin"
+          generated_at: new Date().toISOString(),
+          metrics: metrics
         });
-      }).then(function () {
-        window.EcoWasteUI.toast(type + " report generated.", "success");
-        load();
+        D.exportCSV("ecowaste_" + type.toLowerCase() + "_report_" + stamp + ".csv",
+          ["metric", "value"], flatMetrics(metrics));
+        var uid = D.currentUserId();
+        var genBy = "Admin";
+        var lookup = uid ? D.request("/rest/v1/profiles?select=full_name&id=eq." + uid)
+          .then(function (profiles) { return profiles && profiles.length ? profiles[0].full_name : "Admin"; })
+          .catch(function () { return "Admin"; }) : Promise.resolve("Admin");
+        lookup.then(function (nameBy) {
+          genBy = nameBy || "Admin";
+          return D.add("reports", { report_name: name, type: type, generated_by: genBy });
+        }).then(function () {
+          window.EcoWasteUI.toast(type + " report generated and downloaded.", "success");
+          load();
+        }).catch(function (err) {
+          window.EcoWasteUI.toast(err.message, "error");
+        });
       }).catch(function (err) {
-        window.EcoWasteUI.toast(err.message, "error");
+        window.EcoWasteUI.toast("Could not compute report: " + err.message, "error");
       });
     });
   }
@@ -258,3 +400,4 @@
   });
 })();
 </script>
+

@@ -77,9 +77,10 @@
       }
     },
 
-    list: function (table, select, order) {
+    list: function (table, select, order, filter) {
       var q = "/rest/v1/" + table + "?select=" + encodeURIComponent(select);
       if (order) q += "&order=" + encodeURIComponent(order);
+      if (filter) q += "&" + filter;
       return this.request(q);
     },
 
@@ -120,6 +121,60 @@
       if (n === null || n === undefined || isNaN(Number(n))) return "0";
       var num = Number(n);
       return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    },
+
+    // ---- Export helpers -------------------------------------------------
+    csvCell: function (v) {
+      var s = v === null || v === undefined ? "" : String(v);
+      if (/["\n\r,]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    },
+
+    exportCSV: function (filename, headers, rows) {
+      var lines = [headers.map(this.csvCell).join(",")];
+      rows.forEach(function (r) {
+        lines.push(headers.map(function (h) {
+          return this.csvCell(r[h]);
+        }, this).join(","));
+      }, this);
+      this.exportBlob(filename, lines.join("\r\n"), "text/csv;charset=utf-8;");
+    },
+
+    exportJSON: function (filename, data) {
+      this.exportBlob(filename, JSON.stringify(data, null, 2), "application/json;charset=utf-8;");
+    },
+
+    exportBlob: function (filename, contents, mime) {
+      var blob = new Blob([contents], { type: mime || "text/plain;charset=utf-8;" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+    },
+
+    // ---- Settings store (app_settings table) ----------------------------
+    settings: {
+      all: async function () {
+        return this._data.list("app_settings", "key,value");
+      },
+      set: async function (key, value) {
+        return this._data.req("POST", "/rest/v1/app_settings?on_conflict=key", {
+          key: key,
+          value: value,
+          updated_at: new Date().toISOString(),
+          updated_by: this._data.currentUserId()
+        });
+      }
+    },
+
+    // ---- Account updates (Profile page) ---------------------------------
+    updateAccount: function (body) {
+      return this.req("PATCH", "/auth/v1/user", body);
     }
   };
+  window.EcoWasteData.settings._data = window.EcoWasteData;
 })();

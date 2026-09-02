@@ -7,7 +7,7 @@
 <!-- Bento Grid Layout for Settings -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
 <!-- General Settings Card -->
-<div class="col-span-1 lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)]">
+<div class="col-span-1 lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card">
 <div class="flex items-center gap-sm mb-md border-b border-surface-variant pb-sm">
 <span class="material-symbols-outlined text-primary">tune</span>
 <h3 class="font-headline-md text-headline-md text-on-surface">General Settings</h3>
@@ -15,12 +15,12 @@
 <div class="space-y-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Organization Name</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="text" value="EcoWaste Municipal Div."/>
+<input id="setting-org-name" class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="text" value="EcoWaste Municipal Div."/>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Timezone</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface appearance-none">
+<select id="setting-timezone" class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface appearance-none">
 <option>UTC - Coordinated Universal Time</option>
 <option>EST - Eastern Standard Time</option>
 <option>PST - Pacific Standard Time</option>
@@ -28,7 +28,7 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Default Currency</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface appearance-none">
+<select id="setting-currency" class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface appearance-none">
 <option>USD ($)</option>
 <option>EUR (€)</option>
 </select>
@@ -36,15 +36,15 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Support Email</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="email" value="admin@ecowaste.gov"/>
+<input id="setting-support-email" class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="email" value="admin@ecowaste.gov"/>
 </div>
 </div>
 <div class="mt-lg flex justify-end">
-<button class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save General</button>
+<button id="save-general-btn" class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save General</button>
 </div>
 </div>
 <!-- Security Card -->
-<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)]">
+<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card">
 <div class="flex items-center gap-sm mb-md border-b border-surface-variant pb-sm">
 <span class="material-symbols-outlined text-primary">security</span>
 <h3 class="font-headline-md text-headline-md text-on-surface">Security</h3>
@@ -72,12 +72,15 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-base">Session Timeout (Mins)</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="number" value="30"/>
+<input id="setting-session-timeout" class="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface" type="number" value="30"/>
 </div>
+</div>
+<div class="mt-lg flex justify-end">
+<button id="save-security-btn" class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save Security</button>
 </div>
 </div>
 <!-- Notification Settings Card -->
-<div class="col-span-1 lg:col-span-3 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)]">
+<div class="col-span-1 lg:col-span-3 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-card">
 <div class="flex items-center gap-sm mb-md border-b border-surface-variant pb-sm">
 <span class="material-symbols-outlined text-primary">notifications_active</span>
 <h3 class="font-headline-md text-headline-md text-on-surface">Notification Preferences</h3>
@@ -104,8 +107,114 @@
 <input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle4" name="toggle4" type="checkbox"/>
 <label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle4"></label>
 </div>
-</div>
-</div>
+    </div>
+    </div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var DEFAULTS = {
+    general: {
+      org_name: "EcoWaste Municipal Div.",
+      timezone: "UTC - Coordinated Universal Time",
+      currency: "USD ($)",
+      support_email: "admin@ecowaste.gov"
+    },
+    security: {
+      require_mfa: true,
+      strict_password: true,
+      session_timeout: 30
+    },
+    notifications: {
+      high_volume: true,
+      collector_offline: true,
+      daily_summary: false,
+      weekly_impact: true
+    }
+  };
+
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : "";
+  }
+
+  function setVal(id, v) {
+    var el = document.getElementById(id);
+    if (el && v !== null && v !== undefined) el.value = String(v);
+  }
+
+  function setChecked(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.checked = !!v;
+  }
+
+  async function loadSettings() {
+    try {
+      var rows = await D.settings.all();
+      var map = {};
+      rows.forEach(function (r) { map[r.key] = r.value; });
+
+      var g = Object.assign({}, DEFAULTS.general, map.general || {});
+      setVal("setting-org-name", g.org_name);
+      setVal("setting-timezone", g.timezone);
+      setVal("setting-currency", g.currency);
+      setVal("setting-support-email", g.support_email);
+
+      var s = Object.assign({}, DEFAULTS.security, map.security || {});
+      setChecked("toggle1", s.require_mfa);
+      setChecked("toggle2", s.strict_password);
+      setVal("setting-session-timeout", s.session_timeout);
+
+      var n = Object.assign({}, DEFAULTS.notifications, map.notifications || {});
+      setChecked("toggle3", n.high_volume);
+      setChecked("toggle4", n.collector_offline);
+      setChecked("toggle5", n.daily_summary);
+      setChecked("toggle6", n.weekly_impact);
+    } catch (err) {
+      console.error("EcoWaste settings failed to load:", err);
+    }
+  }
+
+  function save(key) {
+    var values;
+    if (key === "general") {
+      values = {
+        org_name: val("setting-org-name"),
+        timezone: val("setting-timezone"),
+        currency: val("setting-currency"),
+        support_email: val("setting-support-email")
+      };
+    } else if (key === "security") {
+      values = {
+        require_mfa: document.getElementById("toggle1").checked,
+        strict_password: document.getElementById("toggle2").checked,
+        session_timeout: parseInt(val("setting-session-timeout"), 10) || 30
+      };
+    } else {
+      values = {
+        high_volume: document.getElementById("toggle3").checked,
+        collector_offline: document.getElementById("toggle4").checked,
+        daily_summary: document.getElementById("toggle5").checked,
+        weekly_impact: document.getElementById("toggle6").checked
+      };
+    }
+    D.settings.set(key, values)
+      .then(function () { window.EcoWasteUI.toast("Settings saved.", "success"); })
+      .catch(function (err) { window.EcoWasteUI.toast(err.message, "error"); });
+  }
+
+  var genBtn = document.getElementById("save-general-btn");
+  if (genBtn) genBtn.addEventListener("click", function () { save("general"); });
+  var secBtn = document.getElementById("save-security-btn");
+  if (secBtn) secBtn.addEventListener("click", function () { save("security"); });
+  var notifBtn = document.getElementById("save-notifications-btn");
+  if (notifBtn) notifBtn.addEventListener("click", function () { save("notifications"); });
+
+  loadSettings();
+})();
+</script>
 <div class="space-y-md">
 <h4 class="font-title-lg text-title-lg text-on-surface">Email Digests</h4>
 <div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors">
@@ -128,24 +237,12 @@
 <label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle6"></label>
 </div>
 </div>
+<div class="mt-lg flex justify-end">
+<button id="save-notifications-btn" class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save Notifications</button>
 </div>
-</div>
-</div>
-</div>
-</div>
-<script>
-        // Simple logic to toggle the visual state of the custom checkboxes (though CSS handles the main part)
-        document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if(this.checked) {
-                    this.style.borderColor = '#630ed4';
-                } else {
-                    this.style.borderColor = '#ccc3d8'; // outline-variant
-                }
-            });
-            // Init state
-            if(checkbox.checked) {
-                checkbox.style.borderColor = '#630ed4';
-            }
-        });
-    </script>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+

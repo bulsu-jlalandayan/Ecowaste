@@ -24,7 +24,7 @@
       a.setAttribute("href", item.href);
       if (item.view) a.setAttribute("data-view", item.view);
 
-      a.className = "flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest transition-colors";
+      a.className = "flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors";
 
       var span = document.createElement("span");
       span.className = "material-symbols-outlined";

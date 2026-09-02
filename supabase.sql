@@ -411,3 +411,34 @@ INSERT INTO yoy_metrics (category, tons_2023, tons_2024) VALUES
   ('Organic', 320.0, 305.5),
   ('Hazardous', 45.8, 52.1)
 ON CONFLICT (category) DO NOTHING;
+
+-- ------------------------------------------------------------
+-- App Settings
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value JSONB,
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  updated_by UUID REFERENCES profiles(id) ON DELETE SET NULL
+);
+
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "app_settings select" ON app_settings;
+CREATE POLICY "app_settings select" ON app_settings
+  FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "app_settings insert" ON app_settings;
+CREATE POLICY "app_settings insert" ON app_settings
+  FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+
+DROP POLICY IF EXISTS "app_settings update" ON app_settings;
+CREATE POLICY "app_settings update" ON app_settings
+  FOR UPDATE TO authenticated USING (public.is_admin());
+
+-- Seed default settings (values are read from these on the Settings page)
+INSERT INTO app_settings (key, value) VALUES
+  ('general', '{"org_name":"EcoWaste Municipal Div.","timezone":"UTC - Coordinated Universal Time","currency":"USD ($)","support_email":"admin@ecowaste.gov"}'),
+  ('security', '{"require_mfa":true,"strict_password":true,"session_timeout":30}'),
+  ('notifications', '{"high_volume":true,"collector_offline":true,"daily_summary":false,"weekly_impact":true}')
+ON CONFLICT (key) DO NOTHING;

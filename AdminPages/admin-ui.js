@@ -7,12 +7,12 @@
 
   // ---- Toasts -----------------------------------------------------------
   var TOAST_COLORS = {
-    success: "bg-surface-container-lowest border-l-4 border-[#137333]",
+    success: "bg-surface-container-lowest border-l-4 border-status-success-text",
     error: "bg-surface-container-lowest border-l-4 border-error",
     info: "bg-surface-container-lowest border-l-4 border-primary"
   };
   var TOAST_ICON = { success: "check_circle", error: "error", info: "info" };
-  var TOAST_ICON_COLOR = { success: "text-[#137333]", error: "text-error", info: "text-primary" };
+  var TOAST_ICON_COLOR = { success: "text-status-success-text", error: "text-error", info: "text-primary" };
 
   UI.toast = function (message, type) {
     type = type || "success";
@@ -245,6 +245,61 @@
         if (item && item.onClick) item.onClick();
       });
     });
+  };
+
+  // ---- Client-side pagination -------------------------------------------
+  UI.paginate = function (rows, page, size) {
+    size = size || 10;
+    var total = rows.length;
+    var pages = Math.max(1, Math.ceil(total / size));
+    if (page < 1) page = 1;
+    if (page > pages) page = pages;
+    var start = (page - 1) * size;
+    return {
+      rows: rows.slice(start, start + size),
+      total: total,
+      page: page,
+      pages: pages,
+      start: total ? start + 1 : 0,
+      end: total ? Math.min(start + size, total) : 0
+    };
+  };
+
+  UI.paginateButtons = function (container, opts) {
+    if (!container) return;
+    container.innerHTML = "";
+    var mk = function (label, page, disabled, active, icon) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "w-8 h-8 flex items-center justify-center rounded-lg transition-colors " +
+        (active ? "bg-primary text-on-primary font-title-sm" :
+          "border border-outline-variant text-on-surface-variant hover:bg-surface-container-highest ") +
+        (disabled ? " disabled:opacity-50" : "");
+      if (disabled) b.disabled = true;
+      if (icon) b.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + icon + "</span>";
+      else b.textContent = label;
+      b.addEventListener("click", function () { opts.onPage(page); });
+      container.appendChild(b);
+    };
+
+    var p = opts.page, pages = opts.pages;
+    mk("", p - 1, p <= 1, false, "chevron_left");
+    var shown = [];
+    for (var i = 1; i <= pages; i++) {
+      if (i === 1 || i === pages || Math.abs(i - p) <= 1) shown.push(i);
+    }
+    var prev = 0;
+    shown.forEach(function (n) {
+      if (prev && n - prev > 1) {
+        var dots = document.createElement("span");
+        dots.className = "px-1 text-on-surface-variant";
+        dots.textContent = "...";
+        container.appendChild(dots);
+      }
+      mk(String(n), n, false, n === p);
+      prev = n;
+    });
+    mk("", p + 1, p >= pages, false, "chevron_right");
   };
 
   // ---- Client-side filtering -------------------------------------------

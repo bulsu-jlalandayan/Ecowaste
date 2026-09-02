@@ -61,13 +61,30 @@
                       "surface-tint": "#732ee4",
                       "on-tertiary": "#ffffff",
                       "on-secondary-container": "#fffbff",
-                      "on-tertiary-fixed-variant": "#454748"
+                      "on-tertiary-fixed-variant": "#454748",
+                      "status-success": "#dcfce7",
+                      "status-success-text": "#166534",
+                      "status-success-border": "#ceead6",
+                      "status-onroute": "#e6f4ea",
+                      "status-onroute-text": "#137333",
+                      "status-onroute-border": "#ceead6",
+                      "status-pending": "#fef7e0",
+                      "status-pending-text": "#b06000",
+                      "status-pending-border": "#fde293",
+                      "status-error-soft": "#fce8e6",
+                      "status-error-soft-text": "#c5221f",
+                      "status-error-soft-border": "#fad2cf",
+                      "status-tableheader": "#f1f5f9"
               },
               "borderRadius": {
-                      "DEFAULT": "0.125rem",
-                      "lg": "0.25rem",
-                      "xl": "0.5rem",
-                      "full": "0.75rem"
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.375rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "boxShadow": {
+                      "card": "0px 1px 3px rgba(0,0,0,0.05)",
+                      "card-hover": "0px 4px 12px rgba(0,0,0,0.05)"
               },
               "spacing": {
                       "base": "4px",
@@ -94,16 +111,16 @@
                       "label-md": ["Hanken Grotesk"]
               },
               "fontSize": {
-                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                      "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
-                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
-                      "title-md": ["16px", {"lineHeight": "22px", "fontWeight": "500"}],
-                      "mono-md": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
-                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
-                      "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                      "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+                      "body-lg": ["14px", {"lineHeight": "21px", "fontWeight": "400"}],
+                      "headline-md": ["19px", {"lineHeight": "25px", "fontWeight": "600"}],
+                      "body-md": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "title-lg": ["15px", {"lineHeight": "21px", "fontWeight": "600"}],
+                      "title-md": ["14px", {"lineHeight": "19px", "fontWeight": "500"}],
+                      "mono-md": ["12px", {"lineHeight": "17px", "fontWeight": "400"}],
+                      "body-sm": ["12px", {"lineHeight": "17px", "fontWeight": "400"}],
+                      "display-lg": ["33px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["25px", {"lineHeight": "31px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["11px", {"lineHeight": "15px", "fontWeight": "600"}]
               }
       },
           },
@@ -122,6 +139,10 @@
         }
         .toggle-checkbox:checked + .toggle-label {
             background-color: #630ed4;
+        }
+        *:focus-visible {
+            outline: 2px solid #630ed4;
+            outline-offset: 2px;
         }
       </style>
 </head>
@@ -154,12 +175,17 @@
 <div class="flex items-center gap-md">
 <div class="relative hidden sm:flex items-center">
 <span class="material-symbols-outlined absolute left-sm text-on-surface-variant">search</span>
-<input class="pl-[36px] pr-sm py-sm rounded-DEFAULT border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 font-body-sm text-body-sm placeholder:text-on-surface-variant/50" placeholder="Search across portal..." type="text">
+<input id="global-search" class="pl-[36px] pr-sm py-sm rounded-DEFAULT border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 font-body-sm text-body-sm placeholder:text-on-surface-variant/50" placeholder="Search across portal..." type="text">
+<div id="global-search-dd" class="hidden absolute left-0 right-0 top-12 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg z-50 overflow-hidden max-h-80 overflow-y-auto"></div>
 </div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors">
+<div class="relative">
+<button id="notif-btn" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors" type="button" aria-haspopup="menu" aria-expanded="false">
 <span class="material-symbols-outlined">notifications</span>
+<span id="notif-badge" class="hidden absolute top-2 right-2 min-w-[16px] h-4 px-[4px] rounded-full bg-error text-on-error text-[10px] font-semibold items-center justify-center"></span>
 </button>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors">
+<div id="notif-dd" class="hidden absolute right-0 top-12 w-80 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg z-50 overflow-hidden max-h-96 overflow-y-auto"></div>
+</div>
+<button id="help-btn" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest text-on-surface-variant transition-colors" type="button">
 <span class="material-symbols-outlined">help</span>
 </button>
 <div class="h-8 w-px bg-outline-variant hidden sm:block"></div>
