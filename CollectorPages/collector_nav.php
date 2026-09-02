@@ -1,7 +1,5 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-
 $links = array(
     'side' => array(
         array('label' => 'Dashboard',               'icon' => 'dashboard',      'href' => 'collector.html', 'view' => 'dashboard'),

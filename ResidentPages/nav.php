@@ -1,7 +1,5 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-
 $role = isset($_GET['role']) ? strtolower($_GET['role']) : 'resident';
 
 $residentLinks = array(

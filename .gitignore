@@ -1,0 +1,11 @@
+# Sensitive / environment-specific files
+.env
+.env.local
+*.env
+.env.*
+
+# Schema files are intended to be run manually in the Supabase SQL editor,
+# not deployed to a web host.
+supabase.sql
+collector-query.sql
+resident-supabase-query.sql

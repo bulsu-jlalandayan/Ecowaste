@@ -1,0 +1,28 @@
+# Block directory listing
+Options -Indexes
+
+# Force HTTPS (protects login JWT tokens sent on login)
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [L,R=301]
+</IfModule>
+
+# Block direct download of sensitive files (schema, logs, env, credentials, backup)
+<FilesMatch "\.(sql|log|env|ini|bak|sh|htpasswd|htaccess|dist|yml|yaml|json|lock)$">
+    Require all denied
+</FilesMatch>
+
+# Deny access to hidden directories (.git, .env, etc.)
+RedirectMatch 403 ^/.*/\\.(git|env|svn|hg)
+
+# Explicitly deny the SQL schema files (kept locally but excluded from deploy safety)
+<Files "supabase.sql">
+    Require all denied
+</Files>
+<Files "collector-query.sql">
+    Require all denied
+</Files>
+<Files "resident-supabase-query.sql">
+    Require all denied
+</Files>

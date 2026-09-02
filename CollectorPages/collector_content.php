@@ -1,7 +1,5 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-
 $view = isset($_GET['view'])
     ? preg_replace('/[^a-z_]/', '', strtolower($_GET['view']))
     : 'dashboard';

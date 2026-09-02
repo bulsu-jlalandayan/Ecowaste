@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /Authentication/
+Disallow: /AdminPages/
+Disallow: /CollectorPages/
+Disallow: /mobileCollectorPages/
+Disallow: /supabase/
