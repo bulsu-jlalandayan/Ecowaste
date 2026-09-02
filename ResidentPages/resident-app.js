@@ -35,6 +35,7 @@
         if (app) {
           app.innerHTML = html;
           app.scrollTop = 0;
+          reExecScripts(app);
         }
         var titleEl = document.getElementById("app-title");
         if (titleEl) titleEl.textContent = TITLES[view] || "Dashboard";
@@ -55,6 +56,19 @@
           app.classList.remove("opacity-50", "pointer-events-none");
         }
       });
+  }
+
+  function reExecScripts(container) {
+    var scripts = container.querySelectorAll("script");
+    scripts.forEach(function (old) {
+      var s = document.createElement("script");
+      if (old.src) {
+        s.src = old.src;
+      } else {
+        s.textContent = old.textContent;
+      }
+      old.parentNode.replaceChild(s, old);
+    });
   }
 
   function setActiveNav(view) {
@@ -100,6 +114,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     go("dashboard");
     bindUserMenu();
+    setUserName();
   });
 
   function bindUserMenu() {
@@ -180,8 +195,29 @@
 
     modal.querySelector("[data-signout-confirm]").addEventListener("click", function () {
       modal.remove();
+      clearSession();
       window.location.href = "../Authentication/Login.html";
     });
+  }
+
+  function clearSession() {
+    localStorage.removeItem("sb-access-token");
+    localStorage.removeItem("sb-refresh-token");
+    localStorage.removeItem("user-role");
+  }
+
+  function setUserName() {
+    var D = window.EcoWasteData;
+    if (!D) return;
+    var uid = D.currentUserId();
+    if (!uid) return;
+    D.list("profiles", "full_name", null, "id=eq." + uid)
+      .then(function (rows) {
+        if (!rows || !rows.length) return;
+        var name = rows[0].full_name;
+        if (name) window.EcoWasteUserName = name.split(/\s+/)[0];
+      })
+      .catch(function () { /* non-fatal */ });
   }
 
   window.EcoWasteRouter = { go: go };

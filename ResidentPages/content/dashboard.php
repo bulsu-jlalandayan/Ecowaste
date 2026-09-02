@@ -3,7 +3,7 @@
 <!-- Greeting & Quick Actions -->
 <section class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-md">
 <div>
-<h1 class="font-display-lg text-display-lg text-on-surface mb-xs">Good morning, Maria!</h1>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-xs">Good <span id="greet-time">morning</span>, <span id="greet-name">there</span>!</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant">Here is a quick overview of your waste management schedule and requests.</p>
 </div>
 <div class="flex gap-sm">
@@ -26,23 +26,23 @@
 <span class="material-symbols-outlined text-primary">local_shipping</span>
                             Active Request
                         </h3>
-<span class="font-data-mono text-data-mono text-on-surface-variant">REQ-1048</span>
+<span class="font-data-mono text-data-mono text-on-surface-variant" id="active-req-number">—</span>
 </div>
 <div class="flex flex-col gap-xs mb-sm">
 <div class="flex justify-between items-center">
 <span class="font-label-caps text-label-caps text-on-surface-variant">Type</span>
-<span class="font-body-md text-body-md text-on-surface font-medium">Household Waste</span>
+<span class="font-body-md text-body-md text-on-surface font-medium" id="active-req-type">—</span>
 </div>
 <div class="flex justify-between items-center">
 <span class="font-label-caps text-label-caps text-on-surface-variant">Status</span>
-<span class="font-label-caps text-label-caps bg-secondary-container text-on-secondary-container px-2 py-1 rounded-sm">Collector Assigned</span>
+<span class="font-label-caps text-label-caps bg-secondary-container text-on-secondary-container px-2 py-1 rounded-sm" id="active-req-status">—</span>
 </div>
 </div>
 <div class="mt-auto pt-sm border-t border-outline-variant">
 <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary w-2/3 rounded-full"></div>
+<div class="h-full bg-primary w-2/3 rounded-full" id="active-req-progress"></div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 text-right">Estimated arrival: 2 hours</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 text-right" id="active-req-time">—</p>
 </div>
 </div>
 <!-- Upcoming Schedule -->
@@ -54,25 +54,14 @@
                         </h3>
 <a class="font-label-caps text-label-caps text-primary hover:underline" href="#">View Full Schedule</a>
 </div>
-<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-sm">
-<!-- Household -->
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-sm" id="upcoming-schedule">
 <div class="bg-surface-container flex items-center p-sm rounded-lg border border-outline-variant">
 <div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">
 <span class="material-symbols-outlined text-on-surface text-[24px]">delete</span>
 </div>
 <div>
-<h4 class="font-headline-sm font-semibold text-on-surface">Household Waste</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Wednesday, Sep 2</p>
-</div>
-</div>
-<!-- Recyclables -->
-<div class="bg-tertiary-container/10 flex items-center p-sm rounded-lg border border-tertiary-container/30">
-<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">
-<span class="material-symbols-outlined text-tertiary text-[24px]">recycling</span>
-</div>
-<div>
-<h4 class="font-headline-sm font-semibold text-on-surface">Recyclables</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Friday, Sep 4</p>
+<h4 class="font-headline-sm font-semibold text-on-surface">Loading schedule…</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Please wait</p>
 </div>
 </div>
 </div>
@@ -96,3 +85,99 @@
 </div>
 </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var uid = D.currentUserId();
+  var name = (window.EcoWasteUserName || "").trim();
+
+  var hour = new Date().getHours();
+  var greet = hour < 12 ? "morning" : (hour < 18 ? "afternoon" : "evening");
+  var t = document.getElementById("greet-time");
+  if (t) t.textContent = greet;
+  if (name && document.getElementById("greet-name")) {
+    document.getElementById("greet-name").textContent = name;
+  }
+
+  function setText(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = v;
+  }
+
+  var STATUS_PRIORITY = { "In Transit": 0, Scheduled: 1, Unassigned: 2 };
+  var STATUS_PRETTY = { "In Transit": "Collector En Route", Scheduled: "Scheduled", Unassigned: "Pending" };
+
+  async function load() {
+    var requests = await D.list(
+      "collection_requests",
+      "id,request_number,waste_type,status,requested_at,scheduled_date",
+      "requested_at.desc",
+      "user_id=eq." + uid
+    ).catch(function () { return []; });
+
+    var pending = requests.filter(function (r) {
+      return r.status === "Scheduled" || r.status === "In Transit" || r.status === "Unassigned";
+    });
+    if (pending.length) {
+      pending.sort(function (a, b) {
+        return (a.status in STATUS_PRIORITY ? STATUS_PRIORITY[a.status] : 9) -
+               (b.status in STATUS_PRIORITY ? STATUS_PRIORITY[b.status] : 9);
+      });
+      var req = pending[0];
+      setText("active-req-number", req.request_number);
+      setText("active-req-type", req.waste_type || "General");
+      setText("active-req-status", STATUS_PRETTY[req.status] || req.status);
+      if (req.status === "In Transit") setText("active-req-time", "Collector on the way");
+      else if (req.status === "Scheduled") setText("active-req-time", req.scheduled_date ? "Scheduled for " + D.fmtDay(req.scheduled_date) : "Scheduled");
+      else setText("active-req-time", "Awaiting assignment");
+    } else {
+      setText("active-req-number", "—");
+      setText("active-req-type", "No active request");
+      setText("active-req-status", "—");
+      setText("active-req-time", "Start a new request anytime.");
+    }
+
+    var today = new Date().toISOString().slice(0, 10);
+    var schedules = await D.list(
+      "collection_schedules",
+      "zone,waste_type,collection_date,time_start,time_end,status",
+      "collection_date.asc",
+      "collection_date=gte." + today
+    ).catch(function () { return []; });
+
+    var listEl = document.getElementById("upcoming-schedule");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    if (!schedules.length) {
+      listEl.innerHTML =
+        '<div class="bg-surface-container flex items-center p-sm rounded-lg border border-outline-variant">' +
+        '<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">' +
+        '<span class="material-symbols-outlined text-on-surface text-[24px]">event_available</span></div>' +
+        '<div><h4 class="font-headline-sm font-semibold text-on-surface">No upcoming collections</h4>' +
+        '<p class="font-body-sm text-body-sm text-on-surface-variant">Check back later.</p></div></div>';
+      return;
+    }
+    schedules.slice(0, 2).forEach(function (s) {
+      var isRecycling = /recycl|plastic|metal|glass|paper/i.test(s.waste_type || "");
+      var icon = isRecycling ? "recycling" : "delete";
+      var card = document.createElement("div");
+      card.className = (isRecycling
+        ? "bg-tertiary-container/10 border-tertiary-container/30"
+        : "bg-surface-container border-outline-variant") + " flex items-center p-sm rounded-lg border";
+      card.innerHTML =
+        '<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">' +
+        '<span class="material-symbols-outlined text-[24px] ' + (isRecycling ? "text-tertiary" : "text-on-surface") + '">' + icon + "</span></div>" +
+        "<div><h4 class='font-headline-sm font-semibold text-on-surface'>" + D.esc(s.waste_type || "Collection") + "</h4>" +
+        "<p class='font-body-sm text-body-sm text-on-surface-variant'>" + D.esc(D.fmtDay(s.collection_date)) + "</p></div>";
+      listEl.appendChild(card);
+    });
+  }
+
+  load().catch(function (err) {
+    console.error("EcoWaste dashboard failed to load:", err);
+  });
+})();
+</script>

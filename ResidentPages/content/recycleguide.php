@@ -5,11 +5,11 @@
 <h2 class="font-display-lg text-display-lg text-primary mb-4 hidden md:block">Recycling Guide</h2>
 <div class="relative max-w-2xl">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
-<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-md text-body-md outline-none" placeholder="Search for an item (e.g., 'plastic bottle', 'battery')" type="text"/>
+<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-md text-body-md outline-none" id="recycle-search" placeholder="Search for an item (e.g., 'plastic bottle', 'battery')" type="text"/>
 </div>
 </div>
 <!-- Categories Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter mb-xl">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter mb-xl" id="recycle-cards">
 <!-- Card: Paper -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-shadow duration-300 group cursor-pointer relative overflow-hidden">
 <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -164,3 +164,21 @@
 </div>
 </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  if (!window.EcoWasteData) return;
+  var grid = document.getElementById("recycle-cards");
+  var search = document.getElementById("recycle-search");
+  if (!grid || !search) return;
+  var cards = Array.prototype.slice.call(grid.children);
+
+  search.addEventListener("input", function () {
+    var q = search.value.trim().toLowerCase();
+    cards.forEach(function (card) {
+      var show = !q || card.textContent.toLowerCase().indexOf(q) !== -1;
+      card.style.display = show ? "" : "none";
+    });
+  });
+})();
+</script>
