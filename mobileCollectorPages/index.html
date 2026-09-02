@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>EcoWaste - Collector Portal</title>
+<script src="../supabase/config.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#00288e",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed-variant": "#004883",
+                        "outline": "#757684",
+                        "on-secondary-container": "#003c70",
+                        "secondary-container": "#64a8fe",
+                        "status-pending": "#F59E0B",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f4f5",
+                        "status-cancelled": "#EF4444",
+                        "surface-tint": "#3755c3",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001453",
+                        "primary-fixed": "#dde1ff",
+                        "secondary": "#0060ac",
+                        "on-error": "#ffffff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#611e00",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-surface-variant": "#444653",
+                        "surface-bright": "#f8f9fa",
+                        "outline-variant": "#c4c5d5",
+                        "surface-container-high": "#e7e8e9",
+                        "on-background": "#191c1d",
+                        "status-completed": "#10B981",
+                        "surface": "#f8f9fa",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-primary": "#b8c4ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "primary-container": "#1e40af",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-fixed": "#001c39",
+                        "on-tertiary-fixed": "#380d00",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary-container": "#a8b8ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#d4e3ff",
+                        "on-surface": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-container": "#ffa583",
+                        "status-progress": "#3B82F6",
+                        "background": "#f8f9fa",
+                        "border-subtle": "#E5E7EB",
+                        "surface-dark": "#111827",
+                        "surface-dim": "#d9dadb",
+                        "secondary-fixed-dim": "#a4c9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "base": "4px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Geist"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "14px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="password"], select, textarea {
+            border-color: #E5E7EB;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+            border-color: #00288e;
+            box-shadow: 0 0 0 2px rgba(0, 40, 142, 0.2);
+            outline: none;
+        }
+        input[type="radio"] { accent-color: #00288e; }
+        .toggle-checkbox:checked { right: 0; border-color: #00288e; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #00288e; }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.55);
+        }
+        @supports not (backdrop-filter: blur(1px)) {
+            .glass-nav { background: rgba(255, 255, 255, 0.98); }
+        }
+        .table-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex min-h-screen">
+<!-- Top App Bar -->
+<header class="fixed top-0 inset-x-0 z-40 bg-gradient-to-r from-primary to-primary-container text-on-primary flex items-center justify-between h-14 px-4 shadow-lg shadow-primary/20" style="padding-top: env(safe-area-inset-top);">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-primary filled text-[22px]">eco</span>
+<h1 id="app-title" class="font-headline-md text-headline-md text-on-primary">Dashboard</h1>
+</div>
+<div class="flex items-center gap-1">
+<button id="notif-btn" class="relative text-on-primary/90 hover:bg-white/10 rounded-full p-2 transition-colors" aria-label="Notifications" type="button">
+<span class="material-symbols-outlined">notifications</span>
+<span id="notif-badge" class="hidden absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-error text-on-error text-[10px] font-bold flex items-center justify-center"></span>
+</button>
+<button id="profile-btn" class="text-on-primary/90 hover:bg-white/10 rounded-full p-2 transition-colors" aria-label="Profile" type="button">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+
+<!-- Content -->
+<main class="flex-1 w-full pt-14 pb-24 min-h-screen overflow-x-hidden">
+<div id="app" class="flex-1 min-w-0"></div>
+</main>
+
+<!-- Bottom Tab Bar (glassmorphism) -->
+<nav class="glass-nav fixed bottom-0 inset-x-0 z-40 backdrop-blur-xl bg-white/55 border-t border-white/50 shadow-[0_-4px_20px_rgba(0,40,142,0.08)] flex items-stretch justify-around h-16" style="padding-bottom: env(safe-area-inset-bottom);">
+<button class="flex-1 flex flex-col items-center justify-center gap-1 py-1.5 text-on-surface-variant transition-colors" data-tab data-view="dashboard" type="button">
+<span class="tab-pill flex items-center justify-center rounded-xl px-3 py-1 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center gap-1 py-1.5 text-on-surface-variant transition-colors" data-tab data-view="assigned_collections" type="button">
+<span class="tab-pill flex items-center justify-center rounded-xl px-3 py-1 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[22px]">event_note</span>
+</span>
+<span class="font-label-sm text-label-sm">Collections</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center gap-1 py-1.5 text-on-surface-variant transition-colors" data-tab data-view="completed_collections" type="button">
+<span class="tab-pill flex items-center justify-center rounded-xl px-3 py-1 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[22px]">task_alt</span>
+</span>
+<span class="font-label-sm text-label-sm">Completed</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center gap-1 py-1.5 text-on-surface-variant transition-colors" data-tab data-view="waste_records" type="button">
+<span class="tab-pill flex items-center justify-center rounded-xl px-3 py-1 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[22px]">delete_sweep</span>
+</span>
+<span class="font-label-sm text-label-sm">Records</span>
+</button>
+<button id="more-btn" class="flex-1 flex flex-col items-center justify-center gap-1 py-1.5 text-on-surface-variant transition-colors" type="button">
+<span class="flex items-center justify-center rounded-xl px-3 py-1 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</span>
+<span class="font-label-sm text-label-sm">More</span>
+</button>
+</nav>
+
+<!-- More Sheet Overlay -->
+<div id="sheet-overlay" class="hidden fixed inset-0 bg-black/40 z-50"></div>
+<!-- More Sheet -->
+<div id="more-sheet" class="fixed inset-x-0 bottom-0 z-50 bg-surface-container-lowest border-t border-border-subtle rounded-t-2xl transform translate-y-full transition-transform duration-300 shadow-2xl" style="padding-bottom: env(safe-area-inset-bottom);">
+<div class="pt-3 pb-2 flex items-center justify-between px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-t-2xl">
+<h3 class="font-headline-md text-headline-md text-on-primary">More</h3>
+<button id="sheet-close-btn" class="text-on-primary/90 hover:bg-white/10 rounded-full p-2 transition-colors" aria-label="Close" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="py-2" id="more-links">
+<a class="flex items-center gap-3 px-4 py-3.5 text-on-surface hover:bg-surface-container-low transition-colors" href="#" data-view="notifications">
+<span class="material-symbols-outlined text-[22px] text-primary">notifications</span>
+<span class="font-body-md text-body-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3.5 text-on-surface hover:bg-surface-container-low transition-colors" href="#" data-view="activity_history">
+<span class="material-symbols-outlined text-[22px] text-teal-600">history</span>
+<span class="font-body-md text-body-md">Activity History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3.5 text-on-surface hover:bg-surface-container-low transition-colors" href="#" data-view="profile">
+<span class="material-symbols-outlined text-[22px] text-amber-600">person</span>
+<span class="font-body-md text-body-md">My Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3.5 text-on-surface hover:bg-surface-container-low transition-colors" href="#" data-view="settings">
+<span class="material-symbols-outlined text-[22px] text-on-surface-variant">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<div class="my-2 border-t border-border-subtle"></div>
+<div class="px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div id="more-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-emerald-600 text-white flex items-center justify-center font-label-md text-label-md">—</div>
+<div>
+<p id="more-user-name" class="font-label-md text-label-md text-on-surface">—</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Collector</p>
+</div>
+</div>
+</div>
+
+<button class="w-full flex items-center gap-3 px-4 py-3.5 text-error hover:bg-error-container/20 transition-colors" data-signout type="button">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+<span class="font-body-md text-body-md">Sign out</span>
+</button>
+</div>
+</div>
+
+<script src="../CollectorPages/collector-gate.js"></script>
+<script src="../CollectorPages/collector-data.js"></script>
+<script src="../CollectorPages/collector-ui.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

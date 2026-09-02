@@ -113,6 +113,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     go("dashboard");
     bindUserMenu();
+    setUserName();
   });
 
   function bindUserMenu() {
@@ -159,8 +160,32 @@
 
     modal.querySelector("[data-signout-confirm]").addEventListener("click", function () {
       modal.remove();
+      clearSession();
       window.location.href = "../Authentication/Login.html";
     });
+  }
+
+  function clearSession() {
+    localStorage.removeItem("sb-access-token");
+    localStorage.removeItem("sb-refresh-token");
+    localStorage.removeItem("user-role");
+    localStorage.removeItem("eco_search_term");
+  }
+
+  function setUserName() {
+    var D = window.EcoWasteData;
+    if (!D) return;
+    var uid = D.currentUserId();
+    if (!uid) return;
+    D.list("profiles", "full_name", null, "id=eq." + uid)
+      .then(function (rows) {
+        if (!rows || !rows.length) return;
+        var name = rows[0].full_name;
+        document.querySelectorAll("#side-user-name").forEach(function (el) {
+          el.textContent = name;
+        });
+      })
+      .catch(function () { /* non-fatal */ });
   }
 
   window.EcoWasteRouter = { go: go };
