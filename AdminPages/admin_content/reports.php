@@ -17,7 +17,7 @@
 <div class="space-y-4 mb-6">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Date Range</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="collection-range" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>Last 30 Days</option>
 <option>Last Quarter</option>
 <option>Year to Date</option>
@@ -25,14 +25,14 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Zone Filter</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="collection-zone" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>All Zones</option>
 <option>North District</option>
 <option>South District</option>
 </select>
 </div>
 </div>
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
+<button data-gen="Collection" class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-sm" data-icon="play_arrow">play_arrow</span>
                             Generate Report
                         </button>
@@ -50,7 +50,7 @@
 <div class="space-y-4 mb-6">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Date Range</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="participation-range" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>Last 30 Days</option>
 <option>Last Quarter</option>
 <option>Custom Range</option>
@@ -58,14 +58,14 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">User Segment</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="participation-segment" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>All Users</option>
 <option>New Signups (30d)</option>
 <option>Highly Active</option>
 </select>
 </div>
 </div>
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
+<button data-gen="Participation" class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-sm" data-icon="play_arrow">play_arrow</span>
                             Generate Report
                         </button>
@@ -83,7 +83,7 @@
 <div class="space-y-4 mb-6">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Reporting Period</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="environment-period" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>2023 Annual</option>
 <option>Q3 2023</option>
 <option>Q2 2023</option>
@@ -91,14 +91,14 @@
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Metric Focus</label>
-<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<select id="environment-metric" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
 <option>Comprehensive</option>
 <option>Carbon Footprint</option>
 <option>Landfill Diversion</option>
 </select>
 </div>
 </div>
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
+<button data-gen="Environmental" class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-sm" data-icon="play_arrow">play_arrow</span>
                             Generate Report
                         </button>
@@ -109,7 +109,6 @@
 <div class="bg-surface border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
 <div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
 <h3 class="font-title-lg text-title-lg text-on-surface">Recently Generated Reports</h3>
-<button class="text-primary font-label-md text-label-md hover:underline">View All Archive</button>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
@@ -122,65 +121,140 @@
 <th class="py-3 px-4 font-semibold text-right">Actions</th>
 </tr>
 </thead>
-<tbody class="font-body-sm text-body-sm text-on-surface">
-<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group">
-<td class="py-2 px-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-base" data-icon="description">description</span>
-<span class="font-medium">Q3 Route Efficiency Audit</span>
-</td>
-<td class="py-2 px-4">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-fixed text-on-primary-fixed-variant">Collection</span>
-</td>
-<td class="py-2 px-4 text-on-surface-variant">Oct 24, 2023 - 14:30</td>
-<td class="py-2 px-4">System Auto</td>
-<td class="py-2 px-4 text-right flex justify-end gap-2">
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download PDF">
-<span class="material-symbols-outlined text-sm" data-icon="picture_as_pdf">picture_as_pdf</span>
-</button>
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download CSV">
-<span class="material-symbols-outlined text-sm" data-icon="csv">csv</span>
-</button>
-</td>
-</tr>
-<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group">
-<td class="py-2 px-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-base" data-icon="description">description</span>
-<span class="font-medium">September Resident Engagement</span>
-</td>
-<td class="py-2 px-4">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary-fixed text-on-secondary-fixed">Participation</span>
-</td>
-<td class="py-2 px-4 text-on-surface-variant">Oct 22, 2023 - 09:15</td>
-<td class="py-2 px-4">Jane Smith</td>
-<td class="py-2 px-4 text-right flex justify-end gap-2">
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download PDF">
-<span class="material-symbols-outlined text-sm" data-icon="picture_as_pdf">picture_as_pdf</span>
-</button>
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download CSV">
-<span class="material-symbols-outlined text-sm" data-icon="csv">csv</span>
-</button>
-</td>
-</tr>
-<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group">
-<td class="py-2 px-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-base" data-icon="description">description</span>
-<span class="font-medium">Annual Diversion Rate 2022</span>
-</td>
-<td class="py-2 px-4">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">Environmental</span>
-</td>
-<td class="py-2 px-4 text-on-surface-variant">Oct 15, 2023 - 11:00</td>
-<td class="py-2 px-4">Alex Johnson</td>
-<td class="py-2 px-4 text-right flex justify-end gap-2">
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download PDF">
-<span class="material-symbols-outlined text-sm" data-icon="picture_as_pdf">picture_as_pdf</span>
-</button>
-<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-md transition-colors" title="Download CSV">
-<span class="material-symbols-outlined text-sm" data-icon="csv">csv</span>
-</button>
-</td>
-</tr>
+<tbody id="reports-tbody" class="font-body-sm text-body-sm text-on-surface">
 </tbody>
 </table>
 </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var TYPE_BADGE = {
+    "Collection": "bg-primary-fixed text-on-primary-fixed-variant",
+    "Participation": "bg-secondary-fixed text-on-secondary-fixed",
+    "Environmental": "bg-surface-variant text-on-surface-variant"
+  };
+  var TYPE_LABEL = {
+    "Collection": "Collection",
+    "Participation": "Participation",
+    "Environmental": "Environmental"
+  };
+
+  async function load() {
+    var rows = await D.list("reports", "id,report_name,type,generated_at,generated_by", "generated_at.desc");
+    render(rows);
+  }
+
+  function render(rows) {
+    var tbody = document.getElementById("reports-tbody");
+    if (!tbody) return;
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td class="py-2 px-4 text-on-surface-variant" colspan="5">No reports generated yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = "";
+    rows.forEach(function (r) {
+      var badge = TYPE_BADGE[r.type] || "bg-surface-variant text-on-surface-variant";
+      var tr = document.createElement("tr");
+      tr.className = "border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group";
+      tr.innerHTML =
+        '<td class="py-2 px-4 flex items-center gap-2">' +
+          '<span class="material-symbols-outlined text-primary text-base">description</span>' +
+          '<span class="font-medium">' + D.esc(r.report_name) + '</span></td>' +
+        '<td class="py-2 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ' + badge + '">' + D.esc(TYPE_LABEL[r.type] || r.type) + '</span></td>' +
+        '<td class="py-2 px-4 text-on-surface-variant">' + D.esc(D.fmtDate(r.generated_at)) + '</td>' +
+        '<td class="py-2 px-4">' + D.esc(r.generated_by || "—") + '</td>' +
+        '<td class="py-2 px-4 text-right">' +
+          '<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container-highest rounded-md transition-colors" data-action="delete" data-id="' + r.id + '" title="Delete report"><span class="material-symbols-outlined text-sm">delete</span></button>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function selectValue(id, fallback) {
+    var el = document.getElementById(id);
+    return el ? el.value : fallback;
+  }
+
+  function reportName(type) {
+    var parts = [];
+    if (type === "Collection") {
+      parts.push("Collection Efficiency");
+      var zone = selectValue("collection-zone", "");
+      parts.push(zone && zone !== "All Zones" ? zone : selectValue("collection-range", "Last 30 Days"));
+    } else if (type === "Participation") {
+      parts.push("Resident Participation");
+      parts.push(selectValue("participation-segment", "All Users") + " - " + selectValue("participation-range", "Last 30 Days"));
+    } else {
+      parts.push("Environmental Impact");
+      var metric = selectValue("environment-metric", "Comprehensive");
+      parts.push(metric + " - " + selectValue("environment-period", "2023 Annual"));
+    }
+    return parts.join(" — ");
+  }
+
+  function generate(type) {
+    window.EcoWasteUI.confirm({
+      title: "Generate " + type + " report?",
+      message: reportName(type) + " will be added to the report list.",
+      confirmLabel: "Generate"
+    }).then(function (ok) {
+      if (!ok) return;
+      var uid = D.currentUserId();
+      var maybeName = Promise.resolve("");
+      if (uid) {
+        maybeName = D.request("/rest/v1/profiles?select=full_name&id=eq." + uid)
+          .then(function (profiles) {
+            return profiles && profiles.length ? profiles[0].full_name : "";
+          })
+          .catch(function () { return ""; });
+      }
+      maybeName.then(function (genBy) {
+        return D.add("reports", {
+          report_name: reportName(type) + " - " + new Date().toLocaleString(),
+          type: type,
+          generated_by: genBy || "Admin"
+        });
+      }).then(function () {
+        window.EcoWasteUI.toast(type + " report generated.", "success");
+        load();
+      }).catch(function (err) {
+        window.EcoWasteUI.toast(err.message, "error");
+      });
+    });
+  }
+
+  var genButtons = document.querySelectorAll("[data-gen]");
+  genButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      generate(btn.getAttribute("data-gen"));
+    });
+  });
+
+  var tbody = document.getElementById("reports-tbody");
+  if (tbody) {
+    tbody.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      window.EcoWasteUI.confirm({
+        title: "Delete report?",
+        message: "Remove this report from the list? This cannot be undone.",
+        danger: true,
+        confirmLabel: "Delete"
+      }).then(function (ok) {
+        if (!ok) return;
+        D.remove("reports", "id=eq." + btn.getAttribute("data-id"))
+          .then(function () { window.EcoWasteUI.toast("Report deleted.", "success"); load(); })
+          .catch(function (err) { window.EcoWasteUI.toast(err.message, "error"); });
+      });
+    });
+  }
+
+  load().catch(function (err) {
+    console.error("EcoWaste reports failed to load:", err);
+  });
+})();
+</script>

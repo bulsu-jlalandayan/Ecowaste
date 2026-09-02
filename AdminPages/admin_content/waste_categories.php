@@ -4,7 +4,7 @@
 <h2 class="font-display-lg text-display-lg text-on-surface">Waste Categories</h2>
 <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage waste classification types and their disposal guidelines.</p>
 </div>
-<button class="bg-primary text-on-primary font-title-md text-title-md px-lg py-sm rounded-DEFAULT flex items-center gap-sm hover:bg-surface-tint transition-colors shadow-sm self-start sm:self-auto">
+<button id="add-category-btn" class="bg-primary text-on-primary font-title-md text-title-md px-lg py-sm rounded-DEFAULT flex items-center gap-sm hover:bg-surface-tint transition-colors shadow-sm self-start sm:self-auto" type="button">
 <span class="material-symbols-outlined text-[20px]">add</span>
 Add New Category
 </button>
@@ -16,7 +16,7 @@ Add New Category
 </div>
 <p class="font-title-md text-title-md text-on-surface-variant mb-xs relative z-10">Total Categories</p>
 <div class="flex items-end gap-sm relative z-10">
-<span class="font-display-lg text-display-lg text-on-surface">12</span>
+<span id="total-categories-value" class="font-display-lg text-display-lg text-on-surface">—</span>
 </div>
 </div>
 <div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
@@ -25,7 +25,7 @@ Add New Category
 </div>
 <p class="font-title-md text-title-md text-on-surface-variant mb-xs relative z-10">Recyclable</p>
 <div class="flex items-end gap-sm relative z-10">
-<span class="font-display-lg text-display-lg text-on-surface">6</span>
+<span id="recyclable-value" class="font-display-lg text-display-lg text-on-surface">—</span>
 </div>
 </div>
 <div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant p-lg shadow-[0px_1px_3px_rgba(0,0,0,0.05)] relative overflow-hidden group">
@@ -34,11 +34,31 @@ Add New Category
 </div>
 <p class="font-title-md text-title-md text-on-surface-variant mb-xs relative z-10">Hazardous</p>
 <div class="flex items-end gap-sm relative z-10">
-<span class="font-display-lg text-display-lg text-on-surface">3</span>
+<span id="hazardous-value" class="font-display-lg text-display-lg text-on-surface">—</span>
 </div>
 </div>
 </div>
 <div class="bg-surface-container-lowest rounded-DEFAULT border border-outline-variant shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col overflow-hidden">
+<div id="category-toolbar" class="p-md border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-md bg-surface-container-low/50">
+<div class="relative w-full sm:w-72">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input id="category-search" class="w-full pl-xl pr-sm py-2 rounded-DEFAULT border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-sm text-body-sm" placeholder="Search categories..." type="text"/>
+</div>
+<div class="flex items-center gap-sm w-full sm:w-auto">
+<select id="category-type-filter" class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-md py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">All Types</option>
+<option value="Recyclable">Recyclable</option>
+<option value="Compostable">Compostable</option>
+<option value="Landfill">Landfill</option>
+<option value="Hazardous">Hazardous</option>
+</select>
+<select id="category-status-filter" class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-md py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">All Statuses</option>
+<option value="Active">Active</option>
+<option value="Inactive">Inactive</option>
+</select>
+</div>
+</div>
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse min-w-[800px]">
 <thead>
@@ -50,7 +70,7 @@ Add New Category
 <th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md text-right">Actions</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant/50">
+<tbody id="category-tbody" class="divide-y divide-outline-variant/50">
 <tr class="hover:bg-surface-container-lowest/50 transition-colors group">
 <td class="py-sm px-md font-title-md text-title-md text-on-surface">General Waste</td>
 <td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md">Landfill</span></td>
@@ -143,7 +163,7 @@ Add New Category
 </table>
 </div>
 <div class="p-md border-t border-outline-variant flex items-center justify-between text-body-sm text-on-surface-variant bg-surface-container-low/30">
-<div>Showing 1 to 8 of 12 entries</div>
+<div id="category-count">Showing 0 entries</div>
 <div class="flex items-center gap-xs">
 <button class="p-1 rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
 <span class="material-symbols-outlined text-[20px]">chevron_left</span>
@@ -156,3 +176,172 @@ Add New Category
 </div>
 </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var TYPE_BADGE = {
+    "Landfill": "bg-surface-variant text-on-surface-variant",
+    "Compostable": "bg-[#e6f4ea] text-[#137333]",
+    "Recyclable": "bg-secondary-fixed text-primary",
+    "Hazardous": "bg-error-container text-on-error-container"
+  };
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  var allCats = [];
+  var searchTerm = "";
+  var typeFilter = "";
+  var statusFilter = "";
+
+  async function load() {
+    allCats = await D.list("waste_categories", "id,name,type,disposal_method,status", "name.asc");
+    setText("total-categories-value", D.fmtNum(allCats.length));
+    setText("recyclable-value", D.fmtNum(allCats.filter(function (c) { return c.type === "Recyclable"; }).length));
+    setText("hazardous-value", D.fmtNum(allCats.filter(function (c) { return c.type === "Hazardous"; }).length));
+    render();
+  }
+
+  function render() {
+    var cats = window.EcoWasteUI.filterList(allCats, searchTerm, ["name", "disposal_method"], {
+      type: typeFilter,
+      status: statusFilter
+    });
+    var tbody = document.getElementById("category-tbody");
+    if (!tbody) return;
+    if (!cats.length) {
+      tbody.innerHTML = '<tr><td class="py-sm px-md text-on-surface-variant" colspan="5">No waste categories yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = "";
+    cats.forEach(function (c) {
+      var badge = TYPE_BADGE[c.type] || "bg-surface-variant text-on-surface-variant";
+      var active = c.status !== "Inactive";
+      var statusBadge = active ? 'bg-green-100 text-green-800' : 'bg-surface-variant text-on-surface-variant';
+      var tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-lowest/50 transition-colors group";
+      tr.innerHTML =
+        '<td class="py-sm px-md font-title-md text-title-md text-on-surface">' + D.esc(c.name) + '</td>' +
+        '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' + D.esc(c.type) + '</span></td>' +
+        '<td class="py-sm px-md text-on-surface-variant">' + D.esc(c.disposal_method || "—") + '</td>' +
+        '<td class="py-sm px-md"><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[11px] font-bold ' + statusBadge + '">' + (active ? "Active" : "Inactive") + '</span></td>' +
+        '<td class="py-sm px-md text-right whitespace-nowrap">' +
+          '<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="edit" data-id="' + c.id + '" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>' +
+          '<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" data-action="delete" data-id="' + c.id + '" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  var tbody = document.getElementById("category-tbody");
+  if (tbody) {
+    tbody.addEventListener("click", async function (e) {
+      var btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-id");
+      var cat = null;
+      for (var i = 0; i < allCats.length; i++) {
+        if (allCats[i].id === id) { cat = allCats[i]; break; }
+      }
+      if (btn.getAttribute("data-action") === "edit" && cat) {
+        try {
+          await window.EcoWasteUI.openModal({
+            title: "Edit Category",
+            submitLabel: "Save Changes",
+            fields: [
+              { name: "name", label: "Category Name", required: true, value: cat.name },
+              { name: "type", label: "Type", type: "select", required: true, value: cat.type,
+                options: [
+                  { label: "Landfill", value: "Landfill" },
+                  { label: "Compostable", value: "Compostable" },
+                  { label: "Recyclable", value: "Recyclable" },
+                  { label: "Hazardous", value: "Hazardous" }
+                ] },
+              { name: "disposal_method", label: "Disposal Method", value: cat.disposal_method || "", placeholder: "e.g. Sorting & recycling" },
+              { name: "status", label: "Status", type: "select", required: true, value: cat.status,
+                options: [
+                  { label: "Active", value: "Active" },
+                  { label: "Inactive", value: "Inactive" }
+                ] }
+            ],
+            onSubmit: function (values) {
+              return D.update("waste_categories", "id=eq." + id, values);
+            }
+          });
+          window.EcoWasteUI.toast("Category updated.", "success");
+          load();
+        } catch (err) {
+          if (err && err.message === "closed") return;
+          window.EcoWasteUI.toast(err.message, "error");
+        }
+      } else if (btn.getAttribute("data-action") === "delete" && cat) {
+        var ok = await window.EcoWasteUI.confirm({
+          title: "Delete category?",
+          message: "Are you sure you want to delete \"" + cat.name + "\"? This cannot be undone.",
+          danger: true,
+          confirmLabel: "Delete"
+        });
+        if (!ok) return;
+        try {
+          await D.remove("waste_categories", "id=eq." + id);
+          window.EcoWasteUI.toast("Category deleted.", "success");
+          load();
+        } catch (err) {
+          window.EcoWasteUI.toast(err.message, "error");
+        }
+      }
+    });
+  }
+
+  var searchEl = document.getElementById("category-search");
+  var typeFilterEl = document.getElementById("category-type-filter");
+  var statusFilterEl = document.getElementById("category-status-filter");
+  if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this.value; render(); });
+  if (typeFilterEl) typeFilterEl.addEventListener("change", function () { typeFilter = this.value; render(); });
+  if (statusFilterEl) statusFilterEl.addEventListener("change", function () { statusFilter = this.value; render(); });
+
+  var addBtn = document.getElementById("add-category-btn");
+  if (addBtn) {
+    addBtn.addEventListener("click", function () {
+      window.EcoWasteUI.openModal({
+        title: "Add New Category",
+        submitLabel: "Create Category",
+        fields: [
+          { name: "name", label: "Category Name", required: true, placeholder: "e.g. Textiles" },
+          { name: "type", label: "Type", type: "select", required: true, value: "Recyclable",
+            options: [
+              { label: "Landfill", value: "Landfill" },
+              { label: "Compostable", value: "Compostable" },
+              { label: "Recyclable", value: "Recyclable" },
+              { label: "Hazardous", value: "Hazardous" }
+            ] },
+          { name: "disposal_method", label: "Disposal Method", placeholder: "e.g. Sorting & recycling" },
+          { name: "status", label: "Status", type: "select", required: true, value: "Active",
+            options: [
+              { label: "Active", value: "Active" },
+              { label: "Inactive", value: "Inactive" }
+            ] }
+        ],
+        onSubmit: function (values) {
+          return D.add("waste_categories", values);
+        }
+      }).then(function () {
+        window.EcoWasteUI.toast("Category created.", "success");
+        load();
+      }).catch(function (err) {
+        if (err && err.message === "closed") return;
+        window.EcoWasteUI.toast(err.message, "error");
+      });
+    });
+  }
+
+  load().catch(function (err) {
+    console.error("EcoWaste categories data failed to load:", err);
+  });
+})();
+</script>

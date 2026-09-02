@@ -25,7 +25,7 @@
 <div class="flex justify-between items-start mb-md relative z-10">
 <div>
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Waste Collected</p>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs">1,245.8 <span class="font-title-md text-title-md text-on-surface-variant">Tons</span></h2>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs"><span id="total-waste-value">—</span> <span class="font-title-md text-title-md text-on-surface-variant">Tons</span></h2>
 </div>
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
 <span class="material-symbols-outlined">delete_sweep</span>
@@ -45,7 +45,7 @@
 <div class="flex justify-between items-start mb-md relative z-10">
 <div>
 <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Recycling Rate</p>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs">42.7 <span class="font-title-md text-title-md text-on-surface-variant">%</span></h2>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-xs"><span id="recycling-rate-value">—</span> <span class="font-title-md text-title-md text-on-surface-variant">%</span></h2>
 </div>
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
 <span class="material-symbols-outlined">recycling</span>
@@ -60,7 +60,7 @@
 </div>
 <!-- Mini Progress Bar -->
 <div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-md overflow-hidden">
-<div class="h-full bg-secondary w-[42.7%] rounded-full"></div>
+<div id="recycling-progress" class="h-full bg-secondary w-[0%] rounded-full"></div>
 </div>
 </div>
 <!-- Card 3 -->
@@ -114,7 +114,7 @@
 <h3 class="font-title-lg text-title-lg text-on-surface">Recycling Efficiency</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Current Month Goal: 45%</p>
 </div>
-<div class="p-lg flex-1 flex flex-col items-center justify-center relative min-h-[300px]"><div class="relative w-64 h-32 overflow-hidden flex items-end justify-center"><div class="absolute top-0 left-0 w-64 h-64 rounded-full border-[24px] border-surface-container-highest"></div><div class="absolute top-0 left-0 w-64 h-64 rounded-full border-[24px] border-primary border-b-transparent border-r-transparent transform -rotate-45" style="transform: rotate(-13deg);"></div><div class="relative z-10 flex flex-col items-center pb-sm mb-2"><div class="font-display-lg text-display-lg text-primary leading-none">42.7%</div><div class="font-body-md text-body-md text-on-surface-variant font-medium">Efficiency Rate</div></div><div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary rounded-full z-20 border-2 border-surface-container-lowest"></div></div>
+<div class="p-lg flex-1 flex flex-col items-center justify-center relative min-h-[300px]"><div class="relative w-64 h-32 overflow-hidden flex items-end justify-center"><div class="absolute top-0 left-0 w-64 h-64 rounded-full border-[24px] border-surface-container-highest"></div><div class="absolute top-0 left-0 w-64 h-64 rounded-full border-[24px] border-primary border-b-transparent border-r-transparent transform -rotate-45" style="transform: rotate(-13deg);"></div><div class="relative z-10 flex flex-col items-center pb-sm mb-2"><div id="efficiency-gauge-value" class="font-display-lg text-display-lg text-primary leading-none">—</div><div class="font-body-md text-body-md text-on-surface-variant font-medium">Efficiency Rate</div></div><div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary rounded-full z-20 border-2 border-surface-container-lowest"></div></div>
 <div class="mt-lg w-full flex justify-between text-body-sm text-on-surface-variant px-xl">
     <span class="">0%</span>
     <span class="font-medium text-primary">Target: 45%</span>
@@ -151,7 +151,7 @@
 <th class="p-md font-medium border-b border-surface-container-highest text-right">Change</th>
 </tr>
 </thead>
-<tbody class="font-body-md text-body-md text-on-surface divide-y divide-surface-container-high">
+<tbody id="yoy-tbody" class="font-body-md text-body-md text-on-surface divide-y divide-surface-container-high">
 <tr class="hover:bg-surface-container-lowest transition-colors">
 <td class="p-md py-sm">General Waste</td>
 <td class="p-md py-sm text-right">850.5</td>
@@ -200,130 +200,190 @@
 <!-- Chart Scripts -->
 <script>
         (function() {
+            "use strict";
+            var D = window.EcoWasteData;
+            if (!D || !localStorage.getItem("sb-access-token")) return;
+
             // Colors from Tailwind config
-            const primaryColor = '#630ed4';
-            const primaryContainerColor = '#7c3aed';
-            const secondaryColor = '#4648d4';
-            const surfaceHighest = '#e5e1e4';
-            const onSurfaceVariant = '#4a4455';
+            var primaryColor = '#630ed4';
+            var primaryContainerColor = '#7c3aed';
+            var secondaryColor = '#4648d4';
+            var surfaceHighest = '#e5e1e4';
+            var onSurfaceVariant = '#4a4455';
+
+            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
             // Chart.js Default Settings
             Chart.defaults.font.family = "'Hanken Grotesk', sans-serif";
             Chart.defaults.color = onSurfaceVariant;
             Chart.defaults.scale.grid.color = surfaceHighest;
 
-            // Volume Chart (Area/Line)
-            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
-            
-            // Create Gradient
-            const gradientPrimary = volumeCtx.createLinearGradient(0, 0, 0, 400);
-            gradientPrimary.addColorStop(0, 'rgba(99, 14, 212, 0.2)');
-            gradientPrimary.addColorStop(1, 'rgba(99, 14, 212, 0)');
+            async function load() {
+                var volume = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
+                var regional = await D.list("regional_stats", "region,waste_tons", "waste_tons.desc");
+                var yoy = await D.list("yoy_metrics", "category,tons_2023,tons_2024");
 
-            const gradientSecondary = volumeCtx.createLinearGradient(0, 0, 0, 400);
-            gradientSecondary.addColorStop(0, 'rgba(70, 72, 212, 0.2)');
-            gradientSecondary.addColorStop(1, 'rgba(70, 72, 212, 0)');
+                var labels = volume.map(function (r) { return MONTHS[(Number(r.month) - 1) % 12]; });
+                var totalData = volume.map(function (r) { return Number(r.total_waste_tons) || 0; });
+                var recycledData = volume.map(function (r) { return Number(r.recycled_tons) || 0; });
 
-            new Chart(volumeCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                        {
-                            label: 'Total Waste (Tons)',
-                            data: [120, 135, 125, 145, 140, 150, 160, 155, 145, 150, 140, 135],
-                            borderColor: primaryColor,
-                            backgroundColor: gradientPrimary,
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: 'Recycled (Tons)',
-                            data: [45, 50, 48, 55, 60, 65, 70, 68, 65, 72, 65, 60],
-                            borderColor: secondaryColor,
-                            backgroundColor: gradientSecondary,
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            pointHoverRadius: 6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false // Using custom legend in HTML
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(28, 27, 29, 0.9)',
-                            titleFont: { size: 13, family: "'Hanken Grotesk', sans-serif" },
-                            bodyFont: { size: 14, family: "'Hanken Grotesk', sans-serif" },
-                            padding: 12,
-                            cornerRadius: 4
-                        }
+                var totalTons = totalData.reduce(function (a, b) { return a + b; }, 0);
+                var recycledTons = recycledData.reduce(function (a, b) { return a + b; }, 0);
+                var rate = totalTons > 0 ? (recycledTons / totalTons) * 100 : 0;
+
+                setKpis(totalTons, rate);
+                renderVolumeChart(labels, totalData, recycledData);
+                renderRegionalChart(regional);
+                renderYoy(yoy);
+            }
+
+            function setKpis(totalTons, rate) {
+                var totalEl = document.getElementById("total-waste-value");
+                if (totalEl) totalEl.textContent = D.fmtNum(totalTons);
+                var rateEl = document.getElementById("recycling-rate-value");
+                if (rateEl) rateEl.textContent = rate.toFixed(1);
+                var progress = document.getElementById("recycling-progress");
+                if (progress) progress.style.width = rate.toFixed(1) + "%";
+                var gauge = document.getElementById("efficiency-gauge-value");
+                if (gauge) gauge.textContent = rate.toFixed(1) + "%";
+            }
+
+            function renderVolumeChart(labels, totalData, recycledData) {
+                var canvas = document.getElementById('volumeChart');
+                if (!canvas || typeof Chart === "undefined") return;
+                var volumeCtx = canvas.getContext('2d');
+
+                var gradientPrimary = volumeCtx.createLinearGradient(0, 0, 0, 400);
+                gradientPrimary.addColorStop(0, 'rgba(99, 14, 212, 0.2)');
+                gradientPrimary.addColorStop(1, 'rgba(99, 14, 212, 0)');
+
+                var gradientSecondary = volumeCtx.createLinearGradient(0, 0, 0, 400);
+                gradientSecondary.addColorStop(0, 'rgba(70, 72, 212, 0.2)');
+                gradientSecondary.addColorStop(1, 'rgba(70, 72, 212, 0)');
+
+                new Chart(volumeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Total Waste (Tons)',
+                                data: totalData,
+                                borderColor: primaryColor,
+                                backgroundColor: gradientPrimary,
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Recycled (Tons)',
+                                data: recycledData,
+                                borderColor: secondaryColor,
+                                backgroundColor: gradientSecondary,
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                pointHoverRadius: 6
+                            }
+                        ]
                     },
-                    scales: {
-                        x: {
-                            grid: { display: false }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(28, 27, 29, 0.9)',
+                                titleFont: { size: 13, family: "'Hanken Grotesk', sans-serif" },
+                                bodyFont: { size: 14, family: "'Hanken Grotesk', sans-serif" },
+                                padding: 12,
+                                cornerRadius: 4
+                            }
                         },
-                        y: {
-                            beginAtZero: true,
-                            border: { display: false }
-                        }
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { beginAtZero: true, border: { display: false } }
+                        },
+                        interaction: { mode: 'nearest', axis: 'x', intersect: false }
                     }
-                }
-            });
+                });
+            }
 
-            // Regional Distribution Chart (Bar)
-            const regionalCtx = document.getElementById('regionalChart').getContext('2d');
-            new Chart(regionalCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['North Dist.', 'South Dist.', 'East Area', 'West End', 'Central', 'Port Zone'],
-                    datasets: [{
-                        label: 'Waste Generation (Tons)',
-                        data: [320, 250, 180, 210, 450, 120],
-                        backgroundColor: primaryContainerColor,
-                        borderRadius: 4,
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(28, 27, 29, 0.9)',
-                            titleFont: { size: 13 },
-                            bodyFont: { size: 14 },
-                            padding: 12,
-                            cornerRadius: 4
-                        }
+            function renderRegionalChart(rows) {
+                var canvas = document.getElementById('regionalChart');
+                if (!canvas || typeof Chart === "undefined") return;
+                new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: rows.map(function (r) { return r.region; }),
+                        datasets: [{
+                            label: 'Waste Generation (Tons)',
+                            data: rows.map(function (r) { return Number(r.waste_tons) || 0; }),
+                            backgroundColor: primaryContainerColor,
+                            borderRadius: 4,
+                            barPercentage: 0.6
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: { display: false }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(28, 27, 29, 0.9)',
+                                titleFont: { size: 13 },
+                                bodyFont: { size: 14 },
+                                padding: 12,
+                                cornerRadius: 4
+                            }
                         },
-                        y: {
-                            beginAtZero: true,
-                            border: { display: false }
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { beginAtZero: true, border: { display: false } }
                         }
                     }
+                });
+            }
+
+            function renderYoy(rows) {
+                var tbody = document.getElementById("yoy-tbody");
+                if (!tbody) return;
+                tbody.innerHTML = "";
+                if (!rows.length) {
+                    tbody.innerHTML = '<tr><td class="p-md py-sm text-on-surface-variant" colspan="4">No year-over-year data.</td></tr>';
+                    return;
                 }
+                rows.forEach(function (r) {
+                    var a = Number(r.tons_2023) || 0;
+                    var b = Number(r.tons_2024) || 0;
+                    var diff = a > 0 ? ((b - a) / a) * 100 : 0;
+                    var up = diff >= 0;
+                    var arrow = up ? 'arrow_upward' : 'arrow_downward';
+                    var isBad = up && r.category === 'Hazardous';
+                    var badge = isBad
+                        ? 'text-error bg-error-container/50'
+                        : 'text-[#166534] bg-[#dcfce7]/50';
+                    var tr = document.createElement("tr");
+                    tr.className = "hover:bg-surface-container-lowest transition-colors";
+                    tr.innerHTML =
+                        '<td class="p-md py-sm">' + D.esc(r.category) + '</td>' +
+                        '<td class="p-md py-sm text-right">' + D.esc(D.fmtNum(a)) + '</td>' +
+                        '<td class="p-md py-sm text-right">' + D.esc(D.fmtNum(b)) + '</td>' +
+                        '<td class="p-md py-sm text-right">' +
+                        '<span class="inline-flex items-center gap-xs px-xs py-0.5 rounded-sm font-label-md text-label-md ' + badge + '">' +
+                        '<span class="material-symbols-outlined text-[14px]">' + arrow + '</span> ' + Math.abs(diff).toFixed(1) + '%' +
+                        '</span></td>';
+                    tbody.appendChild(tr);
+                });
+            }
+
+            load().catch(function (err) {
+                console.error("EcoWaste trends data failed to load:", err);
             });
         })();
     </script>

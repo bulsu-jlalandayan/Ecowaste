@@ -30,7 +30,7 @@
 <span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 12%
                             </span>
 </div>
-<div class="font-display-lg text-display-lg text-on-surface">24,592</div>
+<div id="total-users-value" class="font-display-lg text-display-lg text-on-surface">—</div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Active this month</p>
 </div>
 <!-- Stat Card 2 -->
@@ -44,7 +44,7 @@
 <span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 5%
                             </span>
 </div>
-<div class="font-display-lg text-display-lg text-on-surface">1,843</div>
+<div id="active-requests-value" class="font-display-lg text-display-lg text-on-surface">—</div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Pending processing</p>
 </div>
 <!-- Stat Card 3 -->
@@ -58,7 +58,7 @@
 <span class="material-symbols-outlined text-xs mr-1">horizontal_rule</span> 0%
                             </span>
 </div>
-<div class="font-display-lg text-display-lg text-on-surface">428</div>
+<div id="pending-assignments-value" class="font-display-lg text-display-lg text-on-surface">—</div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Awaiting dispatch</p>
 </div>
 <!-- Stat Card 4 -->
@@ -72,7 +72,7 @@
 <span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 2.4%
                             </span>
 </div>
-<div class="font-display-lg text-display-lg text-on-surface">68.5%</div>
+<div id="recycling-rate-value" class="font-display-lg text-display-lg text-on-surface">—</div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Avg across zones</p>
 </div>
 </div>
@@ -143,7 +143,7 @@
 <th class="py-sm px-lg font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Status</th>
 </tr>
 </thead>
-<tbody class="font-body-md text-body-md divide-y divide-outline-variant">
+<tbody id="recent-activity-tbody" class="font-body-md text-body-md divide-y divide-outline-variant">
 <tr class="hover:bg-surface-container-lowest transition-colors group">
 <td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8901</td>
 <td class="py-3 px-lg text-on-surface">Sector 4, North District</td>
@@ -223,7 +223,7 @@
 </table>
 </div>
 <div class="px-lg py-sm border-t border-outline-variant bg-surface-container-lowest flex justify-between items-center text-sm text-on-surface-variant">
-<span>Showing 1 to 5 of 45 entries</span>
+<span id="recent-activity-count">Showing 0 entries</span>
 <div class="flex gap-2">
 <button class="p-1 rounded hover:bg-surface-container-high transition-colors disabled:opacity-50"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
 <button class="p-1 rounded hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
@@ -231,3 +231,83 @@
 </div>
 </div>
 </div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var STATUS_BADGE = {
+    "Unassigned": "bg-error-container text-on-error-container",
+    "Scheduled": "bg-secondary-fixed text-primary",
+    "In Transit": "bg-surface-tint/10 text-surface-tint",
+    "Completed": "bg-[#dcfce7] text-[#166534]"
+  };
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  async function load() {
+    var totalUsers = await D.count("profiles");
+    var activeRequests = await D.count("collection_requests", "status=neq.Completed");
+    var pending = await D.count("collection_requests", "status=eq.Unassigned");
+
+    var volume = await D.list("monthly_volume", "total_waste_tons,recycled_tons", "year.asc,month.asc");
+    var total = 0, recycled = 0;
+    volume.forEach(function (r) {
+      total += Number(r.total_waste_tons) || 0;
+      recycled += Number(r.recycled_tons) || 0;
+    });
+    var rate = total > 0 ? (recycled / total) * 100 : 0;
+
+    setText("total-users-value", D.fmtNum(totalUsers));
+    setText("active-requests-value", D.fmtNum(activeRequests));
+    setText("pending-assignments-value", D.fmtNum(pending));
+    setText("recycling-rate-value", rate.toFixed(1) + "%");
+
+    var requests = await D.list("collection_requests",
+      "request_number,location,waste_type,status,requested_at,collector_name",
+      "requested_at.desc");
+    renderActivity(requests.slice(0, 5));
+  }
+
+  function renderActivity(rows) {
+    var tbody = document.getElementById("recent-activity-tbody");
+    if (!tbody) return;
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td class="py-3 px-lg text-on-surface-variant" colspan="6">No collection activities yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = "";
+    rows.forEach(function (r) {
+      var name = r.collector_name || "Unassigned";
+      var initials = D.esc(D.initials(name));
+      var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
+      var tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-lowest transition-colors group";
+      tr.innerHTML =
+        '<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#' +
+          D.esc(r.request_number) + '</td>' +
+        '<td class="py-3 px-lg text-on-surface">' + D.esc(r.location) + '</td>' +
+        '<td class="py-3 px-lg text-on-surface">' + D.esc(r.waste_type) + '</td>' +
+        '<td class="py-3 px-lg flex items-center gap-sm">' +
+          '<div class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">' + initials + '</div>' +
+          D.esc(name) + '</td>' +
+        '<td class="py-3 px-lg text-on-surface-variant">' + D.esc(D.fmtDate(r.requested_at)) + '</td>' +
+        '<td class="py-3 px-lg text-right">' +
+          '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md ' + badge + '">' +
+          D.esc(r.status) + '</span>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+    var count = document.getElementById("recent-activity-count");
+    if (count) count.textContent = "Showing 1 to " + rows.length + " of " + rows.length + " entries";
+  }
+
+  load().catch(function (err) {
+    console.error("EcoWaste dashboard data failed to load:", err);
+  });
+})();
+</script>
