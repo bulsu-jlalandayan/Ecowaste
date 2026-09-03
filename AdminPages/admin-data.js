@@ -87,8 +87,17 @@
     count: async function (table, filter) {
       var q = "/rest/v1/" + table + "?select=id";
       if (filter) q += "&" + filter;
-      var rows = await this.request(q);
-      return rows.length;
+      var res = await fetch(SUPABASE_URL + q, {
+        headers: Object.assign({}, this.headers(), { "Prefer": "count=exact" })
+      });
+      if (!res.ok) {
+        throw new Error("Supabase request failed (" + res.status + "): " + res.statusText);
+      }
+      await res.arrayBuffer();
+      var cr = res.headers.get("content-range") || "";
+      var m = /^\d+-(\d+)\/(\d+)$/.exec(cr.trim());
+      if (m) return Number(m[2]);
+      return 0;
     },
 
     esc: function (s) {

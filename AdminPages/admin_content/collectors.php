@@ -449,7 +449,7 @@ if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this
           if (!data.user || !data.user.id) throw new Error("Account could not be created.");
           var cols = await D.request("/rest/v1/collectors?select=id&user_id=eq." + data.user.id);
           if (!cols.length) {
-            throw new Error("That email already belongs to an existing account.");
+            throw new Error("Collector profile could not be created. Please try again.");
           }
         }
       }).then(function () {

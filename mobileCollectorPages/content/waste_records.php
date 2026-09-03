@@ -84,10 +84,15 @@ Record Waste
   var requestId = state.selectedRequestId;
   var current = null;
 
+  var STATUS_CHIP = {
+    Scheduled: ["bg-amber-100 text-amber-800", "Pending"],
+    "In Transit": ["bg-blue-100 text-blue-800", "In Progress"],
+    Completed: ["bg-emerald-100 text-emerald-800", "Completed"]
+  };
+
   async function loadContext() {
     if (!requestId) {
       document.getElementById("waste-request-number").textContent = "No collection selected";
-      var btns = document.querySelectorAll('button#waste-save-btn');
       var ctx = document.getElementById("waste-waste-type");
       if (ctx) ctx.textContent = "Pick a collection from Assigned Collections first.";
       return;
@@ -98,6 +103,10 @@ Record Waste
     document.getElementById("waste-request-number").textContent = current.request_number;
     document.getElementById("waste-waste-type").textContent = current.waste_type || "General";
     document.getElementById("waste-location").textContent = current.location || "";
+    var chip = STATUS_CHIP[current.status] || ["bg-surface-container-high text-on-surface-variant", current.status];
+    var chipEl = document.getElementById("waste-status-chip");
+    chipEl.className = "inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold " + chip[0];
+    chipEl.textContent = chip[1];
   }
 
   document.getElementById("waste-save-btn").addEventListener("click", function () {

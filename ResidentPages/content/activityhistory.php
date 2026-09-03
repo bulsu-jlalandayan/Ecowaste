@@ -108,7 +108,9 @@
           '<span class="material-symbols-outlined text-secondary text-sm">' + m.icon + "</span> " + m.title + "</div></td>" +
           '<td class="py-4 px-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ' + m.cls + '">' +
           '<span class="w-1.5 h-1.5 rounded-full ' + m.dot + '"></span> ' + m.status + "</span></td>" +
-          '<td class="py-4 px-4 text-right"><button class="text-primary hover:text-primary-container font-medium transition-colors text-sm hover:underline">View Details</button></td>';
+          '<td class="py-4 px-4 text-right">' + (r.request_id ?
+            '<a class="text-primary hover:text-primary-container font-medium transition-colors text-sm hover:underline" href="#" data-view="requestdetails" data-request-id="' + D.esc(r.request_id) + '">View Details</a>' :
+            '<span class="text-on-surface-variant text-sm">—</span>') + "</td>";
         body.appendChild(tbody);
       });
     }

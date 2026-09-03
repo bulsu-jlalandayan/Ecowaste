@@ -52,7 +52,7 @@
 <span class="material-symbols-outlined text-primary">calendar_month</span>
                             Upcoming Schedule
                         </h3>
-<a class="font-label-caps text-label-caps text-primary hover:underline" href="#">View Full Schedule</a>
+<a class="font-label-caps text-label-caps text-primary hover:underline" href="#" data-view="schedule">View Full Schedule</a>
 </div>
 <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-sm" id="upcoming-schedule">
 <div class="bg-surface-container flex items-center p-sm rounded-lg border border-outline-variant">

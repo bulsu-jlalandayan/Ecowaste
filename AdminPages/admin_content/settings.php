@@ -109,6 +109,34 @@
 </div>
     </div>
     </div>
+    <div class="space-y-md">
+<h4 class="font-title-lg text-title-lg text-on-surface">Email Digests</h4>
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors">
+<div>
+<h5 class="font-title-md text-title-md text-on-surface">Daily Summary</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Receive a daily report of total collections.</p>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle5" name="toggle5" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle5"></label>
+</div>
+</div>
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors">
+<div>
+<h5 class="font-title-md text-title-md text-on-surface">Weekly Impact Report</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Recycling stats and environmental impact metrics.</p>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle6" name="toggle6" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle6"></label>
+</div>
+</div>
+<div class="mt-lg flex justify-end">
+<button id="save-notifications-btn" class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save Notifications</button>
+    </div>
+    </div>
+    </div>
+    </div>
 <script>
 (function () {
   "use strict";
@@ -215,34 +243,6 @@
   loadSettings();
 })();
 </script>
-<div class="space-y-md">
-<h4 class="font-title-lg text-title-lg text-on-surface">Email Digests</h4>
-<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors">
-<div>
-<h5 class="font-title-md text-title-md text-on-surface">Daily Summary</h5>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Receive a daily report of total collections.</p>
-</div>
-<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle5" name="toggle5" type="checkbox"/>
-<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle5"></label>
-</div>
-</div>
-<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors">
-<div>
-<h5 class="font-title-md text-title-md text-on-surface">Weekly Impact Report</h5>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Recycling stats and environmental impact metrics.</p>
-</div>
-<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle6" name="toggle6" type="checkbox"/>
-<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer" for="toggle6"></label>
-</div>
-</div>
-<div class="mt-lg flex justify-end">
-<button id="save-notifications-btn" class="bg-primary text-on-primary font-title-md px-lg py-sm rounded hover:bg-surface-tint transition-colors">Save Notifications</button>
-</div>
-    </div>
-    </div>
-    </div>
     </div>
     </div>
 

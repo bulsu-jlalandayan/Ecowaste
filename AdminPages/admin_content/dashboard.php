@@ -27,7 +27,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Total Users</span>
 <span class="flex items-center text-primary font-label-md text-label-md bg-secondary-fixed px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 12%
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-users-change" class="font-label-md text-label-md text-primary">12%</span>
                             </span>
 </div>
 <div id="total-users-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -41,7 +41,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Active Requests</span>
 <span class="flex items-center text-error font-label-md text-label-md bg-error-container px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 5%
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-requests-change" class="font-label-md text-label-md text-error">5%</span>
                             </span>
 </div>
 <div id="active-requests-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -55,7 +55,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Pending Assignments</span>
 <span class="flex items-center text-on-surface-variant font-label-md text-label-md bg-surface-variant px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">horizontal_rule</span> 0%
+<span class="material-symbols-outlined text-xs mr-1">horizontal_rule</span> <span id="kpi-pending-change" class="font-label-md text-label-md text-on-surface-variant">0%</span>
                             </span>
 </div>
 <div id="pending-assignments-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -69,7 +69,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Recycling Rate</span>
 <span class="flex items-center text-primary font-label-md text-label-md bg-secondary-fixed px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> 2.4%
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-rate-change" class="font-label-md text-label-md text-primary">2.4%</span>
                             </span>
 </div>
 <div id="recycling-rate-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -98,11 +98,11 @@
 <!-- Doughnut -->
 <div class="flex-1 bg-surface border border-outline-variant rounded-xl p-lg shadow-card flex flex-col">
 <h3 class="font-title-lg text-title-lg text-on-surface mb-md">Waste Distribution</h3>
-<div class="flex-1 flex items-center justify-center relative"><svg class="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="transparent" stroke="#7b7487" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle><circle cx="50" cy="50" r="40" fill="transparent" stroke="#4648d4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="113.1"></circle><circle cx="50" cy="50" r="40" fill="transparent" stroke="#630ed4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0" style="stroke-dasharray: 138.2, 251.3;"></circle></svg><div class="absolute flex flex-col items-center justify-center"><span class="font-display-lg text-headline-lg font-bold text-on-surface">100%</span><span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Total</span></div></div>
+<div class="flex-1 flex items-center justify-center relative"><svg class="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="transparent" stroke="#7b7487" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle><circle id="dist-recycled-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#4648d4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="251.3"></circle><circle id="dist-total-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#630ed4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle></svg><div class="absolute flex flex-col items-center justify-center"><span id="dist-total-label" class="font-display-lg text-headline-lg font-bold text-on-surface">—</span><span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Recycled</span></div></div>
 <div class="mt-md space-y-sm">
-<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-primary"></div><span class="font-body-sm text-body-sm">Organic</span></div><span class="font-mono-md text-mono-md">55%</span></div>
-<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-secondary"></div><span class="font-body-sm text-body-sm">Plastic</span></div><span class="font-mono-md text-mono-md">30%</span></div>
-<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-outline"></div><span class="font-body-sm text-body-sm">Metal/Other</span></div><span class="font-mono-md text-mono-md">15%</span></div>
+<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-primary"></div><span class="font-body-sm text-body-sm">Total Waste</span></div><span id="dist-total-pct" class="font-mono-md text-mono-md">—</span></div>
+<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-secondary"></div><span class="font-body-sm text-body-sm">Recycled</span></div><span id="dist-recycled-pct" class="font-mono-md text-mono-md">—</span></div>
+<div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-outline"></div><span class="font-body-sm text-body-sm">Not Recycled</span></div><span id="dist-sink-pct" class="font-mono-md text-mono-md">—</span></div>
 </div>
 </div>
 <!-- Quick Actions -->
@@ -318,7 +318,7 @@
     var activeRequests = await D.count("collection_requests", "status=neq.Completed");
     var pending = await D.count("collection_requests", "status=eq.Unassigned");
 
-    var volume = await D.list("monthly_volume", "total_waste_tons,recycled_tons", "year.asc,month.asc");
+    var volume = await D.list("monthly_volume", "total_waste_tons,recycled_tons,year,month", "year.asc,month.asc");
     var total = 0, recycled = 0;
     volume.forEach(function (r) {
       total += Number(r.total_waste_tons) || 0;
@@ -326,24 +326,94 @@
     });
     var rate = total > 0 ? (recycled / total) * 100 : 0;
 
+    var cut = new Date(Date.now() - 30 * 86400000).toISOString();
+    var recentUsers = await D.count("profiles", "created_at=gt." + encodeURIComponent(cut));
+
     state.totalUsers = totalUsers;
     state.activeRequests = activeRequests;
     state.pending = pending;
     state.rate = rate;
     state.totalTons = total;
     state.recycledTons = recycled;
+    state.recentUsers = recentUsers;
 
     setText("total-users-value", D.fmtNum(totalUsers));
     setText("active-requests-value", D.fmtNum(activeRequests));
     setText("pending-assignments-value", D.fmtNum(pending));
     setText("recycling-rate-value", rate.toFixed(1) + "%");
 
-    renderVolumeChart(volume);
-
     allRequests = await D.list("collection_requests",
       "request_number,location,zone,waste_type,status,requested_at,collector_name",
       "requested_at.desc");
+
+    renderKpiChanges(volume, allRequests);
+    renderDistribution(recycled, total);
+
+    renderVolumeChart(volume);
+
     renderActivity(getVisibleRequests());
+  }
+
+  function renderKpiChanges(volume, requests) {
+    function setChange(id, value, upGood) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var num = Number(value) || 0;
+      var arrow = num > 0 ? "arrow_upward" : num < 0 ? "arrow_downward" : "horizontal_rule";
+      var text = (num > 0 ? "+" : "") + num.toFixed(1) + "%";
+      el.textContent = text;
+      var icon = el.previousElementSibling;
+      if (icon && icon.classList.contains("material-symbols-outlined")) icon.textContent = arrow;
+      var cls = "font-label-md ";
+      if (num === 0) cls += "text-on-surface-variant";
+      else if (num > 0) cls += upGood ? "text-primary" : "text-error";
+      else cls += upGood ? "text-error" : "text-primary";
+      el.className = cls;
+    }
+
+    var now = Date.now();
+    var created30 = 0;
+    if (requests) {
+      requests.forEach(function (r) {
+        var t = new Date(r.requested_at).getTime();
+        if (!isNaN(t) && t >= now - 30 * 86400000) created30++;
+      });
+    }
+    var req30Pct = state.activeRequests > 0 ? (created30 / state.activeRequests) * 100 : 0;
+
+    var rateChange = 0;
+    if (volume && volume.length >= 2) {
+      var last = volume[volume.length - 1];
+      var prev = volume[volume.length - 2];
+      var lr = (Number(last.total_waste_tons) || 0) > 0 ? (Number(last.recycled_tons) || 0) / (Number(last.total_waste_tons) || 0) * 100 : 0;
+      var pr = (Number(prev.total_waste_tons) || 0) > 0 ? (Number(prev.recycled_tons) || 0) / (Number(prev.total_waste_tons) || 0) * 100 : 0;
+      rateChange = pr > 0 ? lr - pr : 0;
+    }
+
+    setChange("kpi-users-change", state.totalUsers > 0 ? (state.recentUsers / state.totalUsers) * 100 : 0, true);
+    setChange("kpi-requests-change", req30Pct, true);
+    setChange("kpi-pending-change", 0, false);
+    setChange("kpi-rate-change", rateChange, true);
+  }
+
+  function renderDistribution(recycled, total) {
+    var recycledPct = total > 0 ? (recycled / total) * 100 : 0;
+    var sinkPct = Math.max(0, 100 - recycledPct);
+    var totalLabel = document.getElementById("dist-total-label");
+    if (totalLabel) totalLabel.textContent = Math.round(recycledPct) + "%";
+    var tp = document.getElementById("dist-total-pct");
+    if (tp) tp.textContent = total ? "100%" : "—";
+    var rp = document.getElementById("dist-recycled-pct");
+    if (rp) rp.textContent = total ? recycledPct.toFixed(1) + "%" : "—";
+    var sp = document.getElementById("dist-sink-pct");
+    if (sp) sp.textContent = total ? sinkPct.toFixed(1) + "%" : "—";
+    var arc = document.getElementById("dist-recycled-arc");
+    if (arc && total > 0) {
+      var circumference = 251.3;
+      var offset = circumference * (1 - recycledPct / 100);
+      arc.setAttribute("stroke-dasharray", circumference.toFixed(1));
+      arc.setAttribute("stroke-dashoffset", offset.toFixed(1));
+    }
   }
 
   function renderVolumeChart(volume) {

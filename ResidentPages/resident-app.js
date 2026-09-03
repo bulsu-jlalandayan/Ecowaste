@@ -4,12 +4,14 @@
   var app = document.getElementById("app");
   var loading = false;
   var currentView = null;
+  var appState = { selectedRequestId: null };
 
   var TITLES = {
     dashboard: "Dashboard",
     reportwaste: "Report Waste",
     requestcollection: "Request Collection",
     requestlist: "My Requests",
+    requestdetails: "Request Details",
     schedule: "Schedule",
     recycleguide: "Recycling Guide",
     activityhistory: "Activity History",
@@ -104,6 +106,9 @@
         var view = el.getAttribute("data-view");
         if (view) {
           e.preventDefault();
+          if (el.hasAttribute("data-request-id")) {
+            appState.selectedRequestId = el.getAttribute("data-request-id");
+          }
           go(view);
         }
       });
@@ -221,4 +226,5 @@
   }
 
   window.EcoWasteRouter = { go: go };
+  window.EcoWasteAppState = appState;
 })();

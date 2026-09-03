@@ -9,27 +9,27 @@
 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Search Requests</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full pl-10 pr-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest" placeholder="Search by ID or Location" type="text"/>
+<input id="complete-search" class="w-full pl-10 pr-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest" placeholder="Search by ID or Location" type="text"/>
 </div>
 </div>
 <div class="sm:col-span-1 lg:w-auto">
 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Date Range</label>
-<input class="w-full px-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest text-on-surface" type="date"/>
+<input id="complete-date" class="w-full px-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest text-on-surface" type="date"/>
 </div>
 <div class="sm:col-span-1 lg:w-auto">
 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Waste Type</label>
-<select class="w-full px-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest text-on-surface appearance-none">
-<option>All Types</option>
-<option>Recyclables</option>
-<option>General Waste</option>
-<option>Organic</option>
-<option>Hazardous</option>
+<select id="complete-waste" class="w-full px-4 py-2 h-12 border border-border-subtle rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-sm text-body-sm bg-surface-container-lowest text-on-surface appearance-none">
+<option value="">All Types</option>
+<option value="Recyclable">Recyclables</option>
+<option value="General">General Waste</option>
+<option value="Organic">Organic</option>
+<option value="Hazardous">Hazardous</option>
 </select>
 </div>
-<button class="sm:col-span-2 lg:col-span-1 h-12 px-6 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary transition-colors flex items-center justify-center gap-2">
+<button id="complete-filter-btn" class="sm:col-span-2 lg:col-span-1 h-12 px-6 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined">filter_list</span>
-                    Apply Filters
-                </button>
+                Apply Filters
+            </button>
 </div>
 <!-- Data Table -->
 <div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden">
@@ -39,95 +39,121 @@
 <tr class="bg-surface-container-low border-b border-border-subtle">
 <th class="sticky left-0 bg-surface-container-low py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Request ID</th>
 <th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Waste Type</th>
-<th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Quantity</th>
 <th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Location</th>
 <th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Collection Date</th>
 <th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Completed Date</th>
-<th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">Proof</th>
 <th class="py-3 px-3 sm:px-4 font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap text-right">Action</th>
 </tr>
 </thead>
-<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-border-subtle">
-<tr class="hover:bg-surface-bright transition-colors group">
-<td class="sticky left-0 bg-surface-container-lowest py-4 px-3 sm:px-4 font-medium">REQ-1040</td>
-<td class="py-4 px-3 sm:px-4">
-<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm whitespace-nowrap">
-<span class="w-2 h-2 rounded-full bg-primary-container"></span>
-                                        Recyclables
-                                    </span>
-</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">12 Bags</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">102 Main St</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">Oct 22, 2023</td>
-<td class="py-4 px-3 sm:px-4 text-on-surface-variant whitespace-nowrap">Oct 22, 2023, 14:30</td>
-<td class="py-4 px-3 sm:px-4">
-<button class="text-primary hover:text-primary-container flex items-center gap-1">
-<span class="material-symbols-outlined text-xl">image</span>
-</button>
-</td>
-<td class="py-4 px-3 sm:px-4 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline whitespace-nowrap">View Details</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-bright transition-colors group">
-<td class="sticky left-0 bg-surface-container-lowest py-4 px-3 sm:px-4 font-medium">REQ-1041</td>
-<td class="py-4 px-3 sm:px-4">
-<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm whitespace-nowrap">
-<span class="w-2 h-2 rounded-full bg-outline"></span>
-                                        General Waste
-                                    </span>
-</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">5 Bins</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">450 Oak Ave</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">Oct 21, 2023</td>
-<td class="py-4 px-3 sm:px-4 text-on-surface-variant whitespace-nowrap">Oct 21, 2023, 09:15</td>
-<td class="py-4 px-3 sm:px-4">
-<button class="text-primary hover:text-primary-container flex items-center gap-1">
-<span class="material-symbols-outlined text-xl">image</span>
-</button>
-</td>
-<td class="py-4 px-3 sm:px-4 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline whitespace-nowrap">View Details</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-bright transition-colors group">
-<td class="sticky left-0 bg-surface-container-lowest py-4 px-3 sm:px-4 font-medium">REQ-1038</td>
-<td class="py-4 px-3 sm:px-4">
-<span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm whitespace-nowrap">
-<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
-                                        Hazardous
-                                    </span>
-</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">2 Drums</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">89 Industrial Pkwy</td>
-<td class="py-4 px-3 sm:px-4 whitespace-nowrap">Oct 20, 2023</td>
-<td class="py-4 px-3 sm:px-4 text-on-surface-variant whitespace-nowrap">Oct 20, 2023, 16:45</td>
-<td class="py-4 px-3 sm:px-4">
-<button class="text-primary hover:text-primary-container flex items-center gap-1">
-<span class="material-symbols-outlined text-xl">image</span>
-</button>
-</td>
-<td class="py-4 px-3 sm:px-4 text-right">
-<button class="text-primary font-label-md text-label-md hover:underline whitespace-nowrap">View Details</button>
-</td>
-</tr>
+<tbody id="complete-table-body" class="font-body-sm text-body-sm text-on-surface divide-y divide-border-subtle">
 </tbody>
 </table>
 </div>
 <!-- Pagination -->
 <div class="px-4 py-3 border-t border-border-subtle bg-surface-container-lowest flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Showing 1 to 3 of 42 entries</span>
-<div class="flex items-center gap-2">
-<button class="p-2 border border-border-subtle rounded-lg text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50" disabled="">
-<span class="material-symbols-outlined text-xl">chevron_left</span>
-</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm">1</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface font-label-sm text-label-sm">2</button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface font-label-sm text-label-sm">3</button>
-<span class="text-on-surface-variant">...</span>
-<button class="p-2 border border-border-subtle rounded-lg text-on-surface-variant hover:bg-surface-container-low">
-<span class="material-symbols-outlined text-xl">chevron_right</span>
-</button>
+<span id="complete-count" class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Showing 0 entries</span>
+<div id="complete-pagination-btns" class="flex items-center gap-2"></div>
 </div>
 </div>
-</div>
+<script>
+(function () {
+  "use strict";
+  var D = window.EcoWasteData;
+  var UI = window.EcoWasteUI;
+  if (!D || !localStorage.getItem("sb-access-token")) return;
+
+  var uid = D.currentUserId();
+  var allRequests = [];
+  var searchTerm = "";
+  var wasteFilter = "";
+  var dateFilter = "";
+  var page = 1;
+  var PAGE_SIZE = 10;
+
+  var WASTE_CHIP = {
+    Recyclable: { cls: "bg-secondary-fixed text-on-secondary-fixed-variant", dot: "bg-primary-container" },
+    General: { cls: "bg-surface-container-high text-on-surface", dot: "bg-outline" },
+    Organic: { cls: "bg-amber-50 text-amber-700", dot: "bg-amber-400" },
+    Hazardous: { cls: "bg-tertiary-fixed text-on-tertiary-fixed-variant", dot: "bg-tertiary-container" }
+  };
+
+  function dateOf(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function buildRow(r) {
+    var wc = WASTE_CHIP[r.waste_type] || WASTE_CHIP.General;
+    var tr = document.createElement("tr");
+    tr.className = "hover:bg-surface-bright transition-colors group";
+    tr.innerHTML =
+      '<td class="sticky left-0 bg-surface-container-lowest py-4 px-3 sm:px-4 font-medium">' + D.esc(r.request_number) + '</td>' +
+      '<td class="py-4 px-3 sm:px-4"><span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full ' + wc.cls + ' font-label-sm text-label-sm whitespace-nowrap"><span class="w-2 h-2 rounded-full ' + wc.dot + '"></span> ' + D.esc(r.waste_type || "General") + '</span></td>' +
+      '<td class="py-4 px-3 sm:px-4 whitespace-nowrap">' + D.esc(r.location || "—") + '</td>' +
+      '<td class="py-4 px-3 sm:px-4 whitespace-nowrap">' + D.fmtDate(r.requested_at) + '</td>' +
+      '<td class="py-4 px-3 sm:px-4 text-on-surface-variant whitespace-nowrap">' + D.fmtDate(r.completed_at) + '</td>' +
+      '<td class="py-4 px-3 sm:px-4 text-right"><button data-view="collection_details" data-request-id="' + r.id + '" class="text-primary font-label-md text-label-md hover:underline whitespace-nowrap">View Details</button></td>';
+    return tr;
+  }
+
+  function filtered() {
+    return allRequests.filter(function (r) {
+      var ok = true;
+      if (wasteFilter && (r.waste_type || "").toLowerCase() !== wasteFilter.toLowerCase()) ok = false;
+      if (dateFilter && dateOf(r.completed_at || r.requested_at) !== dateFilter) ok = false;
+      if (ok && searchTerm) {
+        var hay = ((r.request_number || "") + " " + (r.location || "")).toLowerCase();
+        ok = hay.indexOf(searchTerm.toLowerCase()) !== -1;
+      }
+      return ok;
+    });
+  }
+
+  function render() {
+    var rows = filtered();
+    var tbody = document.getElementById("complete-table-body");
+    tbody.innerHTML = "";
+    var pg = UI.paginate(rows, page, PAGE_SIZE);
+    if (!pg.rows.length) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="6" class="py-12 text-center font-body-sm text-body-sm text-on-surface-variant">No completed collections found.</td>';
+      tbody.appendChild(tr);
+    } else {
+      pg.rows.forEach(function (r) { tbody.appendChild(buildRow(r)); });
+    }
+    var count = document.getElementById("complete-count");
+    if (count) count.textContent = "Showing " + (rows.length ? pg.start + " to " + pg.end + " of " : "0 of ") + rows.length + " entries";
+    var navBtns = document.getElementById("complete-pagination-btns");
+    if (navBtns) UI.paginateButtons(navBtns, { page: pg.page, pages: pg.pages, onPage: function (p) { page = p; render(); } });
+    if (window.EcoWasteRouter) {
+      document.querySelectorAll("#app [data-view]").forEach(function (el) {
+        if (el.dataset.bound) return;
+        el.addEventListener("click", function (e) {
+          var view = el.getAttribute("data-view");
+          if (view) {
+            e.preventDefault();
+            if (el.hasAttribute("data-request-id")) {
+              window.EcoWasteAppState.selectedRequestId = el.getAttribute("data-request-id");
+            }
+            window.EcoWasteRouter.go(view);
+          }
+        });
+        el.dataset.bound = "1";
+      });
+    }
+  }
+
+  async function load() {
+    allRequests = await D.list("collection_requests", "id,request_number,location,waste_type,status,requested_at,completed_at", "requested_at.desc", "collector_id=eq." + uid + "&status=eq.Completed");
+    render();
+  }
+
+  document.getElementById("complete-search").addEventListener("input", function (e) { searchTerm = e.target.value; page = 1; render(); });
+  document.getElementById("complete-waste").addEventListener("change", function (e) { wasteFilter = e.target.value; page = 1; render(); });
+  document.getElementById("complete-date").addEventListener("change", function (e) { dateFilter = e.target.value; page = 1; render(); });
+  document.getElementById("complete-filter-btn").addEventListener("click", function () { render(); });
+
+  load().catch(function (err) { console.error("EcoWaste completed collections failed to load:", err); });
+})();
+</script>

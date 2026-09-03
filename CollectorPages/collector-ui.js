@@ -44,6 +44,10 @@
     container.appendChild(el);
   };
 
+  UI.toast.success = function (msg) { UI.toast(msg, "success"); };
+  UI.toast.error = function (msg) { UI.toast(msg, "error"); };
+  UI.toast.info = function (msg) { UI.toast(msg, "info"); };
+
   UI.confirm = function (opts) {
     return new Promise(function (resolve) {
       var overlay = document.createElement("div");

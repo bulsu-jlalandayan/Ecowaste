@@ -4,6 +4,7 @@
   var app = document.getElementById("app");
   var loading = false;
   var currentView = null;
+  var appState = { selectedRequestId: null };
 
   var TITLES = {
     dashboard: "Dashboard",
@@ -103,6 +104,9 @@
         var view = el.getAttribute("data-view");
         if (view) {
           e.preventDefault();
+          if (el.hasAttribute("data-request-id")) {
+            appState.selectedRequestId = el.getAttribute("data-request-id");
+          }
           go(view);
         }
       });
@@ -189,4 +193,5 @@
   }
 
   window.EcoWasteRouter = { go: go };
+  window.EcoWasteAppState = appState;
 })();

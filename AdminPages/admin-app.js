@@ -413,6 +413,8 @@
     });
 
     modal.querySelector("[data-signout-confirm]").addEventListener("click", function () {
+      localStorage.removeItem("sb-access-token");
+      localStorage.removeItem("user-role");
       modal.remove();
       window.location.href = "../Authentication/Login.html";
     });

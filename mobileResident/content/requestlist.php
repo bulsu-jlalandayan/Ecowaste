@@ -65,7 +65,11 @@
     var sm = STATUS_META[r.status] || { cls: "bg-surface-container-high text-on-surface-variant", label: r.status };
     var wm = WASTE_META[r.waste_type] || { icon: "delete", cls: "text-primary" };
     var div = document.createElement("div");
-    div.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0";
+    div.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0 cursor-pointer";
+    div.setAttribute("role", "button");
+    div.setAttribute("tabindex", "0");
+    div.setAttribute("data-view", "requestdetails");
+    div.setAttribute("data-request-id", r.id);
     div.innerHTML =
       '<span class="material-symbols-outlined w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 ' + wm.cls + '">' + wm.icon + "</span>" +
       '<div class="flex-1 min-w-0">' +

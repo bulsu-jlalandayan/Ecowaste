@@ -4,12 +4,14 @@
   var app = document.getElementById("app");
   var loading = false;
   var currentView = null;
+  var appState = { selectedRequestId: null };
 
   var TITLES = {
     dashboard: "Dashboard",
     schedule: "Schedule",
     requestlist: "My Requests",
     requestcollection: "Request Collection",
+    requestdetails: "Request Details",
     reportwaste: "Report Waste",
     notifications: "Notifications",
     activityhistory: "Activity History",
@@ -17,12 +19,13 @@
     profile: "Profile"
   };
 
-  // Bottom-tab active groups (requestcollection lights up "Requests").
+  // Bottom-tab active groups (requestcollection/requestdetails light up "Requests").
   var TAB_GROUP = {
     dashboard: "dashboard",
     schedule: "schedule",
     requestlist: "requestlist",
     requestcollection: "requestlist",
+    requestdetails: "requestlist",
     reportwaste: "reportwaste",
     notifications: "notifications",
     activityhistory: "activityhistory",
@@ -117,6 +120,9 @@
         var view = el.getAttribute("data-view");
         if (!view) return;
         e.preventDefault();
+        if (el.hasAttribute("data-request-id")) {
+          appState.selectedRequestId = el.getAttribute("data-request-id");
+        }
         closeSheet();
         go(view);
       });
@@ -225,4 +231,5 @@
   });
 
   window.EcoWasteRouter = { go: go };
+  window.EcoWasteAppState = appState;
 })();

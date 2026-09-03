@@ -117,7 +117,7 @@
           '<td class="px-6 py-4 whitespace-nowrap font-body-md text-body-md text-on-surface-variant">' + D.esc(D.fmtDate(r.requested_at)) + "</td>" +
           '<td class="px-6 py-4 whitespace-nowrap">' + statusBadge(r.status) + "</td>" +
           '<td class="px-6 py-4 whitespace-nowrap text-right font-body-md text-body-md">' +
-          '<a class="text-primary hover:text-primary-container transition-colors font-semibold" href="#">View Details</a></td>';
+          '<a class="text-primary hover:text-primary-container transition-colors font-semibold" href="#" data-view="requestdetails" data-request-id="' + D.esc(r.id) + '">View Details</a></td>';
         tbody.appendChild(tr);
       });
     }
