@@ -75,15 +75,15 @@
 </div>
 <!-- Data Table -->
 <div class="overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[800px]">
+<table class="w-full text-left border-collapse min-w-[1000px]">
 <thead>
 <tr class="bg-surface-container-low border-b border-outline-variant">
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low">Collector Info</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low">ID Number</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low">Vehicle</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low">Status</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low">Rating</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low text-right">Actions</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[300px]">Collector Info</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[130px]">ID Number</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[240px]">Vehicle</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[140px]">Status</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[100px]">Rating</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[80px] text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="collector-tbody" class="divide-y divide-outline-variant/50">

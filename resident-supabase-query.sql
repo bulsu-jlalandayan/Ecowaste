@@ -78,6 +78,21 @@ CREATE POLICY "resident update own report" ON waste_reports
 -- Auto-generate report numbers for resident submissions.
 CREATE SEQUENCE IF NOT EXISTS report_number_seq START 8000;
 
+-- Populate report_number from the sequence when a row is inserted without one.
+CREATE OR REPLACE FUNCTION public.assign_waste_report_number()
+RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public AS $$
+BEGIN
+  IF NEW.report_number IS NULL OR NEW.report_number = '' THEN
+    NEW.report_number := 'REP-' || nextval('report_number_seq');
+  END IF;
+  RETURN NEW;
+END $$;
+
+DROP TRIGGER IF EXISTS trg_waste_report_number ON waste_reports;
+CREATE TRIGGER trg_waste_report_number
+  BEFORE INSERT ON waste_reports
+  FOR EACH ROW EXECUTE FUNCTION public.assign_waste_report_number();
+
 -- ------------------------------------------------------------
 -- 3) collection_schedules table (the resident "Schedule" view).
 --    Seeded with sample recurring collection days per zone.

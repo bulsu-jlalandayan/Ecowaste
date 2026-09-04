@@ -170,7 +170,7 @@
 
   function upsertPref(patch) {
     var body = Object.assign({}, prefs || {}, patch, { updated_at: new Date().toISOString(), user_id: uid });
-    return D.req("POST", "/rest/v1/resident_preferences?on_conflict=user_id", body);
+    return D.reqUpsert("POST", "/rest/v1/resident_preferences?on_conflict=user_id", body);
   }
 
   document.getElementById("edit-profile-btn").addEventListener("click", function () {

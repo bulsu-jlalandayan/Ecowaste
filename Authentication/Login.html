@@ -181,7 +181,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     const userId = loginData.user.id;
 
-    const profileRes = await fetch(SUPABASE_URL + "/rest/v1/profiles?id=eq." + userId + "&select=role", {
+    const profileRes = await fetch(SUPABASE_URL + "/rest/v1/profiles?id=eq." + userId + "&select=role,status", {
       method: "GET",
       headers: {
         "apikey": SUPABASE_ANON_KEY,
@@ -193,6 +193,22 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     if (!profileRes.ok || profiles.length === 0) {
       throw new Error("Could not retrieve user profile.");
+    }
+
+    if (profiles[0].status === "Inactive") {
+      try {
+        await fetch(SUPABASE_URL + "/auth/v1/logout", {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + loginData.access_token,
+          },
+        });
+      } catch (e) { /* best-effort session cleanup */ }
+      localStorage.removeItem("sb-access-token");
+      localStorage.removeItem("sb-refresh-token");
+      localStorage.removeItem("user-role");
+      throw new Error("Your account has been deactivated. Please contact an administrator.");
     }
 
     const role = profiles[0].role;

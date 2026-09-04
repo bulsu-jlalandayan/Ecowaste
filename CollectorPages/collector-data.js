@@ -22,7 +22,17 @@
     },
 
     req: async function (method, path, body) {
-      var opts = { method: method, headers: this.headers() };
+      return this.reqHeaders(method, path, body, null);
+    },
+
+    reqHeaders: async function (method, path, body, extraHeaders) {
+      var headers = this.headers();
+      if (extraHeaders) {
+        Object.keys(extraHeaders).forEach(function (k) {
+          headers[k] = extraHeaders[k];
+        });
+      }
+      var opts = { method: method, headers: headers };
       if (body !== undefined) {
         opts.body = JSON.stringify(body);
       }
@@ -150,12 +160,12 @@
         return this._data.list("app_settings", "key,value");
       },
       set: async function (key, value) {
-        return this._data.req("POST", "/rest/v1/app_settings?on_conflict=key", {
+        return this._data.reqHeaders("POST", "/rest/v1/app_settings?on_conflict=key", {
           key: key,
           value: value,
           updated_at: new Date().toISOString(),
           updated_by: this._data.currentUserId()
-        });
+        }, { "Prefer": "resolution=merge-duplicates" });
       }
     },
 
