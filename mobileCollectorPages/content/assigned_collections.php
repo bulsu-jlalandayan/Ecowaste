@@ -74,7 +74,7 @@ Assigned Collections
           '<span class="material-symbols-outlined text-[13px]">' + wt.icon + "</span>" + D.esc(r.waste_type || "General") +
         "</div>" +
         '<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">' + D.esc(r.location || "") + (r.zone ? "<br/>" + D.esc(r.zone) : "") + "</p>" +
-        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-1.5">' + D.fmtDate(r.requested_at) + "</p>" +
+        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-1.5">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + (r.time_start ? "  " + D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end) : "") + "</p>" +
       "</div>" +
       '<span class="material-symbols-outlined text-on-surface-variant mt-1">chevron_right</span>';
     return a;
@@ -103,7 +103,7 @@ Assigned Collections
   }
 
   async function load() {
-    allRequests = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at", "requested_at.asc", "collector_id=eq." + uid + "&status=neq.Completed");
+    allRequests = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", "requested_at.asc", "collector_id=eq." + uid + "&status=neq.Completed");
     render();
   }
 

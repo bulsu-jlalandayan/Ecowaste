@@ -84,7 +84,7 @@
       '<td class="py-4 px-3 sm:px-4 font-body-sm text-body-sm"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-outline text-sm">' + wt.icon + '</span> ' + D.esc(r.waste_type || "General") + '</div></td>' +
       '<td class="py-4 px-3 sm:px-4 font-body-sm text-body-sm text-on-surface-variant">' + D.esc(r.zone || "—") + '</td>' +
       '<td class="py-4 px-3 sm:px-4 font-body-sm text-body-sm">' + D.esc(r.location || "—") + '</td>' +
-      '<td class="py-4 px-3 sm:px-4 font-body-sm text-body-sm">' + D.fmtDate(r.requested_at) + '</td>' +
+      '<td class="py-4 px-3 sm:px-4 font-body-sm text-body-sm">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + (r.time_start ? '<span class="block text-on-surface-variant">' + D.fmtTime(r.time_start) + ' - ' + D.fmtTime(r.time_end) + '</span>' : '') + '</td>' +
       '<td class="py-4 px-3 sm:px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ' + chip + '">' + label + '</span></td>' +
       '<td class="py-4 px-3 sm:px-4 text-right"><button data-view="collection_details" data-request-id="' + r.id + '" class="font-label-md text-label-md text-primary hover:text-secondary bg-primary-fixed bg-opacity-20 hover:bg-opacity-40 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">View Details</button></td>';
     return tr;
@@ -132,7 +132,7 @@
   }
 
   async function load() {
-    allRequests = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at", "requested_at.asc", "collector_id=eq." + uid + "&status=neq.Completed");
+    allRequests = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", "requested_at.asc", "collector_id=eq." + uid + "&status=neq.Completed");
     render();
   }
 

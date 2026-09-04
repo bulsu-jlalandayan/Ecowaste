@@ -106,14 +106,16 @@
       tbody.innerHTML = '<tr><td class="px-6 py-8 text-center font-body-md text-body-md text-on-surface-variant" colspan="5">No requests found.</td></tr>';
     } else {
       rows.forEach(function (r) {
-        var wm = WASTE_META[r.waste_type] || { icon: "delete", cls: "text-primary" };
+        var wts = (r.waste_types && r.waste_types.length) ? r.waste_types : [r.waste_type || "General"];
+        var primary = wts[0];
+        var wm = WASTE_META[primary] || { icon: "delete", cls: "text-primary" };
         var tr = document.createElement("tr");
         tr.className = "hover:bg-surface-container-low transition-colors";
         tr.innerHTML =
           '<td class="px-6 py-4 whitespace-nowrap font-body-md text-body-md font-semibold text-on-surface">' + D.esc(r.request_number) + "</td>" +
           '<td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center gap-2">' +
           '<span class="material-symbols-outlined text-[20px] ' + wm.cls + '" style="font-variation-settings: \'FILL\' 1;">' + wm.icon + "</span>" +
-          '<span class="font-body-md text-body-md text-on-surface">' + D.esc(r.waste_type || "General") + "</span></div></td>" +
+          '<span class="font-body-md text-body-md text-on-surface">' + D.esc(wts.join(", ")) + "</span></div></td>" +
           '<td class="px-6 py-4 whitespace-nowrap font-body-md text-body-md text-on-surface-variant">' + D.esc(D.fmtDate(r.requested_at)) + "</td>" +
           '<td class="px-6 py-4 whitespace-nowrap">' + statusBadge(r.status) + "</td>" +
           '<td class="px-6 py-4 whitespace-nowrap text-right font-body-md text-body-md">' +
@@ -142,6 +144,18 @@
       "requested_at.desc",
       "user_id=eq." + uid
     ).catch(function () { return []; });
+    var ids = all.map(function (r) { return r.id; });
+    if (ids.length) {
+      var items = await D.request(
+        "/rest/v1/collection_request_items?select=request_id,waste_type&request_id=in.(" + ids.join(",") + ")"
+      ).catch(function () { return []; });
+      all.forEach(function (r) {
+        r.waste_types = items
+          .filter(function (i) { return i.request_id === r.id; })
+          .map(function (i) { return i.waste_type; });
+        if (!r.waste_types.length && r.waste_type) r.waste_types = [r.waste_type];
+      });
+    }
     render();
   }
 

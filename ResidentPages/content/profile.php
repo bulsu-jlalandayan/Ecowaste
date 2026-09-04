@@ -10,7 +10,13 @@
 
 <!-- Profile Card -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col md:flex-row md:items-center gap-lg">
-<div class="w-20 h-20 rounded-full bg-primary/10 border border-outline-variant shrink-0 flex items-center justify-center text-primary font-headline-lg text-headline-lg font-bold" id="prof-avatar">?</div>
+<div class="relative w-20 h-20 shrink-0 cursor-pointer group" id="prof-avatar-wrap">
+<div class="w-20 h-20 rounded-full bg-primary/10 border border-outline-variant flex items-center justify-center text-primary font-headline-lg text-headline-lg font-bold overflow-hidden" id="prof-avatar">?</div>
+<div class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white text-[24px]">photo_camera</span>
+</div>
+<input type="file" id="prof-avatar-input" accept="image/jpeg,image/png" class="hidden">
+</div>
 <div class="flex-1">
 <h3 class="font-headline-lg text-headline-lg text-on-surface" id="prof-name">Loading…</h3>
 <p class="font-body-md text-body-md text-on-surface-variant mt-xs flex items-center gap-2">
@@ -158,7 +164,13 @@
     setTxt("prof-name", name || "Resident");
     setTxt("prof-member", profile && profile.created_at ? "Member since " + new Date(profile.created_at).toLocaleDateString(undefined, { month: "long", year: "numeric" }) : "Member");
     var av = document.getElementById("prof-avatar");
-    if (av) av.textContent = D.initials(name || "Resident");
+    if (av) {
+      if (profile && profile.avatar_url) {
+        av.innerHTML = '<img src="' + D.esc(profile.avatar_url) + '" alt="Profile photo" class="w-full h-full object-cover">';
+      } else {
+        av.textContent = D.initials(name || "Resident");
+      }
+    }
     setTxt("pi-name", name);
     setTxt("pi-email", profile ? profile.email : "");
     setTxt("pi-phone", profile ? profile.phone : "");
@@ -212,6 +224,38 @@
     }).catch(function () { });
   });
 
+  // Profile picture upload
+  (function () {
+    var wrap = document.getElementById("prof-avatar-wrap");
+    var input = document.getElementById("prof-avatar-input");
+    if (!wrap || !input) return;
+    wrap.addEventListener("click", function () { input.click(); });
+    input.addEventListener("change", async function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        UI.toast("Image must be under 5 MB.", "error");
+        return;
+      }
+      if (!/^image\/(jpeg|png)$/.test(file.type)) {
+        UI.toast("Only JPEG and PNG images are allowed.", "error");
+        return;
+      }
+      try {
+        UI.toast("Uploading photo...");
+        var url = await D.upload(file, "avatars");
+        await D.update("profiles", "id=eq." + uid, { avatar_url: url });
+        profile = Object.assign({}, profile || {}, { avatar_url: url });
+        D.setProfileAvatar(url);
+        window.dispatchEvent(new CustomEvent("ecowaste:profile-updated", { detail: { avatarUrl: url } }));
+        UI.toast("Profile photo updated.");
+        load();
+      } catch (err) {
+        UI.toast(err.message || "Upload failed.", "error");
+      }
+    });
+  })();
+
   document.querySelectorAll("[data-pref]").forEach(function (el) {
     el.addEventListener("click", function () {
       var key = el.getAttribute("data-pref");
@@ -224,7 +268,7 @@
 
   async function load() {
     var results = await Promise.all([
-      D.list("profiles", "id,email,full_name,phone,address,created_at", null, "id=eq." + uid),
+      D.list("profiles", "id,email,full_name,phone,address,avatar_url,created_at", null, "id=eq." + uid),
       D.list("resident_preferences", "user_id,notification_reminders,collection_reminders,language", null, "user_id=eq." + uid)
     ]);
     profile = results[0] && results[0].length ? results[0][0] : null;

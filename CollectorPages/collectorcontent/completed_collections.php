@@ -91,7 +91,7 @@
       '<td class="sticky left-0 bg-surface-container-lowest py-4 px-3 sm:px-4 font-medium">' + D.esc(r.request_number) + '</td>' +
       '<td class="py-4 px-3 sm:px-4"><span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full ' + wc.cls + ' font-label-sm text-label-sm whitespace-nowrap"><span class="w-2 h-2 rounded-full ' + wc.dot + '"></span> ' + D.esc(r.waste_type || "General") + '</span></td>' +
       '<td class="py-4 px-3 sm:px-4 whitespace-nowrap">' + D.esc(r.location || "—") + '</td>' +
-      '<td class="py-4 px-3 sm:px-4 whitespace-nowrap">' + D.fmtDate(r.requested_at) + '</td>' +
+      '<td class="py-4 px-3 sm:px-4 whitespace-nowrap">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + '</td>' +
       '<td class="py-4 px-3 sm:px-4 text-on-surface-variant whitespace-nowrap">' + D.fmtDate(r.completed_at) + '</td>' +
       '<td class="py-4 px-3 sm:px-4 text-right"><button data-view="collection_details" data-request-id="' + r.id + '" class="text-primary font-label-md text-label-md hover:underline whitespace-nowrap">View Details</button></td>';
     return tr;
@@ -145,7 +145,7 @@
   }
 
   async function load() {
-    allRequests = await D.list("collection_requests", "id,request_number,location,waste_type,status,requested_at,completed_at", "requested_at.desc", "collector_id=eq." + uid + "&status=eq.Completed");
+    allRequests = await D.list("collection_requests", "id,request_number,location,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", "requested_at.desc", "collector_id=eq." + uid + "&status=eq.Completed");
     render();
   }
 

@@ -58,6 +58,27 @@
 </div>
 </div>
 
+<!-- Duty status -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4">
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">work</span> Duty Status
+</h3>
+<div class="mt-3 flex items-center justify-between gap-3">
+<div class="flex items-center gap-2 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+<span id="duty-icon" class="material-symbols-outlined text-emerald-600 text-[20px]">power_settings_new</span>
+</div>
+<div class="min-w-0">
+<p id="prof-duty-label" class="font-label-md text-label-md text-on-surface">Loading...</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Are you available to take collections?</p>
+</div>
+</div>
+<button id="duty-toggle-btn" class="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl font-label-md text-label-md text-on-primary transition-colors" type="button">
+<span id="duty-toggle-text">—</span>
+</button>
+</div>
+</div>
+
 <!-- Actions -->
 <div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-2 flex flex-col">
 <button id="edit-name-btn" class="w-full flex items-center gap-3 px-3 py-3.5 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-body-md text-body-md" type="button">
@@ -105,6 +126,22 @@
         : "bg-amber-100 text-amber-800";
     chip.className = "inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold " + cls;
     chip.textContent = status;
+
+    var onDuty = (collector && collector.status === "On Route") || (status === "Active");
+    var dutyBtn = document.getElementById("duty-toggle-btn");
+    var dutyText = document.getElementById("duty-toggle-text");
+    var dutyLabel = document.getElementById("prof-duty-label");
+    var dutyIcon = document.getElementById("duty-icon");
+    if (dutyText) dutyText.textContent = onDuty ? "Off Duty" : "On Duty";
+    if (dutyLabel) dutyLabel.textContent = onDuty ? "On Duty" : "Off Duty";
+    if (dutyBtn) {
+      dutyBtn.className = "shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl font-label-md text-label-md text-on-primary transition-colors " +
+        (onDuty ? "bg-status-completed" : "bg-primary");
+    }
+    if (dutyIcon) {
+      dutyIcon.className = "material-symbols-outlined text-[20px] " + (onDuty ? "text-emerald-600" : "text-on-surface-variant");
+      dutyIcon.textContent = onDuty ? "power_settings_new" : "power_off";
+    }
   }
 
   async function load() {
@@ -153,6 +190,22 @@
     }).then(function () {
       UI.toast.success("Password updated.");
     });
+  });
+
+  document.getElementById("duty-toggle-btn").addEventListener("click", function () {
+    if (!collector) { UI.toast.error("Collector profile not found."); return; }
+    var next = (collector.status === "On Route") ? "Off Duty" : "On Route";
+    var btn = document.getElementById("duty-toggle-btn");
+    btn.disabled = true;
+    D.update("collectors", "user_id=eq." + uid, { status: next })
+      .then(function () {
+        UI.toast.success(next === "On Route" ? "You are now On Duty." : "You are now Off Duty.");
+        return load();
+      })
+      .catch(function (err) { UI.toast.error("Could not update duty: " + (err.message || "unknown error")); })
+      .finally(function () {
+        btn.disabled = false;
+      });
   });
 
   load().catch(function (err) {

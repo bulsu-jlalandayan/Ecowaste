@@ -94,6 +94,28 @@
       }
     },
 
+    setProfileAvatar: function (avatarUrl) {
+      var avatars = document.querySelectorAll("[data-profile-avatar]");
+      var cacheBustedUrl = avatarUrl;
+      if (avatarUrl && !/^data:|^blob:/i.test(avatarUrl)) {
+        cacheBustedUrl = avatarUrl + (avatarUrl.indexOf("?") === -1 ? "?" : "&") + "v=" + Date.now();
+      }
+      avatars.forEach(function (avatar) {
+        if (cacheBustedUrl) {
+          avatar.src = cacheBustedUrl;
+        } else {
+          avatar.removeAttribute("src");
+        }
+      });
+    },
+
+    loadProfileAvatar: async function () {
+      var uid = this.currentUserId();
+      if (!uid) return;
+      var rows = await this.list("profiles", "avatar_url", null, "id=eq." + uid);
+      this.setProfileAvatar(rows && rows.length ? rows[0].avatar_url : null);
+    },
+
     esc: function (s) {
       if (s === null || s === undefined) return "";
       return String(s).replace(/[&<>"']/g, function (c) {
@@ -163,7 +185,7 @@
       if (!res.ok) {
         throw new Error(out.message || out.error || "Upload failed.");
       }
-      return SUPABASE_URL + "/storage/v1/object/public/" + folder + "/" + (out.Key || path);
+      return SUPABASE_URL + "/storage/v1/object/public/" + folder + "/" + path;
     },
 
     // ---- app_settings store (shared with collector + admin panels) ----

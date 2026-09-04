@@ -102,7 +102,7 @@ Upcoming Collections
           '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ' + wt.chip + '">' +
             '<span class="material-symbols-outlined text-[13px]">' + wt.icon + "</span>" + D.esc(r.waste_type || "General") +
           "</span>" +
-          '<span class="font-label-sm text-label-sm text-on-surface-variant">' + D.fmtDate(r.requested_at) + "</span>" +
+          '<span class="font-label-sm text-label-sm text-on-surface-variant">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + (r.time_start ? " " + D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end) : "") + "</span>" +
         "</div>" +
       "</div>" +
       '<span class="material-symbols-outlined text-on-surface-variant mt-1">chevron_right</span>';
@@ -115,7 +115,7 @@ Upcoming Collections
 
   async function load() {
     var promises = [
-      D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at", "requested_at.asc", "collector_id=eq." + uid),
+      D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", "requested_at.asc", "collector_id=eq." + uid),
       D.list("profiles", "full_name", null, "id=eq." + uid)
     ];
     var results = await Promise.all(promises);

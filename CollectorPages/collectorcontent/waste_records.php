@@ -125,8 +125,12 @@
       document.getElementById("waste-type-display").textContent = "Pick a collection from Assigned Collections first.";
       return;
     }
-    var rows = await D.list("collection_requests", "id,request_number,location,waste_type,status", null, "id=eq." + requestId);
-    if (!rows || !rows.length) return;
+    var uid = D.currentUserId();
+    var rows = await D.list("collection_requests", "id,request_number,location,waste_type,status", null, "id=eq." + requestId + "&collector_id=eq." + uid);
+    if (!rows || !rows.length) {
+      if (requestId) UI.toast("This task is not assigned to you.", "error");
+      return;
+    }
     current = rows[0];
     document.getElementById("waste-req-number").textContent = current.request_number;
     document.getElementById("waste-type-display").textContent = current.waste_type || "General";
@@ -159,7 +163,6 @@
       recorded_at: new Date().toISOString(),
       material_type: current.waste_type || "General",
       weight_kg: weightKg,
-      collector_name: null,
       collector_id: D.currentUserId(),
       facility: "Collection vehicle",
       status: "Verified",

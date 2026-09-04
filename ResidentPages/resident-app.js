@@ -120,6 +120,24 @@
     go("dashboard");
     bindUserMenu();
     setUserName();
+    window.EcoWasteData.loadProfileAvatar().catch(function (err) {
+      console.error("EcoWaste profile avatar failed to load:", err);
+    });
+
+    // Re-bind data-view triggers whenever #app content changes asynchronously
+    // (e.g. request list rows are injected after their async fetch completes).
+    if (app && "MutationObserver" in window) {
+      var mo = new MutationObserver(function () {
+        bindViewDataTriggers();
+      });
+
+      mo.observe(app, { childList: true, subtree: true });
+    }
+  });
+
+  window.addEventListener("ecowaste:profile-updated", function (e) {
+    var avatarUrl = e.detail && e.detail.avatarUrl ? e.detail.avatarUrl : null;
+    window.EcoWasteData.setProfileAvatar(avatarUrl);
   });
 
   function bindUserMenu() {

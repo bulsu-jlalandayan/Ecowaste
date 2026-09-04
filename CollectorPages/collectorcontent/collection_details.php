@@ -214,7 +214,7 @@
       host.innerHTML = '<div class="text-center font-body-md text-body-md text-on-surface-variant">No collection selected. <a href="#" class="text-primary" data-view="assigned_collections">Choose one</a></div>';
       return;
     }
-    var rows = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,description", null, "id=eq." + requestId);
+    var rows = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,description,scheduled_date,time_start,time_end", null, "id=eq." + requestId);
     if (!rows || !rows.length) {
       document.getElementById("detail-req-number").textContent = "Not found";
       return;
@@ -229,9 +229,8 @@
     document.getElementById("detail-neighborhood").textContent = r.zone ? "Zone: " + r.zone : "";
     document.getElementById("detail-description").textContent = r.description || "No description provided.";
 
-    var d = r.requested_at ? new Date(r.requested_at) : null;
-    document.getElementById("detail-scheduled-date").innerHTML = '<span class="material-symbols-outlined text-on-surface-variant text-sm">calendar_today</span> ' + (d ? d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—");
-    document.getElementById("detail-scheduled-time").innerHTML = '<span class="material-symbols-outlined text-on-surface-variant text-sm">schedule</span> ' + (d ? d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) : "—");
+    document.getElementById("detail-scheduled-date").innerHTML = '<span class="material-symbols-outlined text-on-surface-variant text-sm">calendar_today</span> ' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : "Not scheduled");
+    document.getElementById("detail-scheduled-time").innerHTML = '<span class="material-symbols-outlined text-on-surface-variant text-sm">schedule</span> ' + ((r.time_start || "--") + " - " + (r.time_end || "--"));
 
     var chip = CHIP[r.status] || ["bg-surface-container-high text-on-surface-variant", r.status];
     var chipEl = document.getElementById("detail-status-chip");

@@ -161,3 +161,72 @@ DROP POLICY IF EXISTS "app_settings collector update own key" ON app_settings;
 CREATE POLICY "app_settings collector update own key" ON app_settings
   FOR UPDATE TO authenticated
   USING (key = 'collector_settings');
+
+-- ============================================================
+-- 6) Recycling records: only allow a collector to record waste
+--    for a collection request that is assigned to them.
+--    (Server-side enforcement of the "assigned task" rule.)
+-- ============================================================
+DROP TRIGGER IF EXISTS trg_enforce_assigned_request ON recycling_records;
+CREATE OR REPLACE FUNCTION public.enforce_assigned_request()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  req_collector_id UUID;
+BEGIN
+  IF NEW.collector_id IS NULL THEN
+    RAISE EXCEPTION 'A collector_id is required to record waste.';
+  END IF;
+  IF NEW.request_id IS NULL THEN
+    RAISE EXCEPTION 'A request_id is required. Waste can only be recorded for an assigned collection.';
+  END IF;
+  SELECT collector_id INTO req_collector_id
+    FROM collection_requests WHERE id = NEW.request_id;
+  IF req_collector_id IS NULL OR req_collector_id <> NEW.collector_id THEN
+    RAISE EXCEPTION 'This collection request is not assigned to you.';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER trg_enforce_assigned_request
+  BEFORE INSERT OR UPDATE OF collector_id, request_id ON recycling_records
+  FOR EACH ROW EXECUTE FUNCTION public.enforce_assigned_request();
+
+-- ============================================================
+-- 7) Duty ON/OFF: let collectors update their own availability.
+--    Admins keep the existing admin-only "collectors update"
+--    policy; collectors may only set their own status to
+--    'On Route' or 'Off Duty' (not vehicle info or rating).
+--    RLS policy allows a collector to update their own row;
+--    a BEFORE UPDATE trigger restricts collectors to changing
+--    only the status column.
+-- ============================================================
+DROP POLICY IF EXISTS "collectors update own status" ON collectors;
+CREATE POLICY "collectors update own status" ON collectors
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id);
+
+DROP TRIGGER IF EXISTS trg_collector_self_status_guard ON collectors;
+CREATE OR REPLACE FUNCTION public.collector_self_status_guard()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF public.is_admin() THEN
+    RETURN NEW;
+  END IF;
+  IF auth.uid() <> OLD.user_id THEN
+    RETURN NEW;
+  END IF;
+  IF NEW.full_name IS DISTINCT FROM OLD.full_name
+     OR NEW.collector_number IS DISTINCT FROM OLD.collector_number
+     OR NEW.district IS DISTINCT FROM OLD.district
+     OR NEW.vehicle_name IS DISTINCT FROM OLD.vehicle_name
+     OR NEW.vehicle_type IS DISTINCT FROM OLD.vehicle_type
+     OR NEW.rating IS DISTINCT FROM OLD.rating THEN
+    RAISE EXCEPTION 'Collectors may only update their own status.';
+  END IF;
+  IF NEW.status NOT IN ('On Route', 'Off Duty') THEN
+    RAISE EXCEPTION 'Collectors may only set status to On Route or Off Duty.';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER trg_collector_self_status_guard
+  BEFORE UPDATE ON collectors
+  FOR EACH ROW EXECUTE FUNCTION public.collector_self_status_guard();

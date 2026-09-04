@@ -112,7 +112,7 @@
       '<td class="p-3 sm:p-4"><div class="flex flex-col"><span>' + D.esc(r.waste_type || "General") + '</span>' +
       '<span class="text-on-surface-variant text-xs">' + D.esc(r.zone || "") + '</span></div></td>' +
       '<td class="p-3 sm:p-4"><div class="flex flex-col"><span>' + D.esc(r.location || "—") + '</span>' +
-      '<span class="text-on-surface-variant text-xs">' + D.fmtDate(r.requested_at) + '</span></div></td>' +
+      '<span class="text-on-surface-variant text-xs">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + (r.time_start ? ' ' + D.fmtTime(r.time_start) + ' - ' + D.fmtTime(r.time_end) : '') + '</span></div></td>' +
       '<td class="p-3 sm:p-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + chip + ' whitespace-nowrap">' + label + '</span></td>' +
       '<td class="p-3 sm:p-4 text-right"><button class="font-label-md text-label-md text-primary hover:text-primary-container transition-colors whitespace-nowrap" data-view="collection_details" data-request-id="' + r.id + '">View Details</button></td>';
     return tr;
@@ -130,14 +130,14 @@
       '<span class="material-symbols-outlined text-on-surface-variant">event</span></div>' +
       '<div class="flex-1"><div class="flex justify-between items-start">' +
       '<h4 class="font-label-md text-label-md text-on-surface">' + D.esc(r.request_number) + ' - ' + D.esc(r.waste_type || "General") + '</h4>' +
-      '<span class="font-label-sm text-label-sm text-primary">' + D.fmtDate(r.requested_at) + '</span></div>' +
+      '<span class="font-label-sm text-label-sm text-primary">' + (r.scheduled_date ? D.fmtDay(r.scheduled_date) : D.fmtDate(r.requested_at)) + '</span></div>' +
       '<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">' + D.esc(r.location || "—") + '</p></div>';
     return div;
   }
 
   async function load() {
     var results = await Promise.all([
-      D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at", "requested_at.asc", "collector_id=eq." + uid),
+      D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", "requested_at.asc", "collector_id=eq." + uid),
       D.list("profiles", "full_name", null, "id=eq." + uid)
     ]);
     var requests = results[0] || [];

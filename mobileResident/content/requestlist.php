@@ -63,7 +63,8 @@
 
   function card(r) {
     var sm = STATUS_META[r.status] || { cls: "bg-surface-container-high text-on-surface-variant", label: r.status };
-    var wm = WASTE_META[r.waste_type] || { icon: "delete", cls: "text-primary" };
+    var wts = (r.waste_types && r.waste_types.length) ? r.waste_types : [r.waste_type || "General"];
+    var wm = WASTE_META[wts[0]] || { icon: "delete", cls: "text-primary" };
     var div = document.createElement("div");
     div.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0 cursor-pointer";
     div.setAttribute("role", "button");
@@ -76,7 +77,7 @@
       '<div class="flex items-center justify-between gap-2">' +
       '<p class="font-body-md text-body-md text-on-surface font-semibold truncate">' + D.esc(r.request_number) + "</p>" +
       '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold shrink-0 ' + sm.cls + '">' + sm.label + "</span></div>" +
-      '<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">' + D.esc(r.waste_type || "General") + "</p>" +
+      '<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">' + D.esc(wts.join(", ")) + "</p>" +
       '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDate(r.requested_at)) + "</p>" +
       "</div>";
     return div;
@@ -121,6 +122,18 @@
       "requested_at.desc",
       "user_id=eq." + uid
     ).catch(function () { return []; });
+    var ids = all.map(function (r) { return r.id; });
+    if (ids.length) {
+      var items = await D.request(
+        "/rest/v1/collection_request_items?select=request_id,waste_type&request_id=in.(" + ids.join(",") + ")"
+      ).catch(function () { return []; });
+      all.forEach(function (r) {
+        r.waste_types = items
+          .filter(function (i) { return i.request_id === r.id; })
+          .map(function (i) { return i.waste_type; });
+        if (!r.waste_types.length && r.waste_type) r.waste_types = [r.waste_type];
+      });
+    }
     render();
   }
 

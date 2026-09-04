@@ -33,8 +33,8 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-sm mb-xl">
 <label class="cursor-pointer waste-card">
-<input class="sr-only waste-type" name="waste_type" type="radio" value="Household" checked>
-<div class="h-full p-md bg-surface-container-lowest border-2 border-primary rounded-xl relative overflow-hidden transition-all shadow-[0_4px_16px_rgba(15,23,42,0.05)]">
+<input class="sr-only waste-type" name="waste_type" type="checkbox" value="Household">
+<div class="h-full p-md bg-surface-container-lowest border border-outline-variant rounded-xl relative overflow-hidden transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span></div>
 <div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary mb-4"><span class="material-symbols-outlined">delete</span></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">General Household Waste</h3>
@@ -42,32 +42,36 @@
 </div>
 </label>
 <label class="cursor-pointer waste-card">
-<input class="sr-only waste-type" name="waste_type" type="radio" value="Recyclable">
+<input class="sr-only waste-type" name="waste_type" type="checkbox" value="Recyclable">
 <div class="h-full p-md bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="absolute top-4 right-4 text-primary check-ic"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span></div>
 <div class="w-12 h-12 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant mb-4"><span class="material-symbols-outlined">recycling</span></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Recyclables</h3>
 <p class="font-body-md text-body-md text-on-surface-variant">Paper, plastic, metal, and glass.</p>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
-<input class="sr-only waste-type" name="waste_type" type="radio" value="Organic">
+<input class="sr-only waste-type" name="waste_type" type="checkbox" value="Organic">
 <div class="h-full p-md bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="absolute top-4 right-4 text-primary check-ic"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span></div>
 <div class="w-12 h-12 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant mb-4"><span class="material-symbols-outlined">park</span></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Organic/Green Waste</h3>
 <p class="font-body-md text-body-md text-on-surface-variant">Garden clippings, food scraps, and yard debris.</p>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
-<input class="sr-only waste-type" name="waste_type" type="radio" value="Bulky">
+<input class="sr-only waste-type" name="waste_type" type="checkbox" value="Bulky">
 <div class="h-full p-md bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="absolute top-4 right-4 text-primary check-ic"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span></div>
 <div class="w-12 h-12 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant mb-4"><span class="material-symbols-outlined">chair</span></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Bulky Items</h3>
 <p class="font-body-md text-body-md text-on-surface-variant">Furniture, mattresses, or large appliances.</p>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
-<input class="sr-only waste-type" name="waste_type" type="radio" value="E-Waste">
+<input class="sr-only waste-type" name="waste_type" type="checkbox" value="E-Waste">
 <div class="h-full p-md bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="absolute top-4 right-4 text-primary check-ic"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span></div>
 <div class="w-12 h-12 rounded-lg bg-error-container/20 flex items-center justify-center text-error mb-4"><span class="material-symbols-outlined">warning</span></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Hazardous / E-Waste</h3>
 <p class="font-body-md text-body-md text-on-surface-variant">Batteries, chemicals, or electronics.</p>
@@ -106,7 +110,7 @@
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md space-y-md">
 <div class="flex flex-col gap-xs">
 <label class="font-label-caps text-label-caps text-on-surface" for="req-date">Preferred Date *</label>
-<input class="w-full md:w-1/2 bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="req-date" type="date">
+<input class="w-full md:w-1/2 bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="req-date" type="date" min="">
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
 <div class="flex flex-col gap-xs">
@@ -158,7 +162,26 @@ Continue
 
   var step = 0;
   var maxStep = 4; // 0..3
-  var state = { waste_type: "Household", description: "", address: "", scheduled_date: null, time_start: null, time_end: null };
+  var state = { waste_type: [], description: "", address: "", scheduled_date: null, time_start: null, time_end: null };
+
+  var TYPE_LABELS = {
+    Household: "General Household Waste",
+    Recyclable: "Recyclables",
+    Organic: "Organic/Green Waste",
+    Bulky: "Bulky Items",
+    "E-Waste": "Hazardous / E-Waste"
+  };
+
+  // Block past dates.
+  function localToday() {
+    var d = new Date();
+    var mm = String(d.getMonth() + 1).padStart(2, "0");
+    var dd = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + mm + "-" + dd;
+  }
+  var today = localToday();
+  var dateInput = document.getElementById("req-date");
+  if (dateInput) dateInput.min = today;
 
   var dots = Array.prototype.slice.call(document.querySelectorAll(".step-dot"))
     .concat(Array.prototype.slice.call(document.querySelectorAll("[data-step-marker]")).map(function (m) {
@@ -196,8 +219,8 @@ Continue
   }
 
   function updateReview() {
-    var typeLabel = { Househhold: "Household", Household: "General Household Waste", Recyclable: "Recyclables", Organic: "Organic/Green Waste", Bulky: "Bulky Items", "E-Waste": "Hazardous / E-Waste" }[state.waste_type] || state.waste_type;
-    setTxt("review-type", typeLabel);
+    var labels = state.waste_type.map(function (t) { return TYPE_LABELS[t] || t; });
+    setTxt("review-type", labels.length ? labels.join(", ") : "—");
     setTxt("review-date", state.scheduled_date ? D.fmtDay(state.scheduled_date) : "Not set");
     setTxt("review-time", (state.time_start || "--") + " - " + (state.time_end || "--"));
     setTxt("review-address", state.address || "—");
@@ -211,7 +234,14 @@ Continue
 
   function next() {
     if (step === 0) {
-      state.waste_type = (document.querySelector("input.waste-type:checked") || {}).value || "Household";
+      state.waste_type = [];
+      document.querySelectorAll("input.waste-type:checked").forEach(function (cb) {
+        state.waste_type.push(cb.value);
+      });
+      if (!state.waste_type.length) {
+        UI.toast("Please select at least one waste type.", "error");
+        return;
+      }
     } else if (step === 1) {
       state.description = document.getElementById("req-desc").value.trim();
       state.address = document.getElementById("req-address").value.trim();
@@ -221,6 +251,7 @@ Continue
       state.time_start = document.getElementById("req-start").value;
       state.time_end = document.getElementById("req-end").value;
       if (!state.scheduled_date) { UI.toast("Please pick a preferred date.", "error"); return; }
+      if (state.scheduled_date < today) { UI.toast("Please select today or a future date.", "error"); return; }
       if (!state.time_start || !state.time_end) { UI.toast("Please pick a time window.", "error"); return; }
     } else if (step === 3) {
       submit();
@@ -242,21 +273,33 @@ Continue
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> Submitting...';
     try {
-      var prefix = state.waste_type === "E-Waste" ? "REQ-HZ" : "REQ";
+      var primaryType = state.waste_type[0] || "Household";
+      var prefix = state.waste_type.indexOf("E-Waste") !== -1 ? "REQ-HZ" : "REQ";
       var request_number = prefix + "-" + Math.floor(1000 + Math.random() * 9000);
       var body = {
         request_number: request_number,
         user_id: D.currentUserId(),
         location: state.address || "Pending address",
         zone: "Zone A - Residential",
-        waste_type: state.waste_type,
+        waste_type: primaryType,
         status: "Unassigned",
         description: state.description,
         scheduled_date: state.scheduled_date,
         time_start: state.time_start,
         time_end: state.time_end
       };
-      await D.add("collection_requests", body);
+      var inserted = await D.add("collection_requests", body);
+      var requestId = inserted && inserted[0] ? inserted[0].id : null;
+      if (requestId) {
+        var items = state.waste_type.map(function (t) {
+          return { request_id: requestId, waste_type: t };
+        });
+        await fetch(SUPABASE_URL + "/rest/v1/collection_request_items", {
+          method: "POST",
+          headers: Object.assign({}, D.headers(), { "Prefer": "return=minimal" }),
+          body: JSON.stringify(items)
+        });
+      }
       UI.toast("Collection request submitted successfully.");
       if (window.EcoWasteRouter) window.EcoWasteRouter.go("requestlist");
     } catch (err) {
@@ -266,29 +309,23 @@ Continue
     }
   }
 
-  // radio card selection styling
-  document.querySelectorAll(".waste-card").forEach(function (label) {
-    label.addEventListener("change", function () {
-      document.querySelectorAll(".waste-card > div").forEach(function (d) {
-        d.classList.remove("border-2", "border-primary");
-        d.classList.add("border");
-        d.classList.add("border-outline-variant");
-        var ic = d.querySelector(".check-ic");
-        if (ic) ic.style.visibility = "hidden";
-      });
-      var box = label.querySelector("div");
-      box.classList.remove("border-outline-variant");
-      box.classList.add("border-2", "border-primary");
-      var ic = box.querySelector(".check-ic");
-      if (ic) ic.style.visibility = "visible";
-    });
+  // checkbox card selection styling
+  function styleCard(cb) {
+    var label = cb.closest(".waste-card");
+    if (!label) return;
+    var box = label.querySelector("div");
+    var checked = cb.checked;
+    box.classList.toggle("border-2", checked);
+    box.classList.toggle("border-primary", checked);
+    box.classList.toggle("border", !checked);
+    box.classList.toggle("border-outline-variant", !checked);
+    var ic = box.querySelector(".check-ic");
+    if (ic) ic.style.visibility = checked ? "visible" : "hidden";
+  }
+  document.querySelectorAll("input.waste-type").forEach(function (cb) {
+    cb.addEventListener("change", function () { styleCard(cb); });
   });
   document.querySelectorAll(".waste-card .check-ic").forEach(function (c) { c.style.visibility = "hidden"; });
-  var firstChecked = document.querySelector("input.waste-type:checked");
-  if (firstChecked) {
-    var fb = firstChecked.closest(".waste-card");
-    if (fb) fb.dispatchEvent(new Event("change"));
-  }
 
   document.getElementById("wizard-next").addEventListener("click", next);
   document.getElementById("wizard-back").addEventListener("click", back);

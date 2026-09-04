@@ -164,7 +164,7 @@
         '<a href="#" class="mt-2 inline-flex items-center gap-1 font-label-md text-label-md text-primary" data-view="assigned_collections">Choose a collection</a></div>';
       return;
     }
-    var rows = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at", null, "id=eq." + requestId);
+    var rows = await D.list("collection_requests", "id,request_number,location,zone,waste_type,status,requested_at,completed_at,scheduled_date,time_start,time_end", null, "id=eq." + requestId);
     if (!rows || !rows.length) {
       document.getElementById("detail-request-number").textContent = "Not found";
       return;
@@ -176,7 +176,7 @@
     wasteTypeEl.innerHTML =
       '<span class="material-symbols-outlined text-[20px] ' + wt.chip + ' rounded-lg p-1">' + wt.icon + "</span>" +
       '<span class="font-headline-sm text-headline-sm text-on-surface">' + D.esc(r.waste_type || "General") + "</span>";
-    document.getElementById("detail-when").textContent = "Scheduled " + D.fmtDate(r.requested_at);
+    document.getElementById("detail-when").textContent = (r.scheduled_date ? D.fmtDay(r.scheduled_date) : "Not scheduled") + (r.time_start ? "  " + D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end) : "");
     document.getElementById("detail-location").textContent = r.location || "—";
     document.getElementById("detail-zone").textContent = r.zone || "";
     var chip = CHIP[r.status] || ["bg-surface-container-high text-on-surface-variant", r.status];

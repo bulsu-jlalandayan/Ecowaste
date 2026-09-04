@@ -119,9 +119,14 @@
       return;
     }
     var r = rows[0];
+    var items = await D.request(
+      "/rest/v1/collection_request_items?select=waste_type&request_id=eq." + requestId
+    ).catch(function () { return []; });
+    var wasteTypes = items.map(function (i) { return i.waste_type; });
+    if (!wasteTypes.length && r.waste_type) wasteTypes = [r.waste_type];
     if (title) title.textContent = "Request #" + r.request_number;
     setTxt("detail-req-number", r.request_number);
-    setTxt("detail-waste-type", r.waste_type || "General");
+    setTxt("detail-waste-type", wasteTypes.join(", "));
     setTxt("detail-requested", r.requested_at ? D.fmtDate(r.requested_at) : "—");
     setTxt("detail-scheduled-date", r.scheduled_date ? D.fmtDay(r.scheduled_date) : "Not scheduled");
     setTxt("detail-scheduled-time", (r.time_start || "--") + " - " + (r.time_end || "--"));

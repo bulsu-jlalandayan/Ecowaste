@@ -116,6 +116,26 @@
       });
     },
 
+    fmtDay: function (d) {
+      if (!d) return "—";
+      var date = d instanceof Date ? d : new Date(d);
+      if (isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString(undefined, {
+        weekday: "long", month: "short", day: "numeric", year: "numeric"
+      });
+    },
+
+    fmtTime: function (t) {
+      if (!t) return "";
+      var parts = String(t).split(":");
+      if (parts.length < 2) return t;
+      var h = parseInt(parts[0], 10);
+      var m = parts[1];
+      var ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12; if (h === 0) h = 12;
+      return h + ":" + m + " " + ampm;
+    },
+
     fmtNum: function (n) {
       if (n === null || n === undefined || isNaN(Number(n))) return "0";
       var num = Number(n);

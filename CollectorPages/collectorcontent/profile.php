@@ -27,6 +27,24 @@
 <!-- Details Section -->
 <div class="p-stack-lg flex-1 flex flex-col justify-between">
 <div class="space-y-stack-md">
+<div class="flex flex-col bg-surface p-4 rounded-lg border border-border-subtle">
+<span class="font-label-sm text-label-sm text-on-surface-variant mb-3 uppercase tracking-wider">Duty Status</span>
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">work</span>
+</div>
+<div>
+<p id="prof-duty-label" class="font-label-md text-label-md text-on-surface">Loading...</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Set whether you are currently available to take collections.</p>
+</div>
+</div>
+<button id="duty-toggle-btn" class="flex items-center gap-2 px-4 py-2 rounded-lg font-label-md text-label-md transition-colors duration-200" type="button">
+<span class="material-symbols-outlined">power_settings_new</span>
+<span id="duty-toggle-text">—</span>
+</button>
+</div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
 <div class="flex flex-col">
 <span class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Email Address</span>
@@ -102,6 +120,17 @@
     if (chip) {
       chip.className = "font-label-md text-label-md px-4 py-1.5 rounded-full flex items-center gap-2 " + cls;
     }
+
+    var onDuty = (collector && collector.status === "On Route") || (status === "Active");
+    var dutyBtn = document.getElementById("duty-toggle-btn");
+    var dutyText = document.getElementById("duty-toggle-text");
+    var dutyLabel = document.getElementById("prof-duty-label");
+    if (dutyText) dutyText.textContent = onDuty ? "Go Off Duty" : "Go On Duty";
+    if (dutyBtn) {
+      dutyBtn.className = "flex items-center gap-2 px-4 py-2 rounded-lg font-label-md text-label-md transition-colors duration-200 " +
+        (onDuty ? "bg-status-completed hover:bg-emerald-600 text-white" : "bg-primary hover:bg-primary-container text-on-primary");
+    }
+    if (dutyLabel) dutyLabel.textContent = onDuty ? "On Duty — You are available" : "Off Duty — You are unavailable";
   }
 
   async function load() {
@@ -146,6 +175,22 @@
     }).then(function () {
       UI.toast("Password updated.", "success");
     }).catch(function () {});
+  });
+
+  document.getElementById("duty-toggle-btn").addEventListener("click", function () {
+    if (!collector) { UI.toast("Collector profile not found.", "error"); return; }
+    var next = (collector.status === "On Route") ? "Off Duty" : "On Route";
+    var btn = document.getElementById("duty-toggle-btn");
+    btn.disabled = true;
+    D.update("collectors", "user_id=eq." + uid, { status: next })
+      .then(function () {
+        UI.toast(next === "On Route" ? "You are now On Duty." : "You are now Off Duty.", "success");
+        return load();
+      })
+      .catch(function (err) { UI.toast("Could not update duty: " + (err.message || "unknown error"), "error"); })
+      .finally(function () {
+        btn.disabled = false;
+      });
   });
 
   load().catch(function (err) { console.error("EcoWaste profile failed to load:", err); });
