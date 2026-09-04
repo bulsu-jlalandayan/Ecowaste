@@ -73,17 +73,18 @@
                         </button>
 </div>
 </div>
+</div>
 <!-- Data Table -->
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[1000px]">
+<div class="w-full overflow-x-auto">
+<table class="w-full min-w-[900px] table-fixed text-left border-collapse">
 <thead>
 <tr class="bg-surface-container-low border-b border-outline-variant">
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[300px]">Collector Info</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[130px]">ID Number</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[240px]">Vehicle</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[140px]">Status</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[100px]">Rating</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[80px] text-right">Actions</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[30%]">Collector Info</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[13%]">ID Number</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[24%]">Vehicle</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[14%]">Status</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[10%]">Rating</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[9%] text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="collector-tbody" class="divide-y divide-outline-variant/50">
@@ -467,6 +468,3 @@ if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this
   });
 })();
 </script>
-
-
-
