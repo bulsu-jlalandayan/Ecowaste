@@ -38,7 +38,7 @@
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-caps text-label-caps text-on-surface" for="dateTime">Date &amp; Time of Observation</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2.5 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="dateTime" name="dateTime" type="datetime-local">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2.5 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="dateTime" name="dateTime" type="datetime-local" max="">
 </div>
 </div>
 </div>
@@ -97,6 +97,18 @@
 
   var uploads = [];
   var uploadedUrl = null;
+
+  function localNowMax() {
+    var d = new Date();
+    var yyyy = d.getFullYear();
+    var mm = String(d.getMonth() + 1).padStart(2, "0");
+    var dd = String(d.getDate()).padStart(2, "0");
+    var hh = String(d.getHours()).padStart(2, "0");
+    var mi = String(d.getMinutes()).padStart(2, "0");
+    return yyyy + "-" + mm + "-" + dd + "T" + hh + ":" + mi;
+  }
+  var dtInput = document.getElementById("dateTime");
+  if (dtInput) dtInput.max = localNowMax();
 
   var drop = document.getElementById("photo-drop");
   var input = document.getElementById("photo-input");
@@ -166,6 +178,7 @@
       if (!type || !type.value) { UI.toast("Please select a report type.", "error"); return; }
       if (!desc || !desc.value.trim()) { UI.toast("Please provide a description.", "error"); return; }
       if (!addr || !addr.value.trim()) { UI.toast("Please provide a street address or landmark.", "error"); return; }
+      if (dt && dt.value && dt.value > localNowMax()) { UI.toast("Observation date cannot be in the future.", "error"); return; }
 
       var btn = document.getElementById("report-submit-btn");
       if (btn) {

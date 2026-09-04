@@ -31,50 +31,50 @@
 <div class="flex flex-col gap-3">
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Household">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-xl relative overflow-hidden transition-all">
+<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-gray-800 rounded-xl relative overflow-hidden transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">delete</span>
+<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-gray-800/10 flex items-center justify-center text-gray-800">delete</span>
 <div><h3 class="font-body-md text-body-md text-on-surface font-semibold">General Household Waste</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Typical kitchen and bathroom waste.</p></div>
 </div>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Recyclable">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-blue-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant">recycling</span>
+<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600">recycling</span>
 <div><h3 class="font-body-md text-body-md text-on-surface font-semibold">Recyclables</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Paper, plastic, metal, and glass.</p></div>
 </div>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Organic">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-green-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant">park</span>
+<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-green-600/10 flex items-center justify-center text-green-600">park</span>
 <div><h3 class="font-body-md text-body-md text-on-surface font-semibold">Organic / Green Waste</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Garden clippings, food scraps, yard debris.</p></div>
 </div>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Bulky">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-purple-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant">chair</span>
+<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-purple-600/10 flex items-center justify-center text-purple-600">chair</span>
 <div><h3 class="font-body-md text-body-md text-on-surface font-semibold">Bulky Items</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Furniture, mattresses, large appliances.</p></div>
 </div>
 </div>
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="E-Waste">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-xl transition-all">
+<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-red-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-error-container/20 flex items-center justify-center text-error">warning</span>
+<span class="material-symbols-outlined w-11 h-11 rounded-lg bg-red-600/10 flex items-center justify-center text-red-600">warning</span>
 <div><h3 class="font-body-md text-body-md text-on-surface font-semibold">Hazardous / E-Waste</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Batteries, chemicals, electronics.</p></div>
 </div>
 </div>
