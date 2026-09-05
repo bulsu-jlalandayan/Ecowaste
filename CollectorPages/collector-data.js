@@ -90,6 +90,23 @@
       return rows.length;
     },
 
+    // ---- Storage (Supabase Storage for collection proof photos) ----
+    upload: async function (file, bucket) {
+      bucket = bucket || "waste-reports";
+      var uid = this.currentUserId();
+      var path = uid + "/" + Date.now() + "_" + file.name.replace(/[^\w.\-]/g, "_");
+      var res = await fetch(SUPABASE_URL + "/storage/v1/object/" + bucket + "/" + path, {
+        method: "POST",
+        headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + (localStorage.getItem("sb-access-token") || ""), "Content-Type": file.type || "application/octet-stream" },
+        body: file
+      });
+      var out = await res.json();
+      if (!res.ok) {
+        throw new Error(out.message || out.error || "Upload failed.");
+      }
+      return SUPABASE_URL + "/storage/v1/object/public/" + bucket + "/" + path;
+    },
+
     esc: function (s) {
       if (s === null || s === undefined) return "";
       return String(s).replace(/[&<>"']/g, function (c) {

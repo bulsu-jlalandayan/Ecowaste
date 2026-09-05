@@ -69,6 +69,8 @@
   function card(r) {
     var m = ACTION_META[r.action] || { icon: "event", title: r.action, status: "—", cls: "bg-surface-container-high text-on-surface-variant" };
     var d = r.created_at ? new Date(r.created_at) : null;
+    var hasRequest = r.request_id && (r.action === "request_submitted" || r.action === "collection_completed");
+    var hasReport = r.report_id && r.action === "report_submitted";
     var div = document.createElement("div");
     div.className = "flex items-start gap-3 p-4 bg-surface-container-lowest border border-border-subtle rounded-xl transition-colors";
     div.innerHTML =
@@ -83,7 +85,71 @@
       "</p>" +
       (r.description ? '<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">' + D.esc(r.description) + "</p>" : "") +
       "</div>";
+    if (hasRequest) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "shrink-0 mt-1 flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary text-primary font-label-sm text-label-sm hover:bg-primary/5 transition-colors";
+      btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">visibility</span> View';
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (window.EcoWasteAppState) window.EcoWasteAppState.selectedRequestId = r.request_id;
+        if (window.EcoWasteRouter) window.EcoWasteRouter.go("requestdetails");
+      });
+      div.appendChild(btn);
+    } else if (hasReport) {
+      var btn2 = document.createElement("button");
+      btn2.type = "button";
+      btn2.className = "shrink-0 mt-1 flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary text-primary font-label-sm text-label-sm hover:bg-primary/5 transition-colors";
+      btn2.innerHTML = '<span class="material-symbols-outlined text-[14px]">visibility</span> View';
+      btn2.addEventListener("click", function (e) {
+        e.stopPropagation();
+        showReportDetail(r.report_id);
+      });
+      div.appendChild(btn2);
+    }
     return div;
+  }
+
+  async function showReportDetail(reportId) {
+    if (!window.EcoWasteUI) return;
+    var UI = window.EcoWasteUI;
+    try {
+      var rows = await D.list("waste_reports", "report_number,waste_category,report_type,description,address,photo_url,observed_at,status", null, "id=eq." + reportId);
+      if (!rows || !rows.length) { UI.toast("Report not found.", "error"); return; }
+      var rpt = rows[0];
+      var cat = rpt.waste_category || "—";
+      var type = rpt.report_type || "—";
+      var html =
+        '<div class="flex flex-col gap-2.5 text-left">' +
+        '<div class="flex items-start justify-between gap-2"><span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Report #</span><span class="font-data-mono text-data-mono text-primary font-medium text-right">' + D.esc(rpt.report_number) + '</span></div>' +
+        '<div class="flex items-start justify-between gap-2"><span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Category</span><span class="font-body-md text-body-md text-on-surface text-right">' + D.esc(cat) + '</span></div>' +
+        '<div class="flex items-start justify-between gap-2"><span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Type</span><span class="font-body-md text-body-md text-on-surface text-right">' + D.esc(type) + '</span></div>' +
+        '<div class="flex items-start justify-between gap-2"><span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Status</span><span class="font-body-md text-body-md text-on-surface font-semibold text-right">' + D.esc(rpt.status) + '</span></div>' +
+        '<div class="flex items-start justify-between gap-2"><span class="font-label-caps text-label-caps text-on-surface-variant shrink-0">Observed</span><span class="font-body-md text-body-md text-on-surface text-right">' + D.fmtDate(rpt.observed_at) + '</span></div>' +
+        '<div><span class="font-label-caps text-label-caps text-on-surface-variant">Address</span><p class="font-body-md text-body-md text-on-surface mt-0.5">' + D.esc(rpt.address) + '</p></div>' +
+        (rpt.description ? '<div><span class="font-label-caps text-label-caps text-on-surface-variant">Description</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">' + D.esc(rpt.description) + '</p></div>' : '') +
+        (rpt.photo_url ? '<div><span class="font-label-caps text-label-caps text-on-surface-variant">Photo</span><img src="' + D.esc(rpt.photo_url) + '" class="mt-1 rounded-lg w-full max-h-48 object-cover" alt="Evidence photo"></div>' : '') +
+        '</div>';
+      var overlay = document.createElement("div");
+      overlay.className = "fixed inset-0 z-[60] flex items-center justify-center p-4";
+      overlay.innerHTML =
+        '<div class="absolute inset-0 bg-black/40" data-ui-close></div>' +
+        '<div class="relative bg-surface-container-lowest border border-outline-variant rounded-xl shadow-2xl w-full max-w-md overflow-hidden">' +
+        '<div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">' +
+        '<h3 class="font-headline-md text-headline-md text-on-surface">Report Details</h3>' +
+        '<button type="button" data-ui-close class="text-on-surface-variant hover:text-on-surface transition-colors p-1"><span class="material-symbols-outlined">close</span></button>' +
+        "</div>" +
+        '<div class="p-5 max-h-[70vh] overflow-y-auto">' + html + "</div>" +
+        '<div class="flex justify-end px-5 py-4 border-t border-outline-variant bg-surface-container-low/50">' +
+        '<button type="button" data-ui-close class="px-4 py-2 rounded-lg bg-primary text-on-primary font-body-md text-body-md font-semibold transition-colors">Close</button>' +
+        "</div></div>";
+      overlay.querySelectorAll("[data-ui-close]").forEach(function (el) {
+        el.addEventListener("click", function () { overlay.remove(); });
+      });
+      document.body.appendChild(overlay);
+    } catch (err) {
+      UI.toast(err.message || "Failed to load report details.", "error");
+    }
   }
 
   function empty(msg) {

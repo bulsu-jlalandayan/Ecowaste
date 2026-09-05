@@ -4,13 +4,14 @@
   var app = document.getElementById("app");
   var loading = false;
   var currentView = null;
-  var appState = { selectedRequestId: null };
+  var appState = { selectedRequestId: null, editingRecordId: null };
 
   var TITLES = {
     dashboard: "Dashboard",
     assigned_collections: "Assigned Collections",
     collection_details: "Collection Details",
     completed_collections: "Completed Collections",
+    records: "My Records",
     waste_records: "Waste Records",
     notifications: "Notifications",
     activity_history: "Activity History",
@@ -20,7 +21,8 @@
 
   var NAV_GROUP = {
     assigned_collections: "assigned_collections",
-    collection_details: "assigned_collections"
+    collection_details: "assigned_collections",
+    waste_records: "records"
   };
 
   function go(view) {
@@ -106,6 +108,7 @@
           e.preventDefault();
           if (el.hasAttribute("data-request-id")) {
             appState.selectedRequestId = el.getAttribute("data-request-id");
+            appState.editingRecordId = null;
           }
           go(view);
         }

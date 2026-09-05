@@ -10,6 +10,7 @@
     assigned_collections: "Assigned Collections",
     collection_details: "Collection Details",
     completed_collections: "Completed Collections",
+    records: "My Records",
     waste_records: "Waste Records",
     notifications: "Notifications",
     activity_history: "Activity History",
@@ -23,14 +24,15 @@
     assigned_collections: "assigned_collections",
     collection_details: "assigned_collections",
     completed_collections: "completed_collections",
-    waste_records: "waste_records",
+    records: "records",
+    waste_records: "records",
     notifications: "notifications",
     activity_history: "activity_history",
     profile: "profile",
     settings: "settings"
   };
 
-  var appState = { selectedRequestId: null };
+  var appState = { selectedRequestId: null, editingRecordId: null };
 
   function go(view) {
     view = view || "dashboard";
@@ -121,6 +123,7 @@
         e.preventDefault();
         if (el.hasAttribute("data-request-id")) {
           appState.selectedRequestId = el.getAttribute("data-request-id");
+          appState.editingRecordId = null;
         }
         closeSheet();
         go(view);

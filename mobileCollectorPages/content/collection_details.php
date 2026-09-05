@@ -14,7 +14,8 @@
 <span id="detail-status-chip" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container-high text-on-surface-variant">—</span>
 </div>
 <p id="detail-waste-type" class="font-headline-sm text-headline-sm text-on-surface mt-2 flex items-center gap-2">—</p>
-<p id="detail-when" class="font-label-sm text-label-sm text-on-surface-variant mt-1">—</p>
+<p id="detail-date" class="font-label-sm text-label-sm text-on-surface-variant mt-1.5 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> <span id="detail-date-value">—</span></p>
+<p id="detail-time" class="font-label-sm text-label-sm text-on-surface-variant mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> <span id="detail-time-value">—</span></p>
 </div>
 </div>
 
@@ -104,49 +105,85 @@
     var host = document.getElementById("detail-actions");
     host.innerHTML = "";
     if (r.status === "Scheduled") {
-      host.innerHTML +=
-        '<button id="start-collection-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-md text-label-md shadow-md shadow-primary/25 hover:opacity-90 active:scale-[0.99] transition-all" type="button">' +
-        '<span class="material-symbols-outlined text-[20px]">play_circle</span> Start Collection</button>';
-      document.getElementById("start-collection-btn").addEventListener("click", function () {
-        UI.confirm({
-          title: "Start collection?",
-          message: "Mark this collection as In Progress?",
-          confirmLabel: "Start"
-        }).then(function (ok) {
-          if (!ok) throw new Error("cancelled");
-          return D.update("collection_requests", "id=eq." + r.id, { status: "In Transit" });
-        }).then(function () {
-          UI.toast.success("Collection started.");
-          load();
-        }).catch(function (err) {
-          if (err.message !== "cancelled") UI.toast.error("Could not start: " + (err.message || "unknown error"));
+      if (isReady(r)) {
+        host.innerHTML +=
+          '<button id="start-collection-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-md text-label-md shadow-md shadow-primary/25 hover:opacity-90 active:scale-[0.99] transition-all" type="button">' +
+          '<span class="material-symbols-outlined text-[20px]">play_circle</span> Start Collection</button>';
+        document.getElementById("start-collection-btn").addEventListener("click", function () {
+          UI.confirm({
+            title: "Start collection?",
+            message: "Mark this collection as In Progress?",
+            confirmLabel: "Start"
+          }).then(function (ok) {
+            if (!ok) throw new Error("cancelled");
+            return D.update("collection_requests", "id=eq." + r.id, { status: "In Transit" });
+          }).then(function () {
+            UI.toast.success("Collection started.");
+            load();
+          }).catch(function (err) {
+            if (err.message !== "cancelled") UI.toast.error("Could not start: " + (err.message || "unknown error"));
+          });
         });
-      });
+      } else {
+        host.innerHTML +=
+          '<button disabled class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-md text-label-md opacity-40 cursor-not-allowed" type="button">' +
+          '<span class="material-symbols-outlined text-[20px]">play_circle</span> Start Collection</button>' +
+          '<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Available ' + D.esc(scheduleHint(r)) + '</p>';
+      }
     } else if (r.status === "In Transit") {
       host.innerHTML +=
-        '<button id="record-waste-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-md text-label-md shadow-md shadow-primary/25 hover:opacity-90 active:scale-[0.99] transition-all" data-view="waste_records" type="button">' +
-        '<span class="material-symbols-outlined text-[20px]">delete_sweep</span> Record Waste</button>' +
-        '<button id="complete-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-status-completed text-white font-label-md text-label-md shadow-md shadow-emerald-500/25 hover:bg-emerald-600 active:scale-[0.99] transition-all" type="button">' +
-        '<span class="material-symbols-outlined text-[20px]">check_circle</span> Mark as Completed</button>';
-      document.getElementById("complete-btn").addEventListener("click", function () {
-        UI.confirm({
-          title: "Complete collection?",
-          message: "Mark this collection as Completed?",
-          confirmLabel: "Complete"
-        }).then(function (ok) {
-          if (!ok) throw new Error("cancelled");
-          return D.update("collection_requests", "id=eq." + r.id, {
-            status: "Completed",
-            completed_at: new Date().toISOString()
+        '<button id="record-waste-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-md text-label-md shadow-md shadow-primary/25 hover:opacity-90 active:scale-[0.99] transition-all" data-view="waste_records" data-request-id="' + r.id + '" type="button">' +
+        '<span class="material-symbols-outlined text-[20px]">delete_sweep</span> Record Waste</button>';
+      if (isReady(r)) {
+        host.innerHTML +=
+          '<button id="complete-btn" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-status-completed text-white font-label-md text-label-md shadow-md shadow-emerald-500/25 hover:bg-emerald-600 active:scale-[0.99] transition-all" type="button">' +
+          '<span class="material-symbols-outlined text-[20px]">check_circle</span> Mark as Completed</button>';
+        document.getElementById("complete-btn").addEventListener("click", function () {
+          UI.confirm({
+            title: "Complete collection?",
+            message: "Mark this collection as Completed?",
+            confirmLabel: "Complete"
+          }).then(function (ok) {
+            if (!ok) throw new Error("cancelled");
+            return D.update("collection_requests", "id=eq." + r.id, {
+              status: "Completed",
+              completed_at: new Date().toISOString()
+            });
+          }).then(function () {
+            UI.toast.success("Collection completed.");
+            load();
+          }).catch(function (err) {
+            if (err.message !== "cancelled") UI.toast.error("Could not complete: " + (err.message || "unknown error"));
           });
-        }).then(function () {
-          UI.toast.success("Collection completed.");
-          load();
-        }).catch(function (err) {
-          if (err.message !== "cancelled") UI.toast.error("Could not complete: " + (err.message || "unknown error"));
         });
-      });
+      } else {
+        host.innerHTML +=
+          '<button disabled class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl bg-status-completed text-white font-label-md text-label-md opacity-40 cursor-not-allowed" type="button">' +
+          '<span class="material-symbols-outlined text-[20px]">check_circle</span> Mark as Completed</button>' +
+          '<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> Available ' + D.esc(scheduleHint(r)) + '</p>';
+      }
     }
+  }
+
+  function scheduledStart(r) {
+    if (!r.scheduled_date) return null;
+    var date = String(r.scheduled_date).slice(0, 10).split("-");
+    var time = r.time_start ? String(r.time_start).split(":") : [0, 0];
+    var d = new Date(
+      parseInt(date[0], 10), (parseInt(date[1], 10) || 1) - 1, parseInt(date[2], 10) || 1,
+      parseInt(time[0], 10) || 0, parseInt(time[1], 10) || 0
+    );
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function isReady(r) {
+    var start = scheduledStart(r);
+    return !start || new Date() >= start;
+  }
+
+  function scheduleHint(r) {
+    return (r.scheduled_date ? D.fmtDay(r.scheduled_date) : "the scheduled date") +
+      (r.time_start ? " at " + D.fmtTime(r.time_start) : "");
   }
 
   function renderCompleted(r) {
@@ -176,7 +213,10 @@
     wasteTypeEl.innerHTML =
       '<span class="material-symbols-outlined text-[20px] ' + wt.chip + ' rounded-lg p-1">' + wt.icon + "</span>" +
       '<span class="font-headline-sm text-headline-sm text-on-surface">' + D.esc(r.waste_type || "General") + "</span>";
-    document.getElementById("detail-when").textContent = (r.scheduled_date ? D.fmtDay(r.scheduled_date) : "Not scheduled") + (r.time_start ? "  " + D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end) : "");
+    document.getElementById("detail-date-value").textContent = r.scheduled_date ? D.fmtDay(r.scheduled_date) : "Not scheduled";
+    document.getElementById("detail-time-value").textContent = r.time_start
+      ? D.fmtTime(r.time_start) + " - " + (r.time_end ? D.fmtTime(r.time_end) : "--")
+      : "No time window";
     document.getElementById("detail-location").textContent = r.location || "—";
     document.getElementById("detail-zone").textContent = r.zone || "";
     var chip = CHIP[r.status] || ["bg-surface-container-high text-on-surface-variant", r.status];

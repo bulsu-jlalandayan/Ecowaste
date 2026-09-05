@@ -31,7 +31,7 @@
 <div class="flex flex-col gap-3">
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Household">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-gray-800 rounded-xl relative overflow-hidden transition-all">
+<div class="waste-card-box p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-gray-800 rounded-xl relative overflow-hidden transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined w-11 h-11 rounded-lg bg-gray-800/10 flex items-center justify-center text-gray-800">delete</span>
@@ -41,7 +41,7 @@
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Recyclable">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-blue-600 rounded-xl transition-all">
+<div class="waste-card-box p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-blue-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined w-11 h-11 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600">recycling</span>
@@ -51,7 +51,7 @@
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Organic">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-green-600 rounded-xl transition-all">
+<div class="waste-card-box p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-green-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined w-11 h-11 rounded-lg bg-green-600/10 flex items-center justify-center text-green-600">park</span>
@@ -61,7 +61,7 @@
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="Bulky">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-purple-600 rounded-xl transition-all">
+<div class="waste-card-box p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-purple-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined w-11 h-11 rounded-lg bg-purple-600/10 flex items-center justify-center text-purple-600">chair</span>
@@ -71,7 +71,7 @@
 </label>
 <label class="cursor-pointer waste-card">
 <input class="sr-only waste-type" name="waste_type" type="checkbox" value="E-Waste">
-<div class="p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-red-600 rounded-xl transition-all">
+<div class="waste-card-box p-4 bg-surface-container-lowest border border-outline-variant border-l-4 border-l-red-600 rounded-xl transition-all">
 <div class="absolute top-4 right-4 text-primary check-ic" style="visibility:hidden"><span class="material-symbols-outlined filled">check_circle</span></div>
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined w-11 h-11 rounded-lg bg-red-600/10 flex items-center justify-center text-red-600">warning</span>
@@ -159,16 +159,26 @@
     "E-Waste": "Hazardous / E-Waste"
   };
 
-  // Block past dates.
-  function localToday() {
-    var d = new Date();
+  // Block past dates and dates too far in advance (max 7 days).
+  function localDateStr(d) {
     var mm = String(d.getMonth() + 1).padStart(2, "0");
     var dd = String(d.getDate()).padStart(2, "0");
     return d.getFullYear() + "-" + mm + "-" + dd;
   }
-  var today = localToday();
+  var today = localDateStr(new Date());
+  var maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 7);
+  var maxDateStr = localDateStr(maxDate);
   var dateInput = document.getElementById("req-date");
-  if (dateInput) dateInput.min = today;
+  if (dateInput) {
+    dateInput.min = today;
+    dateInput.max = maxDateStr;
+  }
+
+  function localNowTime() {
+    var d = new Date();
+    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
 
   function updateStep() {
     document.querySelectorAll(".step-panel").forEach(function (panel) {
@@ -234,7 +244,10 @@
       state.time_end = document.getElementById("req-end").value;
       if (!state.scheduled_date) { UI.toast("Please pick a preferred date.", "error"); return; }
       if (state.scheduled_date < today) { UI.toast("Please select today or a future date.", "error"); return; }
+      if (state.scheduled_date > maxDateStr) { UI.toast("Requests can only be scheduled up to 7 days in advance.", "error"); return; }
       if (!state.time_start || !state.time_end) { UI.toast("Please pick a time window.", "error"); return; }
+      if (state.time_end <= state.time_start) { UI.toast("The end time must be later than the start time.", "error"); return; }
+      if (state.scheduled_date === today && state.time_start < localNowTime()) { UI.toast("The start time must be in the future for today.", "error"); return; }
     } else if (step === 3) {
       submit();
       return;
@@ -295,17 +308,26 @@
   function styleCard(cb) {
     var label = cb.closest(".waste-card");
     if (!label) return;
-    var box = label.querySelector("div");
+    var box = label.querySelector("div.waste-card-box");
+    if (!box) box = label.querySelector("div");
     var checked = cb.checked;
-    box.classList.toggle("border-2", checked);
-    box.classList.toggle("border-primary", checked);
-    box.classList.toggle("border", !checked);
-    box.classList.toggle("border-outline-variant", !checked);
+    box.classList.toggle("ring-2", checked);
+    box.classList.toggle("ring-primary/40", checked);
+    box.classList.toggle("bg-primary/5", checked);
     var ic = box.querySelector(".check-ic");
     if (ic) ic.style.visibility = checked ? "visible" : "hidden";
   }
+  function syncCardFromInput(cb) { styleCard(cb); }
   document.querySelectorAll("input.waste-type").forEach(function (cb) {
-    cb.addEventListener("change", function () { styleCard(cb); });
+    cb.addEventListener("change", function () { syncCardFromInput(cb); });
+  });
+  document.querySelectorAll("label.waste-card").forEach(function (lbl) {
+    var cb = lbl.querySelector("input.waste-type");
+    if (cb) {
+      lbl.addEventListener("click", function () {
+        requestAnimationFrame(function () { styleCard(cb); });
+      });
+    }
   });
 
   document.getElementById("wizard-next").addEventListener("click", next);

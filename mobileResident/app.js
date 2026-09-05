@@ -232,4 +232,5 @@
 
   window.EcoWasteRouter = { go: go };
   window.EcoWasteAppState = appState;
+  window.EcoWasteRefreshBadge = refreshNotifBadge;
 })();

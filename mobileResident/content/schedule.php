@@ -77,6 +77,43 @@
   function isGeneralType(wt) { return /general|household/i.test(wt || ""); }
   function monthLabel(d) { return d.toLocaleString("en-US", { month: "long", year: "numeric" }); }
   function keyFor(isoDate) { return (isoDate || "").slice(0, 10); }
+  function localDateKey(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function showDayDetail(dayKey, items) {
+    if (!window.EcoWasteUI) return;
+    var UI = window.EcoWasteUI;
+    var label = new Date(dayKey + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    var rows = items.map(function (s) {
+      var color = typeColor(s.waste_type);
+      return '<div class="flex items-start gap-3 p-3 border border-border-subtle rounded-xl bg-surface-container-low">' +
+        '<span class="material-symbols-outlined w-9 h-9 rounded-full shrink-0 flex items-center justify-center" style="background:' + color + "22;color:" + color + '">' + typeIcon(s.waste_type) + "</span>" +
+        '<div class="flex-1 min-w-0">' +
+        '<div class="flex items-center justify-between gap-2"><p class="font-body-md text-body-md font-semibold text-on-surface">' + D.esc(s.waste_type || "Collection") + "</p>" +
+        '<span class="px-2 py-0.5 rounded-full font-label-caps text-[10px] ' + (s.status === "Confirmed" ? "bg-secondary-container text-on-secondary-container" : "border border-outline text-on-surface-variant") + '">' + D.esc((s.status || "Scheduled").toUpperCase()) + "</span></div>" +
+        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtTime(s.time_start) + " - " + D.fmtTime(s.time_end)) + (s.zone ? " · " + D.esc(s.zone) : "") + "</p>" +
+        (s.notes ? '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(s.notes) + "</p>" : "") +
+        "</div></div>";
+    }).join("");
+    var overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 z-[60] flex items-center justify-center p-4";
+    overlay.innerHTML =
+      '<div class="absolute inset-0 bg-black/40" data-ui-close></div>' +
+      '<div class="relative bg-surface-container-lowest border border-outline-variant rounded-xl shadow-2xl w-full max-w-md overflow-hidden">' +
+      '<div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">' +
+      '<h3 class="font-headline-md text-headline-md text-on-surface">' + D.esc(label) + "</h3>" +
+      '<button type="button" data-ui-close class="text-on-surface-variant hover:text-on-surface transition-colors p-1"><span class="material-symbols-outlined">close</span></button>' +
+      "</div>" +
+      '<div class="p-5 flex flex-col gap-2 max-h-[70vh] overflow-y-auto">' + rows + "</div>" +
+      '<div class="flex justify-end px-5 py-4 border-t border-outline-variant bg-surface-container-low/50">' +
+      '<button type="button" data-ui-close class="px-4 py-2 rounded-lg bg-primary text-on-primary font-body-md text-body-md font-semibold transition-colors">Close</button>' +
+      "</div></div>";
+    overlay.querySelectorAll("[data-ui-close]").forEach(function (el) {
+      el.addEventListener("click", function () { overlay.remove(); });
+    });
+    document.body.appendChild(overlay);
+  }
 
   function renderCalendar() {
     var label = document.getElementById("cal-month-label");
@@ -105,17 +142,31 @@
     }
     for (var day = 1; day <= daysInMonth; day++) {
       var d = new Date(year, month, day);
-      var dk = d.toISOString().slice(0, 10);
+      var dk = localDateKey(d);
       var items = byDate[dk] || [];
-      var isToday = new Date().toDateString() === d.toDateString();
+      var isToday = localDateKey(new Date()) === dk;
       var cell = document.createElement("div");
       cell.className = "aspect-square p-0.5 flex flex-col items-center justify-start rounded-lg " +
         (isToday ? "border-2 border-primary bg-surface-container-low" : "border border-outline-variant bg-surface-bright");
       cell.innerHTML = '<span class="font-data-mono text-data-mono text-[12px] ' + (isToday ? "font-bold text-primary" : "text-on-surface-variant") + ' mt-0.5">' + day + "</span>";
       if (items.length) {
-        cell.innerHTML += '<span class="mt-auto mb-0.5 flex gap-0.5">' + items.slice(0, 3).map(function (s) {
-          return '<span class="w-1.5 h-1.5 rounded-full" style="background:' + typeColor(s.waste_type) + '"></span>';
-        }).join("") + "</span>";
+        cell.innerHTML += '<div class="mt-auto mb-0.5 flex flex-col items-center gap-0.5 w-full">' +
+          '<span class="flex gap-0.5">' + items.slice(0, 3).map(function (s) {
+            return '<span class="w-1.5 h-1.5 rounded-full" style="background:' + typeColor(s.waste_type) + '"></span>';
+          }).join("") + "</span>" +
+          '<span class="text-[9px] font-label-caps text-primary underline">View</span></div>';
+        cell.classList.add("cursor-pointer", "hover:bg-surface-container-low");
+        cell.addEventListener("click", function (dk2) {
+          return function () {
+            var dayItems = all.filter(function (s) {
+              if (keyFor(s.collection_date) !== dk2) return false;
+              if (activeType === "GENERAL" && !isGeneralType(s.waste_type)) return false;
+              if (activeType === "RECYCLING" && !isRecyclingType(s.waste_type)) return false;
+              return true;
+            });
+            if (dayItems.length) showDayDetail(dk2, dayItems);
+          };
+        }(dk));
       }
       grid.appendChild(cell);
     }
@@ -168,7 +219,7 @@
       "collection_schedules",
       "zone,waste_type,collection_date,time_start,time_end,status,notes",
       "collection_date.asc",
-      "collection_date=gte." + new Date().toISOString().slice(0, 10)
+      "collection_date=gte." + localDateKey(new Date())
     ).catch(function () { return []; });
     renderAll();
   }

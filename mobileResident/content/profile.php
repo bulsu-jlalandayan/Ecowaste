@@ -56,9 +56,12 @@
 <div class="w-4 h-4 bg-on-primary rounded-full ml-auto" data-knob></div>
 </div>
 </div>
-<div class="px-4 py-3 flex items-center justify-between gap-3">
+<div class="px-4 py-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-surface-container-low transition-colors" id="pref-language-row">
 <div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">language</span><span class="font-body-md text-body-md text-on-surface-variant">Language</span></div>
+<div class="flex items-center gap-1">
 <span class="font-body-md text-body-md text-on-surface text-right" id="pref-language">English</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+</div>
 </div>
 <div class="px-4 py-3 flex items-center justify-between gap-3">
 <div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">local_shipping</span><span class="font-body-md text-body-md text-on-surface">Collection day reminders</span></div>
@@ -201,10 +204,15 @@
         var url = await D.upload(file, "avatars");
         await D.update("profiles", "id=eq." + uid, { avatar_url: url });
         profile = Object.assign({}, profile || {}, { avatar_url: url });
-        D.setProfileAvatar(url);
+        if (D && typeof D.setProfileAvatar === "function") {
+          D.setProfileAvatar(url);
+        }
+        var av = document.getElementById("prof-avatar");
+        if (av) {
+          av.innerHTML = '<img src="' + D.esc(url) + '" alt="Profile photo" class="w-full h-full object-cover">';
+        }
         window.dispatchEvent(new CustomEvent("ecowaste:profile-updated", { detail: { avatarUrl: url } }));
         UI.toast("Profile photo updated.");
-        load();
       } catch (err) {
         UI.toast(err.message || "Upload failed.", "error");
       }
@@ -215,10 +223,41 @@
     el.addEventListener("click", function () {
       var key = el.getAttribute("data-pref");
       var next = !(prefs ? prefs[key] !== false : true);
+      var knob = el.querySelector("[data-knob]");
+      if (knob) {
+        if (next) { el.classList.add("bg-primary"); el.classList.remove("bg-surface-variant"); knob.classList.add("ml-auto"); }
+        else { el.classList.remove("bg-primary"); el.classList.add("bg-surface-variant"); knob.classList.remove("ml-auto"); }
+      }
       upsertPref((function () { var o = {}; o[key] = next; return o; })())
-        .then(function () { prefs = Object.assign({}, prefs || {}, { [key]: next }); renderToggle(el.id, next); })
-        .catch(function (err) { UI.toast(err.message || "Failed to update preference.", "error"); });
+        .then(function () { prefs = Object.assign({}, prefs || {}, { [key]: next }); })
+        .catch(function (err) {
+          UI.toast(err.message || "Failed to update preference.", "error");
+          renderToggle(el.id, !!(prefs ? prefs[key] !== false : true));
+        });
     });
+  });
+
+  var langRow = document.getElementById("pref-language-row");
+  if (langRow) langRow.addEventListener("click", function () {
+    var langs = [
+      { label: "English", value: "English" },
+      { label: "Filipino", value: "Filipino" }
+    ];
+    UI.openModal({
+      title: "Language",
+      submitLabel: "Save",
+      fields: [
+        { name: "language", label: "Select language", type: "select", required: true, options: langs, value: (prefs && prefs.language) ? prefs.language : "English" }
+      ],
+      onSubmit: function (values) {
+        return upsertPref({ language: values.language }).then(function () {
+          prefs = Object.assign({}, prefs || {}, { language: values.language });
+        });
+      }
+    }).then(function () {
+      UI.toast("Language preference saved.");
+      setTxt("pref-language", (prefs && prefs.language) ? prefs.language : "English");
+    }).catch(function () { });
   });
 
   async function load() {

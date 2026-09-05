@@ -66,7 +66,7 @@
     var wts = (r.waste_types && r.waste_types.length) ? r.waste_types : [r.waste_type || "General"];
     var wm = WASTE_META[wts[0]] || { icon: "delete", cls: "text-primary" };
     var div = document.createElement("div");
-    div.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0 cursor-pointer";
+    div.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0 cursor-pointer group";
     div.setAttribute("role", "button");
     div.setAttribute("tabindex", "0");
     div.setAttribute("data-view", "requestdetails");
@@ -79,7 +79,8 @@
       '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold shrink-0 ' + sm.cls + '">' + sm.label + "</span></div>" +
       '<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">' + D.esc(wts.join(", ")) + "</p>" +
       '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDate(r.requested_at)) + "</p>" +
-      "</div>";
+      "</div>" +
+      '<span class="material-symbols-outlined text-on-surface-variant text-[20px] shrink-0 mt-1 group-hover:text-primary">chevron_right</span>';
     return div;
   }
 
@@ -141,6 +142,22 @@
   if (search) search.addEventListener("input", render);
   document.querySelectorAll("#req-filters button").forEach(function (b) {
     b.addEventListener("click", function () { applyFilter(b); });
+  });
+
+  listEl.addEventListener("click", function (e) {
+    var card = e.target.closest("[data-view='requestdetails']");
+    if (!card) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.EcoWasteAppState) window.EcoWasteAppState.selectedRequestId = card.getAttribute("data-request-id");
+    if (window.EcoWasteRouter) window.EcoWasteRouter.go("requestdetails");
+  });
+  listEl.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    var card = e.target.closest("[data-view='requestdetails']");
+    if (!card) return;
+    if (window.EcoWasteAppState) window.EcoWasteAppState.selectedRequestId = card.getAttribute("data-request-id");
+    if (window.EcoWasteRouter) window.EcoWasteRouter.go("requestdetails");
   });
 
   load().catch(function (err) {

@@ -41,7 +41,7 @@
       "</div>";
     if (unread) {
       var dot = document.createElement("span");
-      dot.className = "w-2.5 h-2.5 rounded-full bg-primary shrink-0 mt-2";
+      dot.className = "w-2.5 h-2.5 rounded-full bg-primary shrink-0 mt-2 notif-unread-dot";
       div.appendChild(dot);
     }
     if (unread) {
@@ -50,8 +50,10 @@
           .then(function () {
             div.classList.remove("border-l-primary");
             div.classList.add("opacity-75");
-            if (div.querySelector(".w-2\\.5")) div.removeChild(div.querySelector(".w-2\\.5"));
+            var dotEl = div.querySelector(".notif-unread-dot");
+            if (dotEl) div.removeChild(dotEl);
             renderCount();
+            if (window.EcoWasteRefreshBadge) window.EcoWasteRefreshBadge();
           })
           .catch(function () {});
       });
@@ -96,6 +98,7 @@
     }).then(function () {
       UI.toast("All notifications marked as read.");
       load();
+      if (window.EcoWasteRefreshBadge) window.EcoWasteRefreshBadge();
     }).catch(function (err) {
       UI.toast(err.message || "Could not update notifications.", "error");
     });
