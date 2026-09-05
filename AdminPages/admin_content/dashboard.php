@@ -27,7 +27,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Total Users</span>
 <span class="flex items-center text-primary font-label-md text-label-md bg-secondary-fixed px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-users-change" class="font-label-md text-label-md text-primary">12%</span>
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-users-change" class="font-label-md text-label-md text-primary">—</span>
                             </span>
 </div>
 <div id="total-users-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -41,7 +41,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Active Requests</span>
 <span class="flex items-center text-error font-label-md text-label-md bg-error-container px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-requests-change" class="font-label-md text-label-md text-error">5%</span>
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-requests-change" class="font-label-md text-label-md text-error">—</span>
                             </span>
 </div>
 <div id="active-requests-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -55,7 +55,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Pending Assignments</span>
 <span class="flex items-center text-on-surface-variant font-label-md text-label-md bg-surface-variant px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">horizontal_rule</span> <span id="kpi-pending-change" class="font-label-md text-label-md text-on-surface-variant">0%</span>
+<span class="material-symbols-outlined text-xs mr-1">horizontal_rule</span> <span id="kpi-pending-change" class="font-label-md text-label-md text-on-surface-variant">—</span>
                             </span>
 </div>
 <div id="pending-assignments-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -69,7 +69,7 @@
 <div class="flex items-center justify-between mb-md">
 <span class="font-title-md text-title-md text-on-surface-variant">Recycling Rate</span>
 <span class="flex items-center text-primary font-label-md text-label-md bg-secondary-fixed px-2 py-1 rounded-full">
-<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-rate-change" class="font-label-md text-label-md text-primary">2.4%</span>
+<span class="material-symbols-outlined text-xs mr-1">arrow_upward</span> <span id="kpi-rate-change" class="font-label-md text-label-md text-primary">—</span>
                             </span>
 </div>
 <div id="recycling-rate-value" class="font-display-lg text-display-lg text-on-surface">—</div>
@@ -87,7 +87,7 @@
 </button>
 </div>
 <!-- Decorative Chart Area -->
-<div class="relative h-64 w-full bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant"><canvas id="weeklyVolumeChart" class="w-full h-full"></canvas></div>
+<div class="relative h-64 w-full bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant"><canvas id="weeklyVolumeChart" class="w-full h-full"></canvas><div id="volume-chart-empty" class="absolute inset-0 items-center justify-center font-body-md text-body-md text-on-surface-variant" style="display:none;">No collection data available yet.</div></div>
 <div class="flex justify-center gap-md mt-sm">
 <div class="flex items-center gap-xs"><div class="w-3 h-3 rounded-full bg-primary"></div><span class="font-label-md text-label-md text-on-surface-variant">Total Waste</span></div>
 <div class="flex items-center gap-xs"><div class="w-3 h-3 rounded-full bg-secondary"></div><span class="font-label-md text-label-md text-on-surface-variant">Recycled</span></div>
@@ -98,7 +98,7 @@
 <!-- Doughnut -->
 <div class="flex-1 bg-surface border border-outline-variant rounded-xl p-lg shadow-card flex flex-col">
 <h3 class="font-title-lg text-title-lg text-on-surface mb-md">Waste Distribution</h3>
-<div class="flex-1 flex items-center justify-center relative"><svg class="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="transparent" stroke="#7b7487" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle><circle id="dist-recycled-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#4648d4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="251.3"></circle><circle id="dist-total-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#630ed4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle></svg><div class="absolute flex flex-col items-center justify-center"><span id="dist-total-label" class="font-display-lg text-headline-lg font-bold text-on-surface">—</span><span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Recycled</span></div></div>
+<div class="flex-1 flex items-center justify-center relative"><svg class="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="transparent" stroke="#7b7487" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle><circle id="dist-total-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#630ed4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="0"></circle><circle id="dist-recycled-arc" cx="50" cy="50" r="40" fill="transparent" stroke="#4648d4" stroke-width="12" stroke-dasharray="251.3" stroke-dashoffset="251.3"></circle></svg><div class="absolute flex flex-col items-center justify-center"><span id="dist-total-label" class="font-display-lg text-headline-lg font-bold text-on-surface">—</span><span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Recycled</span></div></div>
 <div class="mt-md space-y-sm">
 <div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-primary"></div><span class="font-body-sm text-body-sm">Total Waste</span></div><span id="dist-total-pct" class="font-mono-md text-mono-md">—</span></div>
 <div class="flex justify-between items-center"><div class="flex items-center gap-sm"><div class="w-3 h-3 rounded bg-secondary"></div><span class="font-body-sm text-body-sm">Recycled</span></div><span id="dist-recycled-pct" class="font-mono-md text-mono-md">—</span></div>
@@ -144,81 +144,7 @@
 </tr>
 </thead>
 <tbody id="recent-activity-tbody" class="font-body-md text-body-md divide-y divide-outline-variant">
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8901</td>
-<td class="py-3 px-lg text-on-surface">Sector 4, North District</td>
-<td class="py-3 px-lg text-on-surface">Mixed Recyclables</td>
-<td class="py-3 px-lg flex items-center gap-sm">
-<div class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">JD</div>
-                                        John Doe
-                                    </td>
-<td class="py-3 px-lg text-on-surface-variant">10:45 AM</td>
-<td class="py-3 px-lg text-right">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md bg-secondary-fixed text-primary">
-                                            In Progress
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8900</td>
-<td class="py-3 px-lg text-on-surface">Downtown Core, Block B</td>
-<td class="py-3 px-lg text-on-surface">Organic</td>
-<td class="py-3 px-lg flex items-center gap-sm">
-<div class="w-6 h-6 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-xs">Un</div>
-                                        Unassigned
-                                    </td>
-<td class="py-3 px-lg text-on-surface-variant">11:30 AM</td>
-<td class="py-3 px-lg text-right">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md bg-surface-variant text-on-surface-variant">
-                                            Scheduled
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8899</td>
-<td class="py-3 px-lg text-on-surface">Industrial Park, East</td>
-<td class="py-3 px-lg text-on-surface">Hazardous/Electronic</td>
-<td class="py-3 px-lg flex items-center gap-sm">
-<div class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">AS</div>
-                                        Alice Smith
-                                    </td>
-<td class="py-3 px-lg text-on-surface-variant">09:15 AM</td>
-<td class="py-3 px-lg text-right">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md bg-status-success text-status-success-text">
-                                            Completed
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8898</td>
-<td class="py-3 px-lg text-on-surface">Residential Zone 2</td>
-<td class="py-3 px-lg text-on-surface">General Waste</td>
-<td class="py-3 px-lg flex items-center gap-sm">
-<div class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">BJ</div>
-                                        Bob Jones
-                                    </td>
-<td class="py-3 px-lg text-on-surface-variant">08:00 AM</td>
-<td class="py-3 px-lg text-right">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md bg-status-success text-status-success-text">
-                                            Completed
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors group">
-<td class="py-3 px-lg font-mono-md text-mono-md text-on-surface-variant group-hover:text-primary transition-colors">#REQ-8897</td>
-<td class="py-3 px-lg text-on-surface">Central Market Area</td>
-<td class="py-3 px-lg text-on-surface">Organic</td>
-<td class="py-3 px-lg flex items-center gap-sm">
-<div class="w-6 h-6 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-xs">JD</div>
-                                        John Doe
-                                    </td>
-<td class="py-3 px-lg text-on-surface-variant">07:30 AM</td>
-<td class="py-3 px-lg text-right">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-md text-label-md bg-status-success text-status-success-text">
-                                            Completed
-                                        </span>
-</td>
-</tr>
+<tr><td class="py-3 px-lg text-on-surface-variant" colspan="6">Loading recent activities&hellip;</td></tr>
 </tbody>
 </table>
 </div>
@@ -254,8 +180,18 @@
     totalUsers: 0,
     activeRequests: 0,
     pending: 0,
-    volume: []
+    rate: 0,
+    totalTons: 0,
+    recycledTons: 0
   };
+  var volumeChart = null;
+  var refreshing = false;
+
+  function monthKey(iso) {
+    var d = iso ? new Date(iso) : new Date();
+    if (isNaN(d.getTime())) return null;
+    return d.getFullYear() + "-" + d.getMonth();
+  }
 
   function isToday(iso) {
     if (!iso) return false;
@@ -313,48 +249,58 @@
     return allRequests.filter(function (r) { return isToday(r.requested_at); });
   }
 
-  async function load() {
+  async function refreshAll() {
     var totalUsers = await D.count("profiles");
     var activeRequests = await D.count("collection_requests", "status=neq.Completed");
     var pending = await D.count("collection_requests", "status=eq.Unassigned");
 
-    var volume = await D.list("monthly_volume", "total_waste_tons,recycled_tons,year,month", "year.asc,month.asc");
-    var total = 0, recycled = 0;
-    volume.forEach(function (r) {
-      total += Number(r.total_waste_tons) || 0;
-      recycled += Number(r.recycled_tons) || 0;
-    });
-    var rate = total > 0 ? (recycled / total) * 100 : 0;
-
-    var cut = new Date(Date.now() - 30 * 86400000).toISOString();
-    var recentUsers = await D.count("profiles", "created_at=gt." + encodeURIComponent(cut));
+    var parents = await Promise.all([
+      D.list("recycling_records", "weight_kg,recorded_at,material_type"),
+      D.list("profiles", "created_at")
+    ]);
+    var stats = D.computeWasteStats(parents[0] || []);
+    var profiles = parents[1] || [];
 
     state.totalUsers = totalUsers;
     state.activeRequests = activeRequests;
     state.pending = pending;
-    state.rate = rate;
-    state.totalTons = total;
-    state.recycledTons = recycled;
-    state.recentUsers = recentUsers;
+    state.rate = stats.rate;
+    state.totalTons = Math.round((stats.totalKg / 1000) * 10) / 10;
+    state.recycledTons = Math.round((stats.recycledKg / 1000) * 10) / 10;
 
     setText("total-users-value", D.fmtNum(totalUsers));
     setText("active-requests-value", D.fmtNum(activeRequests));
     setText("pending-assignments-value", D.fmtNum(pending));
-    setText("recycling-rate-value", rate.toFixed(1) + "%");
+    setText("recycling-rate-value", stats.rate.toFixed(1) + "%");
 
     allRequests = await D.list("collection_requests",
       "request_number,location,zone,waste_type,status,requested_at,collector_name",
       "requested_at.desc");
 
-    renderKpiChanges(volume, allRequests);
-    renderDistribution(recycled, total);
-
-    renderVolumeChart(volume);
-
+    renderKpiChanges(stats, profiles, allRequests);
+    renderDistribution(stats);
+    renderVolumeChart(stats.months);
     renderActivity(getVisibleRequests());
   }
 
-  function renderKpiChanges(volume, requests) {
+  function load() {
+    return refreshAll();
+  }
+
+  function scheduleRefresh() {
+    if (window.__ecoDashRefresh) clearInterval(window.__ecoDashRefresh);
+    window.__ecoDashRefresh = setInterval(function () {
+      if (refreshing) return;
+      refreshing = true;
+      refreshAll().catch(function (err) {
+        console.error("EcoWaste dashboard auto-refresh failed:", err);
+      }).finally(function () {
+        refreshing = false;
+      });
+    }, 60000);
+  }
+
+  function renderKpiChanges(stats, profiles, requests) {
     function setChange(id, value, upGood) {
       var el = document.getElementById(id);
       if (!el) return;
@@ -371,58 +317,90 @@
       el.className = cls;
     }
 
-    var now = Date.now();
+    var now = new Date();
+    var nowKey = now.getFullYear() + "-" + now.getMonth();
+    var prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    var prevKey = prevDate.getFullYear() + "-" + prevDate.getMonth();
+    var newThisMonth = 0, newLastMonth = 0;
+    (profiles || []).forEach(function (p) {
+      var k = monthKey(p.created_at);
+      if (k === nowKey) newThisMonth++;
+      else if (k === prevKey) newLastMonth++;
+    });
+    var userChange = newLastMonth > 0
+      ? ((newThisMonth - newLastMonth) / newLastMonth) * 100
+      : (newThisMonth > 0 ? 100 : 0);
+
     var created30 = 0;
-    if (requests) {
-      requests.forEach(function (r) {
-        var t = new Date(r.requested_at).getTime();
-        if (!isNaN(t) && t >= now - 30 * 86400000) created30++;
-      });
-    }
+    var windowStart = Date.now() - 30 * 86400000;
+    (requests || []).forEach(function (r) {
+      var t = new Date(r.requested_at).getTime();
+      if (!isNaN(t) && t >= windowStart) created30++;
+    });
     var req30Pct = state.activeRequests > 0 ? (created30 / state.activeRequests) * 100 : 0;
 
     var rateChange = 0;
-    if (volume && volume.length >= 2) {
-      var last = volume[volume.length - 1];
-      var prev = volume[volume.length - 2];
-      var lr = (Number(last.total_waste_tons) || 0) > 0 ? (Number(last.recycled_tons) || 0) / (Number(last.total_waste_tons) || 0) * 100 : 0;
-      var pr = (Number(prev.total_waste_tons) || 0) > 0 ? (Number(prev.recycled_tons) || 0) / (Number(prev.total_waste_tons) || 0) * 100 : 0;
+    var months = (stats && stats.months) || [];
+    if (months.length >= 2) {
+      var last = months[months.length - 1];
+      var prev = months[months.length - 2];
+      var lr = last.totalKg > 0 ? (last.recycledKg / last.totalKg) * 100 : 0;
+      var pr = prev.totalKg > 0 ? (prev.recycledKg / prev.totalKg) * 100 : 0;
       rateChange = pr > 0 ? lr - pr : 0;
     }
 
-    setChange("kpi-users-change", state.totalUsers > 0 ? (state.recentUsers / state.totalUsers) * 100 : 0, true);
+    setChange("kpi-users-change", userChange, true);
     setChange("kpi-requests-change", req30Pct, true);
     setChange("kpi-pending-change", 0, false);
     setChange("kpi-rate-change", rateChange, true);
   }
 
-  function renderDistribution(recycled, total) {
-    var recycledPct = total > 0 ? (recycled / total) * 100 : 0;
+  function renderDistribution(stats) {
+    var hasData = stats.totalKg > 0;
+    var recycledPct = hasData ? stats.rate : 0;
     var sinkPct = Math.max(0, 100 - recycledPct);
     var totalLabel = document.getElementById("dist-total-label");
-    if (totalLabel) totalLabel.textContent = Math.round(recycledPct) + "%";
+    if (totalLabel) totalLabel.textContent = hasData ? Math.round(recycledPct) + "%" : "—";
     var tp = document.getElementById("dist-total-pct");
-    if (tp) tp.textContent = total ? "100%" : "—";
+    if (tp) tp.textContent = hasData ? "100%" : "—";
     var rp = document.getElementById("dist-recycled-pct");
-    if (rp) rp.textContent = total ? recycledPct.toFixed(1) + "%" : "—";
+    if (rp) rp.textContent = hasData ? recycledPct.toFixed(1) + "%" : "—";
     var sp = document.getElementById("dist-sink-pct");
-    if (sp) sp.textContent = total ? sinkPct.toFixed(1) + "%" : "—";
+    if (sp) sp.textContent = hasData ? sinkPct.toFixed(1) + "%" : "—";
     var arc = document.getElementById("dist-recycled-arc");
-    if (arc && total > 0) {
+    if (arc) {
       var circumference = 251.3;
-      var offset = circumference * (1 - recycledPct / 100);
-      arc.setAttribute("stroke-dasharray", circumference.toFixed(1));
-      arc.setAttribute("stroke-dashoffset", offset.toFixed(1));
+      if (hasData) {
+        var offset = circumference * (1 - recycledPct / 100);
+        arc.setAttribute("stroke-dasharray", circumference.toFixed(1));
+        arc.setAttribute("stroke-dashoffset", offset.toFixed(1));
+      } else {
+        arc.setAttribute("stroke-dasharray", circumference.toFixed(1));
+        arc.setAttribute("stroke-dashoffset", circumference.toFixed(1));
+      }
     }
   }
 
-  function renderVolumeChart(volume) {
+  function renderVolumeChart(months) {
     var canvas = document.getElementById("weeklyVolumeChart");
-    if (!canvas || typeof Chart === "undefined" || !volume || !volume.length) return;
-    var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var labels = volume.map(function (r) { return MONTHS[(Number(r.month) - 1) % 12]; });
-    var totalData = volume.map(function (r) { return Number(r.total_waste_tons) || 0; });
-    var recycledData = volume.map(function (r) { return Number(r.recycled_tons) || 0; });
+    if (!canvas) return;
+    var emptyEl = document.getElementById("volume-chart-empty");
+    if (typeof Chart === "undefined") {
+      if (emptyEl) {
+        emptyEl.textContent = "Chart library failed to load. Check your connection.";
+        emptyEl.style.display = "flex";
+      }
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = months.length ? "none" : "flex";
+    if (volumeChart) {
+      volumeChart.destroy();
+      volumeChart = null;
+    }
+    if (!months.length) return;
+    var labels = months.map(function (m) { return m.label; });
+    var totalData = months.map(function (m) { return m.totalTons; });
+    var recycledData = months.map(function (m) { return m.recycledTons; });
     var ctx = canvas.getContext("2d");
     var gradTotal = ctx.createLinearGradient(0, 0, 0, 260);
     gradTotal.addColorStop(0, "rgba(99, 14, 212, 0.2)");
@@ -430,7 +408,7 @@
     var gradRecycled = ctx.createLinearGradient(0, 0, 0, 260);
     gradRecycled.addColorStop(0, "rgba(70, 72, 212, 0.2)");
     gradRecycled.addColorStop(1, "rgba(70, 72, 212, 0)");
-    new Chart(ctx, {
+    volumeChart = new Chart(ctx, {
       type: "line",
       data: {
         labels: labels,
@@ -527,7 +505,15 @@
 bindDashboardControls();
   load().catch(function (err) {
     console.error("EcoWaste dashboard data failed to load:", err);
+    setText("total-users-value", "—");
+    setText("active-requests-value", "—");
+    setText("pending-assignments-value", "—");
+    setText("recycling-rate-value", "—");
+    var tbody = document.getElementById("recent-activity-tbody");
+    if (tbody) tbody.innerHTML = '<tr><td class="py-3 px-lg text-on-surface-variant" colspan="6">Unable to load dashboard data.</td></tr>';
+    if (UI && UI.toast) UI.toast("Could not load dashboard data.", "error");
   });
+  scheduleRefresh();
 })();
 </script>
 

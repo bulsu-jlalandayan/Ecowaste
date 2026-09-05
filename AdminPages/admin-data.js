@@ -142,6 +142,85 @@
       return num.toLocaleString(undefined, { maximumFractionDigits: 1 });
     },
 
+    // ---- Waste analytics (shared by Dashboard / Trends / Reports) -------
+    WASTE_MONTHS: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+
+    wasteCategory: function (material) {
+      var s = String(material || "").toLowerCase();
+      if (/e-?\s*waste|batteri?|hazard|electronic|chemical|tox/i.test(s)) return "Hazardous";
+      if (/organic|compost|yard waste|green waste|food waste|biodegradable/i.test(s)) return "Organic";
+      if (/plastic|paper|metals?|glass|alumini?um|cardboard|recyclab/i.test(s)) return "Recyclables";
+      return "General Waste";
+    },
+
+    computeWasteStats: function (records, zoneById) {
+      function emptyCategories() {
+        return { "General Waste": 0, "Recyclables": 0, "Organic": 0, "Hazardous": 0 };
+      }
+      var now = new Date();
+      var curYear = now.getFullYear();
+      var curMonth = now.getMonth() + 1;
+      var totalKg = 0;
+      var recycledKg = 0;
+      var monthMap = {};
+      var byYearCategory = {};
+      var zoneMap = {};
+      var yearSet = {};
+
+      (records || []).forEach(function (r) {
+        var w = Number(r.weight_kg) || 0;
+        if (!(w > 0)) return;
+        var d = r.recorded_at ? new Date(r.recorded_at) : null;
+        var y = d && !isNaN(d.getTime()) ? d.getFullYear() : null;
+        var m = d && y !== null ? d.getMonth() + 1 : null;
+        if (y === null) return;
+        if (y > curYear || (y === curYear && m > curMonth)) return;
+
+        var cat = this.wasteCategory(r.material_type);
+        totalKg += w;
+        if (cat === "Recyclables") recycledKg += w;
+        if (!byYearCategory[y]) byYearCategory[y] = emptyCategories();
+        byYearCategory[y][cat] += w;
+        yearSet[y] = 1;
+
+        var key = y + "-" + (m < 10 ? "0" : "") + m;
+        var mono = monthMap[key];
+        if (!mono) {
+          mono = monthMap[key] = { year: y, month: m, totalKg: 0, recycledKg: 0 };
+        }
+        mono.totalKg += w;
+        if (cat === "Recyclables") mono.recycledKg += w;
+
+        if (zoneById) {
+          var zone = r.request_id && zoneById[r.request_id] ? zoneById[r.request_id] : "Other";
+          zoneMap[zone] = (zoneMap[zone] || 0) + w;
+        }
+      }, this);
+
+      var months = Object.keys(monthMap).sort().map(function (k) {
+        var mo = monthMap[k];
+        return {
+          year: mo.year,
+          month: mo.month,
+          label: this.WASTE_MONTHS[mo.month - 1] + " " + mo.year,
+          totalKg: mo.totalKg,
+          recycledKg: mo.recycledKg,
+          totalTons: Math.round((mo.totalKg / 1000) * 10) / 10,
+          recycledTons: Math.round((mo.recycledKg / 1000) * 10) / 10
+        };
+      }, this);
+
+      return {
+        totalKg: totalKg,
+        recycledKg: recycledKg,
+        rate: totalKg > 0 ? (recycledKg / totalKg) * 100 : 0,
+        months: months,
+        years: Object.keys(yearSet).map(Number).sort(function (a, b) { return b - a; }),
+        byYearCategory: byYearCategory,
+        byZone: zoneMap
+      };
+    },
+
     // ---- Export helpers -------------------------------------------------
     csvCell: function (v) {
       var s = v === null || v === undefined ? "" : String(v);

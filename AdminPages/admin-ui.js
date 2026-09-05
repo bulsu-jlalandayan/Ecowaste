@@ -20,14 +20,14 @@
     if (!container) {
       container = document.createElement("div");
       container.id = "eco-toast-container";
-      container.className = "fixed top-4 right-4 z-[100] flex flex-col gap-sm w-80 max-w-[90vw]";
+      container.className = "fixed top-4 right-4 z-[100] flex flex-col gap-sm w-80 max-w-[90vw] pointer-events-none";
       document.body.appendChild(container);
     }
     if (container.children.length >= 4) container.removeChild(container.firstChild);
 
     var el = document.createElement("div");
     el.className =
-      "flex items-start gap-sm px-md py-sm rounded-xl border border-outline-variant shadow-lg " +
+      "flex items-start gap-sm px-md py-sm rounded-xl border border-outline-variant shadow-lg pointer-events-auto " +
       TOAST_COLORS[type];
     el.innerHTML =
       '<span class="material-symbols-outlined text-[20px] mt-px ' + TOAST_ICON_COLOR[type] + '">' +
@@ -196,13 +196,47 @@
   };
 
   // ---- Dropdown menu ----------------------------------------------------
+  var menuOpen = null;
+  var menuAnchor = null;
+
+  function closeMenu() {
+    if (!menuOpen) return;
+    var menu = menuOpen;
+    menuOpen = null;
+    menuAnchor = null;
+    if (menu.parentNode) menu.parentNode.removeChild(menu);
+    document.removeEventListener("click", onMenuDocClick);
+    document.removeEventListener("keydown", onMenuDocKey);
+  }
+
+  function onMenuDocClick(e) {
+    if (!menuOpen) return;
+    if (menuOpen.contains(e.target)) return;
+    if (menuAnchor && menuAnchor.contains && menuAnchor.contains(e.target)) return;
+    closeMenu();
+  }
+
+  function onMenuDocKey(e) {
+    if (e.key === "Escape") closeMenu();
+  }
+
   UI.menu = function (anchor, items) {
+    if (menuOpen && menuAnchor === anchor) {
+      closeMenu();
+      return;
+    }
+    if (menuOpen) closeMenu();
+
     var menu = document.createElement("div");
     var r = anchor.getBoundingClientRect();
-    var open = true;
-    menu.className = "fixed z-[70] w-56 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-2xl py-xs overflow-hidden";
-    menu.style.top = Math.min(r.bottom + 4, window.innerHeight - (items.length * 40 + 20)) + "px";
+    menu.className = "fixed z-[90] w-56 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-2xl py-xs overflow-hidden";
+
+    var itemCount = items.filter(function (it) { return it !== "-"; }).length;
+    var menuHeight = itemCount * 40 + 24;
+    var top = Math.min(r.bottom + 4, window.innerHeight - menuHeight - 8);
+    menu.style.top = Math.max(8, top) + "px";
     menu.style.left = Math.max(8, Math.min(r.right - 224, window.innerWidth - 240)) + "px";
+
     menu.innerHTML = items.map(function (item, i) {
       if (item === "-") {
         return '<div class="my-1 border-t border-outline-variant"></div>';
@@ -216,32 +250,17 @@
     }).join("");
 
     document.body.appendChild(menu);
-
-    var close = function () {
-      if (!open) return;
-      open = false;
-      if (menu.parentNode) menu.parentNode.removeChild(menu);
-      document.removeEventListener("click", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-
-    function onClick(e) {
-      if (menu.contains(e.target)) return;
-      close();
-    }
-    function onKey(e) {
-      if (e.key === "Escape") close();
-    }
-
-    document.addEventListener("click", onClick);
-    document.addEventListener("keydown", onKey);
+    menuOpen = menu;
+    menuAnchor = anchor;
+    document.addEventListener("click", onMenuDocClick);
+    document.addEventListener("keydown", onMenuDocKey);
 
     Array.prototype.forEach.call(menu.querySelectorAll("button"), function (btn, i) {
       var realItems = items.filter(function (it) { return it !== "-"; });
       btn.addEventListener("click", function (e) {
         e.stopPropagation();
         var item = realItems[i];
-        close();
+        closeMenu();
         if (item && item.onClick) item.onClick();
       });
     });

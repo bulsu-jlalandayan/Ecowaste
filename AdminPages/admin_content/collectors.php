@@ -53,7 +53,7 @@
 <div class="p-md border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-md bg-surface-container-low/50">
 <div class="relative w-full sm:w-72">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="search">search</span>
-<input id="collector-search" class="w-full pl-xl pr-sm py-2 rounded-DEFAULT border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-sm text-body-sm" placeholder="Search by name, ID, or vehicle..." type="text"/>
+<input id="collector-search" class="w-full pl-xl pr-sm py-2 rounded-DEFAULT border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-sm text-body-sm" placeholder="Search by name or ID..." type="text"/>
 </div>
 <div class="flex items-center gap-sm w-full sm:w-auto">
 <select id="collector-status-filter" class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-md py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
@@ -76,132 +76,17 @@
 </div>
 <!-- Data Table -->
 <div class="w-full overflow-x-auto">
-<table class="w-full min-w-[900px] table-fixed text-left border-collapse">
+<table class="w-full min-w-[720px] table-fixed text-left border-collapse">
 <thead>
 <tr class="bg-surface-container-low border-b border-outline-variant">
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[30%]">Collector Info</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[13%]">ID Number</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[24%]">Vehicle</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[14%]">Status</th>
-<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[10%]">Rating</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[34%]">Collector Info</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[16%]">ID Number</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[18%]">Status</th>
+<th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[13%]">Rating</th>
 <th class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider py-sm px-md sticky top-0 bg-surface-container-low w-[9%] text-right">Actions</th>
 </tr>
 </thead>
 <tbody id="collector-tbody" class="divide-y divide-outline-variant/50">
-<!-- Row 1 -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
-<td class="py-sm px-md">
-<div class="flex items-center gap-md">
-<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-title-md text-title-md">
-                                            JD
-                                        </div>
-<div>
-<p class="font-title-md text-title-md text-on-surface">John Doe</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant">North District</p>
-</div>
-</div>
-</td>
-<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">COL-8492</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-on-surface">
-<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="local_shipping">local_shipping</span>
-<span class="font-body-md text-body-md">TRK-01 (Heavy)</span>
-</div>
-</td>
-<td class="py-sm px-md">
-<span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-status-onroute text-status-onroute-text font-label-md text-label-md">
-<span class="w-1.5 h-1.5 rounded-full bg-status-onroute-text"></span>
-                                        On Route
-                                    </span>
-</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined text-[16px] fill-current" data-icon="star" data-weight="fill">star</span>
-<span class="font-title-md text-title-md">4.9</span>
-</div>
-</td>
-<td class="py-sm px-md text-right">
-<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
-<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-</button>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
-<td class="py-sm px-md">
-<div class="flex items-center gap-md">
-<div class="w-8 h-8 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center font-title-md text-title-md">
-                                            AS
-                                        </div>
-<div>
-<p class="font-title-md text-title-md text-on-surface">Alice Smith</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant">East District</p>
-</div>
-</div>
-</td>
-<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">COL-3721</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-on-surface">
-<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="local_shipping">local_shipping</span>
-<span class="font-body-md text-body-md">TRK-14 (Medium)</span>
-</div>
-</td>
-<td class="py-sm px-md">
-<span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md">
-<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
-                                        Off Duty
-                                    </span>
-</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined text-[16px] fill-current" data-icon="star" data-weight="fill">star</span>
-<span class="font-title-md text-title-md">4.7</span>
-</div>
-</td>
-<td class="py-sm px-md text-right">
-<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
-<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-</button>
-</td>
-</tr>
-<!-- Row 3 (Issue) -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors group bg-error-container/10">
-<td class="py-sm px-md">
-<div class="flex items-center gap-md">
-<div class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center font-title-md text-title-md">
-                                            MJ
-                                        </div>
-<div>
-<p class="font-title-md text-title-md text-on-surface">Marcus Johnson</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant">West District</p>
-</div>
-</div>
-</td>
-<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">COL-9920</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-on-surface">
-<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="local_shipping">local_shipping</span>
-<span class="font-body-md text-body-md">TRK-05 (Heavy)</span>
-</div>
-</td>
-<td class="py-sm px-md">
-<span class="inline-flex items-center gap-xs px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md">
-<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                        Vehicle Issue
-                                    </span>
-</td>
-<td class="py-sm px-md">
-<div class="flex items-center gap-xs text-primary">
-<span class="material-symbols-outlined text-[16px] fill-current" data-icon="star" data-weight="fill">star</span>
-<span class="font-title-md text-title-md">4.2</span>
-</div>
-</td>
-<td class="py-sm px-md text-right">
-<button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
-<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-</button>
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -250,7 +135,7 @@ var allCollectors = [];
 
   async function load() {
     allCollectors = await D.list("collectors",
-      "id,user_id,full_name,collector_number,district,vehicle_name,vehicle_type,status,rating",
+      "id,user_id,full_name,collector_number,district,status,rating",
       "full_name.asc");
     setText("total-active-value", D.fmtNum(allCollectors.filter(function (c) { return c.status !== "Vehicle Issue"; }).length));
     setText("on-route-value", D.fmtNum(allCollectors.filter(function (c) { return c.status === "On Route"; }).length));
@@ -260,7 +145,7 @@ var allCollectors = [];
 
   function filtered() {
     return window.EcoWasteUI.filterList(allCollectors, searchTerm,
-      ["full_name", "collector_number", "vehicle_name", "district"],
+      ["full_name", "collector_number", "district"],
       { status: statusFilter });
   }
 
@@ -270,7 +155,7 @@ var allCollectors = [];
     if (!tbody) return;
     var page = window.EcoWasteUI.paginate(rows, collectorPage, 10);
     if (!page.rows.length) {
-      tbody.innerHTML = '<tr><td class="py-sm px-md text-on-surface-variant" colspan="6">No collectors yet.</td></tr>';
+      tbody.innerHTML = '<tr><td class="py-sm px-md text-on-surface-variant" colspan="5">No collectors yet.</td></tr>';
     } else {
       tbody.innerHTML = "";
       page.rows.forEach(function (c) {
@@ -289,10 +174,6 @@ var allCollectors = [];
             '</div>' +
           '</td>' +
           '<td class="py-sm px-md font-mono-md text-mono-md text-on-surface-variant">' + D.esc(c.collector_number) + '</td>' +
-          '<td class="py-sm px-md"><div class="flex items-center gap-xs text-on-surface">' +
-            '<span class="material-symbols-outlined text-[16px] text-on-surface-variant">local_shipping</span>' +
-            '<span class="font-body-md text-body-md">' + D.esc(c.vehicle_name || "—") + ' (' + D.esc(c.vehicle_type || "—") + ')</span>' +
-            '</div></td>' +
           '<td class="py-sm px-md"><span class="inline-flex items-center gap-xs px-2 py-1 rounded-full font-label-md text-label-md ' + badge + '">' +
             '<span class="w-1.5 h-1.5 rounded-full ' + dot + '"></span>' + D.esc(c.status) + '</span></td>' +
           '<td class="py-sm px-md"><div class="flex items-center gap-xs text-primary">' +
@@ -301,6 +182,22 @@ var allCollectors = [];
             '</div></td>' +
           '<td class="py-sm px-md text-right"><button class="text-on-surface-variant hover:text-primary p-1 rounded transition-colors" data-action="menu" data-id="' + c.id + '"><span class="material-symbols-outlined">more_vert</span></button></td>';
         tbody.appendChild(tr);
+        var menuBtn = tr.querySelector("button[data-action=menu]");
+        if (menuBtn) {
+          menuBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.EcoWasteUI.menu(menuBtn, [
+              { label: "Edit", icon: "edit", onClick: function () { openEdit(c); } },
+              "-",
+              { label: "Set On Route", icon: "directions_car", onClick: function () { setCollectorStatus(c, "On Route"); } },
+              { label: "Set Off Duty", icon: "home", onClick: function () { setCollectorStatus(c, "Off Duty"); } },
+              { label: "Flag Vehicle Issue", icon: "warning", onClick: function () { setCollectorStatus(c, "Vehicle Issue"); } },
+              "-",
+              { label: "Delete", icon: "delete", danger: true, onClick: function () { deleteCollector(c); } }
+            ]);
+          });
+        }
       });
     }
     var count = document.getElementById("collector-count");
@@ -321,20 +218,12 @@ var allCollectors = [];
           full_name: c.full_name || "",
           collector_number: c.collector_number || "",
           district: c.district || "",
-          vehicle: c.vehicle_name ? c.vehicle_name + " (" + (c.vehicle_type || "") + ")" : "",
           status: c.status || "",
           rating: c.rating !== null && c.rating !== undefined ? c.rating : ""
         };
       });
-      D.exportCSV("ecowaste_collectors.csv", ["full_name", "collector_number", "district", "vehicle", "status", "rating"], rows);
+      D.exportCSV("ecowaste_collectors.csv", ["full_name", "collector_number", "district", "status", "rating"], rows);
     });
-  }
-
-  function findCollector(id) {
-    for (var i = 0; i < allCollectors.length; i++) {
-      if (allCollectors[i].id === id) return allCollectors[i];
-    }
-    return null;
   }
 
   function setCollectorStatus(c, status) {
@@ -352,8 +241,6 @@ var allCollectors = [];
       submitLabel: "Save Changes",
       fields: [
         { name: "district", label: "District", value: c.district || "", placeholder: "e.g. North District" },
-        { name: "vehicle_name", label: "Vehicle Name", value: c.vehicle_name || "", placeholder: "e.g. TRK-01" },
-        { name: "vehicle_type", label: "Vehicle Type", value: c.vehicle_type || "", placeholder: "e.g. Heavy" },
         { name: "rating", label: "Rating (0 - 5)", type: "number", value: c.rating !== null ? String(c.rating) : "", placeholder: "e.g. 4.5" },
         { name: "status", label: "Status", type: "select", required: true, value: c.status,
           options: [
@@ -365,8 +252,6 @@ var allCollectors = [];
       onSubmit: function (values) {
         var body = {
           district: values.district || null,
-          vehicle_name: values.vehicle_name || null,
-          vehicle_type: values.vehicle_type || null,
           status: values.status
         };
         if (values.rating !== "") {
@@ -401,27 +286,6 @@ var allCollectors = [];
           load();
         })
         .catch(function (err) { window.EcoWasteUI.toast(err.message, "error"); });
-    });
-  }
-
-  var tbody = document.getElementById("collector-tbody");
-  if (tbody) {
-    tbody.addEventListener("click", function (e) {
-      var btn = e.target.closest("button[data-action]");
-      if (!btn) return;
-      var c = findCollector(btn.getAttribute("data-id"));
-      if (!c) return;
-      if (btn.getAttribute("data-action") === "menu") {
-        window.EcoWasteUI.menu(btn, [
-          { label: "Edit", icon: "edit", onClick: function () { openEdit(c); } },
-          "-",
-          { label: "Set On Route", icon: "directions_car", onClick: function () { setCollectorStatus(c, "On Route"); } },
-          { label: "Set Off Duty", icon: "home", onClick: function () { setCollectorStatus(c, "Off Duty"); } },
-          { label: "Flag Vehicle Issue", icon: "warning", onClick: function () { setCollectorStatus(c, "Vehicle Issue"); } },
-          "-",
-          { label: "Delete", icon: "delete", danger: true, onClick: function () { deleteCollector(c); } }
-        ]);
-      }
     });
   }
 

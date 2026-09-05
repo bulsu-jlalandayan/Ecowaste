@@ -26,7 +26,7 @@
       app.classList.add("opacity-50", "pointer-events-none");
     }
 
-    fetch("admin_app.php?view=" + encodeURIComponent(view))
+    fetch("admin_app.php?view=" + encodeURIComponent(view), { cache: "no-store" })
       .then(function (res) {
         return res.text();
       })

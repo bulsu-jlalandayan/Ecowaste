@@ -30,10 +30,10 @@
 <span class="font-body-lg text-body-lg text-on-surface-variant mb-1">kg</span>
 </div>
 <div class="flex items-center gap-2">
-<span class="bg-status-onroute text-status-onroute-text px-2 py-1 rounded font-label-md text-label-md flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
-                                12.5%
-                            </span>
+<span id="monthly-delta-chip" class="bg-status-onroute text-status-onroute-text px-2 py-1 rounded font-label-md text-label-md flex items-center gap-1">
+<span id="monthly-delta-arrow" class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
+<span id="monthly-delta-value">—</span>
+</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">vs last month</span>
 </div>
 </div>
@@ -41,44 +41,7 @@
 <!-- Material Breakdown (Placeholder for charts/stats) -->
 <div class="lg:col-span-8 bg-surface-container-lowest border border-surface-variant rounded-xl p-lg shadow-card flex flex-col justify-center">
 <h3 class="font-title-md text-title-md text-on-surface-variant mb-lg">Material Breakdown</h3>
-<div class="flex flex-wrap gap-md justify-between items-end h-full">
-<div class="flex-1 min-w-[100px]">
-<div class="flex justify-between font-label-md text-label-md mb-2">
-<span class="text-on-surface">Plastic</span>
-<span id="plastic-value" class="text-on-surface-variant">—</span>
-</div>
-<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
-<div id="plastic-bar" class="bg-primary h-full w-[0%] rounded-full"></div>
-</div>
-</div>
-<div class="flex-1 min-w-[100px]">
-<div class="flex justify-between font-label-md text-label-md mb-2">
-<span class="text-on-surface">Paper</span>
-<span id="paper-value" class="text-on-surface-variant">—</span>
-</div>
-<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
-<div id="paper-bar" class="bg-secondary h-full w-[0%] rounded-full"></div>
-</div>
-</div>
-<div class="flex-1 min-w-[100px]">
-<div class="flex justify-between font-label-md text-label-md mb-2">
-<span class="text-on-surface">Metal</span>
-<span id="metal-value" class="text-on-surface-variant">—</span>
-</div>
-<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
-<div id="metal-bar" class="bg-tertiary h-full w-[0%] rounded-full"></div>
-</div>
-</div>
-<div class="flex-1 min-w-[100px]">
-<div class="flex justify-between font-label-md text-label-md mb-2">
-<span class="text-on-surface">Glass</span>
-<span id="glass-value" class="text-on-surface-variant">—</span>
-</div>
-<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
-<div id="glass-bar" class="bg-outline h-full w-[0%] rounded-full"></div>
-</div>
-</div>
-</div>
+<div id="material-breakdown" class="flex flex-wrap gap-md justify-between items-end h-full"></div>
 </div>
 </div>
 <!-- Data Table Section -->
@@ -144,25 +107,75 @@
     "Discrepancy": "bg-status-error-soft text-status-error-soft-text border border-status-error-soft-border"
   };
 
-  var MATERIAL_ICON = {
+var MATERIAL_ICON = {
     plastic: "water_bottle",
     paper: "description",
     metal: "build",
-    glass: "local_drink"
+    glass: "local_drink",
+    ewaste: "devices",
+    bulky: "weekend",
+    household: "delete_sweep",
+    organic: "eco",
+    general: "delete"
   };
-  var MATERIAL_BAR_CLASS = {
+  var MATERIAL_BOX_CLASS = {
     plastic: "bg-primary",
     paper: "bg-secondary",
     metal: "bg-tertiary",
-    glass: "bg-outline"
+    glass: "bg-outline",
+    ewaste: "bg-error",
+    bulky: "bg-tertiary-container",
+    household: "bg-surface-variant",
+    organic: "bg-status-success",
+    general: "bg-surface-container-high"
+  };
+  var MATERIAL_ICON_CLASS = {
+    plastic: "text-on-primary",
+    paper: "text-on-secondary",
+    metal: "text-on-tertiary",
+    glass: "text-white",
+    ewaste: "text-on-error",
+    bulky: "text-on-tertiary-container",
+    household: "text-on-surface-variant",
+    organic: "text-status-success-text",
+    general: "text-on-surface-variant",
+    other: "text-primary"
+  };
+  var GROUP_LABEL = {
+    plastic: "Plastic",
+    paper: "Paper",
+    metal: "Metal",
+    glass: "Glass",
+    ewaste: "E-Waste",
+    bulky: "Bulky",
+    household: "Household",
+    organic: "Organic",
+    general: "General",
+    other: "Other"
+  };
+  var MATERIAL_TEXT_CLASS = {
+    plastic: "text-primary",
+    paper: "text-secondary",
+    metal: "text-tertiary",
+    glass: "text-outline",
+    ewaste: "text-error",
+    bulky: "text-tertiary-container",
+    household: "text-on-surface-variant",
+    organic: "text-status-success-text",
+    general: "text-on-surface-variant",
+    other: "text-primary"
   };
 
   function materialGroup(material) {
     var m = String(material || "").toLowerCase();
-    if (m.indexOf("plastic") > -1) return "plastic";
-    if (m.indexOf("paper") > -1) return "paper";
-    if (m.indexOf("metal") > -1) return "metal";
-    if (m.indexOf("glass") > -1) return "glass";
+    if (/plastic|pet|hdpe/i.test(m)) return "plastic";
+    if (/paper|cardboard|carton|pulp/i.test(m)) return "paper";
+    if (/metals?|alumini?um|steel|iron|copper|scrap/i.test(m)) return "metal";
+    if (/glass/i.test(m)) return "glass";
+    if (/e-?\s*waste|batteri|electronic|hazard|tox|chem/i.test(m)) return "ewaste";
+    if (/organic|compost|food waste|green waste|yard waste|biodegrad/i.test(m)) return "organic";
+    if (/bulk|furniture|appliance/i.test(m)) return "bulky";
+    if (/household|general|mixed|municipal|domestic/i.test(m)) return "household";
     return "other";
   }
 
@@ -171,9 +184,88 @@
     return Math.round(kg) + " kg";
   }
 
-  function applyBar(id, pct) {
-    var el = document.getElementById(id);
-    if (el) el.style.width = Math.max(pct, 3).toFixed(1) + "%";
+function renderSummary(allRecords) {
+    var now = new Date();
+    var curYear = now.getFullYear();
+    var curMonth = now.getMonth();
+    var prevStart = new Date(curYear, curMonth - 1, 1);
+
+    var totalThisMonth = 0;
+    var totalLastMonth = 0;
+    var monthKg = {};
+    var allGroups = [];
+
+    (allRecords || []).forEach(function (r) {
+      var w = Number(r.weight_kg) || 0;
+      if (!(w > 0)) return;
+      var d = r.recorded_at ? new Date(r.recorded_at) : null;
+      if (!d || isNaN(d.getTime())) return;
+      if (d.getTime() > now.getTime()) return;
+
+      var g = materialGroup(r.material_type);
+      if (allGroups.indexOf(g) === -1) allGroups.push(g);
+
+      if (d.getFullYear() === curYear && d.getMonth() === curMonth) {
+        totalThisMonth += w;
+        monthKg[g] = (monthKg[g] || 0) + w;
+      } else if (d.getFullYear() === prevStart.getFullYear() && d.getMonth() === prevStart.getMonth()) {
+        totalLastMonth += w;
+      }
+    });
+
+    var totalEl = document.getElementById("total-recycled-value");
+    if (totalEl) totalEl.textContent = D.fmtNum(totalThisMonth);
+
+    var delta = totalLastMonth > 0
+      ? ((totalThisMonth - totalLastMonth) / totalLastMonth) * 100
+      : (totalThisMonth > 0 ? 100 : 0);
+    var up = delta >= 0;
+    var deltaChip = document.getElementById("monthly-delta-chip");
+    var deltaArrow = document.getElementById("monthly-delta-arrow");
+    var deltaValue = document.getElementById("monthly-delta-value");
+    if (deltaValue) deltaValue.textContent = Math.abs(delta).toFixed(1) + "%";
+    if (deltaArrow) deltaArrow.textContent = up ? "arrow_upward" : "arrow_downward";
+    if (deltaChip) {
+      deltaChip.className = "px-2 py-1 rounded font-label-md text-label-md flex items-center gap-1 " +
+        (up ? "bg-status-onroute text-status-onroute-text" : "bg-status-error-soft text-status-error-soft-text");
+    }
+
+    renderBreakdown(allGroups, monthKg, totalThisMonth);
+  }
+
+  function renderBreakdown(groups, monthKg, totalThisMonth) {
+    var container = document.getElementById("material-breakdown");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!groups.length) {
+      container.innerHTML = '<div class="w-full font-body-md text-body-md text-on-surface-variant">No recycling data yet.</div>';
+      return;
+    }
+
+    groups.slice().sort(function (a, b) {
+      return (monthKg[b] || 0) - (monthKg[a] || 0);
+    }).forEach(function (g, idx) {
+      var kg = monthKg[g] || 0;
+      var pct = totalThisMonth > 0 ? (kg / totalThisMonth) * 100 : 0;
+      var icon = MATERIAL_ICON[g] || "recycling";
+      var barColor = MATERIAL_BOX_CLASS[g] || "bg-primary";
+      var textClass = MATERIAL_TEXT_CLASS[g] || "text-primary";
+      var label = GROUP_LABEL[g] || D.esc(g);
+      var wrap = document.createElement("div");
+      wrap.className = "flex-1 min-w-[100px]";
+      wrap.innerHTML =
+        '<div class="flex justify-between font-label-md text-label-md mb-2">' +
+          '<span class="flex items-center gap-1 text-on-surface">' +
+          '<span class="material-symbols-outlined text-[14px] ' + textClass + '">' + icon + '</span>' +
+            label + '</span>' +
+          '<span class="text-on-surface-variant">' + fmtWeight(kg) + '</span>' +
+        '</div>' +
+        '<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">' +
+          '<div class="' + barColor + ' h-full rounded-full" style="width:' + pct.toFixed(1) + '%"></div>' +
+        '</div>';
+      container.appendChild(wrap);
+    });
   }
 
 var allRecords = [];
@@ -203,24 +295,7 @@ var allRecords = [];
     var allRows = filtered();
     var page = window.EcoWasteUI.paginate(allRows, recordPage, 10);
 
-    var totals = { plastic: 0, paper: 0, metal: 0, glass: 0, other: 0 };
-    var grand = 0;
-    allRows.forEach(function (r) {
-      var w = Number(r.weight_kg) || 0;
-      totals[materialGroup(r.material_type)] += w;
-      grand += w;
-    });
-
-    var totalEl = document.getElementById("total-recycled-value");
-    if (totalEl) totalEl.textContent = D.fmtNum(grand);
-
-    var fourBench = totals.plastic + totals.paper + totals.metal + totals.glass;
-    ["plastic", "paper", "metal", "glass"].forEach(function (key) {
-      var valueEl = document.getElementById(key + "-value");
-      if (valueEl) valueEl.textContent = fmtWeight(totals[key]);
-      var pct = fourBench > 0 ? (totals[key] / fourBench) * 100 : 0;
-      applyBar(key + "-bar", pct);
-    });
+    renderSummary(allRecords);
 
     var tbody = document.getElementById("record-tbody");
     if (!tbody) return;
@@ -231,8 +306,8 @@ var allRecords = [];
       page.rows.forEach(function (r) {
         var group = materialGroup(r.material_type);
         var icon = MATERIAL_ICON[group] || "recycling";
-        var boxClass = MATERIAL_BAR_CLASS[group] || "bg-surface-variant";
-        var iconColor = group === "metal" ? "text-tertiary" : group === "glass" ? "text-on-surface-variant" : group === "paper" ? "text-secondary" : "text-primary";
+        var boxClass = MATERIAL_BOX_CLASS[group] || "bg-surface-variant";
+        var iconColor = MATERIAL_ICON_CLASS[group] || "text-primary";
         var badge = STATUS_BADGE[r.status] || "bg-surface-variant text-on-surface-variant";
         var tr = document.createElement("tr");
         tr.className = "border-b border-surface-variant hover:bg-surface-container-low transition-colors group";
@@ -405,8 +480,15 @@ if (searchEl) searchEl.addEventListener("input", function () { searchTerm = this
   var addBtn = document.getElementById("add-record-btn");
   if (addBtn) addBtn.addEventListener("click", openAdd);
 
-  load().catch(function (err) {
+load().catch(function (err) {
     console.error("EcoWaste recycling records failed to load:", err);
+    var totalEl = document.getElementById("total-recycled-value");
+    if (totalEl) totalEl.textContent = "—";
+    var deltaValue = document.getElementById("monthly-delta-value");
+    if (deltaValue) deltaValue.textContent = "—";
+    var breakdown = document.getElementById("material-breakdown");
+    if (breakdown) breakdown.innerHTML = '<div class="w-full font-body-md text-body-md text-on-surface-variant">Could not load recycling data.</div>';
+    if (window.EcoWasteUI && window.EcoWasteUI.toast) window.EcoWasteUI.toast("Could not load recycling records.", "error");
   });
 })();
 </script>

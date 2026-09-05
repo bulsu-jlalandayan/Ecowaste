@@ -32,7 +32,7 @@
 <div class="flex items-center gap-xs relative z-10">
 <span class="flex items-center font-label-md text-label-md text-error bg-error-container/50 px-xs py-0.5 rounded-sm">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-                            4.2%
+                            <span id="waste-delta">—</span>
                         </span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">vs last year</span>
 </div>
@@ -52,7 +52,7 @@
 <div class="flex items-center gap-xs relative z-10">
 <span class="flex items-center font-label-md text-label-md text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-                            8.5%
+                            <span id="rate-delta">—</span>
                         </span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">vs last year</span>
 </div>
@@ -76,7 +76,7 @@
 <div class="flex items-center gap-xs relative z-10">
 <span class="flex items-center font-label-md text-label-md text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm">
 <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-                            12.1%
+                            <span id="co2-delta">—</span>
                         </span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">vs last year</span>
 </div>
@@ -104,6 +104,7 @@
 </div>
 <div class="p-lg flex-1 relative min-h-[300px]">
 <canvas class="w-full h-full" id="volumeChart" width="792" height="289" style="display: block; box-sizing: border-box; height: 289.4px; width: 792.7px;"></canvas>
+<div id="volume-chart-empty" class="absolute inset-0 items-center justify-center font-body-md text-body-md text-on-surface-variant" style="display:none;">No collection data available yet.</div>
 </div>
 </div>
 <!-- Secondary Chart: Efficiency Gauge -->
@@ -129,6 +130,7 @@
 </div>
 <div class="p-lg flex-1 relative min-h-[300px]">
 <canvas class="w-full h-full" id="regionalChart" width="576" height="252" style="display: block; box-sizing: border-box; height: 252px; width: 576px;"></canvas>
+<div id="regional-chart-empty" class="absolute inset-0 items-center justify-center font-body-md text-body-md text-on-surface-variant" style="display:none;">No regional data available yet.</div>
 </div>
 </div>
 <!-- Year-over-Year Comparison Table -->
@@ -141,52 +143,13 @@
 <thead>
 <tr class="bg-status-tableheader text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
 <th class="p-md font-medium border-b border-surface-container-highest">Category</th>
-<th class="p-md font-medium border-b border-surface-container-highest text-right">2023 (Tons)</th>
-<th class="p-md font-medium border-b border-surface-container-highest text-right">2024 (Tons)</th>
+<th class="p-md font-medium border-b border-surface-container-highest text-right" id="yoy-year-a-col">— (Tons)</th>
+<th class="p-md font-medium border-b border-surface-container-highest text-right" id="yoy-year-b-col">— (Tons)</th>
 <th class="p-md font-medium border-b border-surface-container-highest text-right">Change</th>
 </tr>
 </thead>
 <tbody id="yoy-tbody" class="font-body-md text-body-md text-on-surface divide-y divide-surface-container-high">
-<tr class="hover:bg-surface-container-lowest transition-colors">
-<td class="p-md py-sm">General Waste</td>
-<td class="p-md py-sm text-right">850.5</td>
-<td class="p-md py-sm text-right">795.2</td>
-<td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
-<span class="material-symbols-outlined text-[14px]">arrow_downward</span> 6.5%
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors">
-<td class="p-md py-sm">Recyclables</td>
-<td class="p-md py-sm text-right">410.2</td>
-<td class="p-md py-sm text-right">450.6</td>
-<td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
-<span class="material-symbols-outlined text-[14px]">arrow_upward</span> 9.8%
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors">
-<td class="p-md py-sm">Organic</td>
-<td class="p-md py-sm text-right">320.0</td>
-<td class="p-md py-sm text-right">305.5</td>
-<td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-status-success-text bg-status-success/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
-<span class="material-symbols-outlined text-[14px]">arrow_downward</span> 4.5%
-                                        </span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-lowest transition-colors">
-<td class="p-md py-sm">Hazardous</td>
-<td class="p-md py-sm text-right">45.8</td>
-<td class="p-md py-sm text-right">52.1</td>
-<td class="p-md py-sm text-right">
-<span class="inline-flex items-center gap-xs text-error bg-error-container/50 px-xs py-0.5 rounded-sm font-label-md text-label-md">
-<span class="material-symbols-outlined text-[14px]">arrow_upward</span> 13.7%
-                                        </span>
-</td>
-</tr>
+<tr><td class="p-md py-sm text-on-surface-variant" colspan="4">Loading year-over-year data&hellip;</td></tr>
 </tbody>
 </table>
 </div>
@@ -206,43 +169,46 @@
             var surfaceHighest = '#e5e1e4';
             var onSurfaceVariant = '#4a4455';
 
-var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var CO2_FACTOR = 0.94; // metric tons CO2e avoided per ton recycled (EPA-derived assumption)
+var CO2_FACTOR = 0.94; // metric tons CO2e avoided per ton recycled (EPA-derived assumption)
 
             // Chart.js Default Settings
             Chart.defaults.font.family = "'Hanken Grotesk', sans-serif";
             Chart.defaults.color = onSurfaceVariant;
             Chart.defaults.scale.grid.color = surfaceHighest;
 
-            var volumeData = [];
-            var regionalData = [];
-            var yoyData = [];
+            var stats = null;
+            var zoneRows = [];
             var currentYear = "all";
+            var charts = { volume: null, regional: null };
+            var CATEGORY_ORDER = ["General Waste", "Recyclables", "Organic", "Hazardous"];
 
             async function load() {
-                volumeData = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
-                regionalData = await D.list("regional_stats", "region,waste_tons", "waste_tons.desc");
-                yoyData = await D.list("yoy_metrics", "category,tons_2023,tons_2024");
+                var results = await Promise.all([
+                    D.list("recycling_records", "weight_kg,recorded_at,material_type,request_id"),
+                    D.list("collection_requests", "id,zone")
+                ]);
+                var zoneById = {};
+                (results[1] || []).forEach(function (r) { if (r.id) zoneById[r.id] = r.zone || "Unzoned"; });
+                stats = D.computeWasteStats(results[0] || [], zoneById);
+
+                zoneRows = Object.keys(stats.byZone).map(function (z) {
+                    return { region: z, waste_tons: Math.round((stats.byZone[z] / 1000) * 10) / 10 };
+                }).sort(function (a, b) { return b.waste_tons - a.waste_tons; });
 
                 populateYearFilter();
                 applyYear();
-                renderRegionalChart(regionalData);
-                renderYoy(yoyData);
+                renderRegionalChart();
+                renderYoy();
+                renderKpiDeltas();
             }
 
             function populateYearFilter() {
                 var sel = document.getElementById("trend-year-filter");
                 if (!sel) return;
-                var years = [];
-                volumeData.forEach(function (r) {
-                    var y = String(r.year);
-                    if (years.indexOf(y) === -1) years.push(y);
-                });
-                years.sort().reverse();
-                years.forEach(function (y) {
+                stats.years.forEach(function (y) {
                     var opt = document.createElement("option");
-                    opt.value = y;
-                    opt.textContent = y;
+                    opt.value = String(y);
+                    opt.textContent = String(y);
                     sel.appendChild(opt);
                 });
                 sel.addEventListener("change", function () {
@@ -251,52 +217,54 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                 });
             }
 
-            function filteredVolume() {
-                if (currentYear === "all") return volumeData;
-                return volumeData.filter(function (r) { return String(r.year) === currentYear; });
+            function filteredMonths() {
+                if (!stats) return [];
+                if (currentYear === "all") return stats.months;
+                return stats.months.filter(function (m) { return String(m.year) === currentYear; });
             }
 
             function applyYear() {
-                var vol = filteredVolume();
-                var labels = vol.map(function (r) { return MONTHS[(Number(r.month) - 1) % 12]; });
-                var totalData = vol.map(function (r) { return Number(r.total_waste_tons) || 0; });
-                var recycledData = vol.map(function (r) { return Number(r.recycled_tons) || 0; });
-
-                var totalTons = totalData.reduce(function (a, b) { return a + b; }, 0);
-                var recycledTons = recycledData.reduce(function (a, b) { return a + b; }, 0);
+                var months = filteredMonths();
+                var totalTons = 0, recycledTons = 0;
+                months.forEach(function (m) { totalTons += m.totalTons; recycledTons += m.recycledTons; });
                 var rate = totalTons > 0 ? (recycledTons / totalTons) * 100 : 0;
 
-                setKpis(totalTons, rate);
-                var co2El = document.getElementById("co2-value");
-                if (co2El) co2El.textContent = D.fmtNum(Math.round(recycledTons * CO2_FACTOR * 10) / 10);
-                renderVolumeChart(labels, totalData, recycledData);
+                setKpis(totalTons, rate, recycledTons);
+                renderVolumeChart(months);
             }
 
             function exportTrends() {
+                if (!stats) return;
                 var lines = [];
-                var vol = filteredVolume();
+                var months = filteredMonths();
+                var lastYear = stats.years[0];
+                var prevYear = stats.years[1];
                 lines.push("SECTION,Monthly Collection Volume,,,,");
                 lines.push("Year,Month,Total Waste (Tons),Recycled (Tons),,");
-                vol.forEach(function (r) {
-                    lines.push([D.csvCell(r.year), D.csvCell(r.month), D.csvCell(r.total_waste_tons), D.csvCell(r.recycled_tons), D.csvCell(""), D.csvCell("")].join(","));
+                months.forEach(function (m) {
+                    lines.push([D.csvCell(m.year), D.csvCell(m.month), D.csvCell(m.totalTons), D.csvCell(m.recycledTons), D.csvCell(""), D.csvCell("")].join(","));
                 });
                 lines.push("SECTION,Regional Distribution,,,,");
-                lines.push("Region,Waste (Tons),,,,");
-                regionalData.forEach(function (r) {
-                    lines.push([D.csvCell(r.region), D.csvCell(r.waste_tons), D.csvCell(""), D.csvCell(""), D.csvCell(""), D.csvCell("")].join(","));
+                lines.push("Zone,Waste (Tons),,,,");
+                zoneRows.forEach(function (z) {
+                    lines.push([D.csvCell(z.region), D.csvCell(z.waste_tons), D.csvCell(""), D.csvCell(""), D.csvCell(""), D.csvCell("")].join(","));
                 });
                 lines.push("SECTION,Year over Year,,,,");
-                lines.push("Category,2023 (Tons),2024 (Tons),Change %,,");
-                yoyData.forEach(function (r) {
-                    var a = Number(r.tons_2023) || 0;
-                    var b = Number(r.tons_2024) || 0;
-                    var diff = a > 0 ? ((b - a) / a) * 100 : 0;
-                    lines.push([D.csvCell(r.category), D.csvCell(a), D.csvCell(b), D.csvCell(diff.toFixed(1) + "%"), D.csvCell(""), D.csvCell("")].join(","));
-                });
+                lines.push("Category," + (prevYear || "—") + " (Tons)," + (lastYear || "—") + " (Tons),Change %,,");
+                if (lastYear && prevYear) {
+                    var aCat = stats.byYearCategory[prevYear] || {};
+                    var bCat = stats.byYearCategory[lastYear] || {};
+                    CATEGORY_ORDER.forEach(function (category) {
+                        var a = (aCat[category] || 0) / 1000;
+                        var b = (bCat[category] || 0) / 1000;
+                        var diff = a > 0 ? ((b - a) / a) * 100 : 0;
+                        lines.push([D.csvCell(category), D.csvCell(a), D.csvCell(b), D.csvCell(diff.toFixed(1) + "%"), D.csvCell(""), D.csvCell("")].join(","));
+                    });
+                }
                 D.exportBlob("ecowaste_trends_data.csv", lines.join("\r\n"), "text/csv;charset=utf-8;");
             }
 
-            function setKpis(totalTons, rate) {
+function setKpis(totalTons, rate, recycledTons) {
                 var totalEl = document.getElementById("total-waste-value");
                 if (totalEl) totalEl.textContent = D.fmtNum(totalTons);
                 var rateEl = document.getElementById("recycling-rate-value");
@@ -305,11 +273,40 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                 if (progress) progress.style.width = rate.toFixed(1) + "%";
                 var gauge = document.getElementById("efficiency-gauge-value");
                 if (gauge) gauge.textContent = rate.toFixed(1) + "%";
+                var co2El = document.getElementById("co2-value");
+                if (co2El) co2El.textContent = D.fmtNum(Math.round(recycledTons * CO2_FACTOR * 10) / 10);
             }
 
-            function renderVolumeChart(labels, totalData, recycledData) {
+function destroyChart(key) {
+                if (charts[key]) {
+                    charts[key].destroy();
+                    charts[key] = null;
+                }
+            }
+
+            function setEmptyOverlay(id, visible) {
+                var overlay = document.getElementById(id);
+                if (overlay) overlay.style.display = visible ? "flex" : "none";
+            }
+
+            function renderVolumeChart(months) {
                 var canvas = document.getElementById('volumeChart');
-                if (!canvas || typeof Chart === "undefined") return;
+                if (!canvas) return;
+                var emptyEl = document.getElementById("volume-chart-empty");
+                if (typeof Chart === "undefined") {
+                    if (emptyEl) {
+                        emptyEl.textContent = "Chart library failed to load. Check your connection.";
+                        emptyEl.style.display = "flex";
+                    }
+                    return;
+                }
+                setEmptyOverlay("volume-chart-empty", !months.length);
+                destroyChart("volume");
+                if (!months.length) return;
+
+                var labels = months.map(function (m) { return m.label; });
+                var totalData = months.map(function (m) { return m.totalTons; });
+                var recycledData = months.map(function (m) { return m.recycledTons; });
                 var volumeCtx = canvas.getContext('2d');
 
                 var gradientPrimary = volumeCtx.createLinearGradient(0, 0, 0, 400);
@@ -320,7 +317,7 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                 gradientSecondary.addColorStop(0, 'rgba(70, 72, 212, 0.2)');
                 gradientSecondary.addColorStop(1, 'rgba(70, 72, 212, 0)');
 
-                new Chart(volumeCtx, {
+                charts.volume = new Chart(volumeCtx, {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -373,16 +370,27 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                 });
             }
 
-            function renderRegionalChart(rows) {
+function renderRegionalChart() {
                 var canvas = document.getElementById('regionalChart');
-                if (!canvas || typeof Chart === "undefined") return;
-                new Chart(canvas.getContext('2d'), {
+                if (!canvas) return;
+                var emptyEl = document.getElementById("regional-chart-empty");
+                if (typeof Chart === "undefined") {
+                    if (emptyEl) {
+                        emptyEl.textContent = "Chart library failed to load. Check your connection.";
+                        emptyEl.style.display = "flex";
+                    }
+                    return;
+                }
+                setEmptyOverlay("regional-chart-empty", !zoneRows.length);
+                destroyChart("regional");
+                if (!zoneRows.length) return;
+                charts.regional = new Chart(canvas.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: rows.map(function (r) { return r.region; }),
+                        labels: zoneRows.map(function (r) { return r.region; }),
                         datasets: [{
                             label: 'Waste Generation (Tons)',
-                            data: rows.map(function (r) { return Number(r.waste_tons) || 0; }),
+                            data: zoneRows.map(function (r) { return Number(r.waste_tons) || 0; }),
                             backgroundColor: primaryContainerColor,
                             borderRadius: 4,
                             barPercentage: 0.6
@@ -409,28 +417,36 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                 });
             }
 
-            function renderYoy(rows) {
+function renderYoy() {
                 var tbody = document.getElementById("yoy-tbody");
                 if (!tbody) return;
+                var lastYear = stats.years[0];
+                var prevYear = stats.years[1];
+                var colA = document.getElementById("yoy-year-a-col");
+                var colB = document.getElementById("yoy-year-b-col");
+                if (colA) colA.textContent = (prevYear || "—") + " (Tons)";
+                if (colB) colB.textContent = (lastYear || "—") + " (Tons)";
                 tbody.innerHTML = "";
-                if (!rows.length) {
-                    tbody.innerHTML = '<tr><td class="p-md py-sm text-on-surface-variant" colspan="4">No year-over-year data.</td></tr>';
+                if (!lastYear || !prevYear) {
+                    tbody.innerHTML = '<tr><td class="p-md py-sm text-on-surface-variant" colspan="4">No year-over-year data yet.</td></tr>';
                     return;
                 }
-                rows.forEach(function (r) {
-                    var a = Number(r.tons_2023) || 0;
-                    var b = Number(r.tons_2024) || 0;
+                var aCat = stats.byYearCategory[prevYear] || {};
+                var bCat = stats.byYearCategory[lastYear] || {};
+                CATEGORY_ORDER.forEach(function (category) {
+                    var a = (aCat[category] || 0) / 1000;
+                    var b = (bCat[category] || 0) / 1000;
                     var diff = a > 0 ? ((b - a) / a) * 100 : 0;
                     var up = diff >= 0;
                     var arrow = up ? 'arrow_upward' : 'arrow_downward';
-                    var isBad = up && r.category === 'Hazardous';
+                    var isBad = up && category === 'Hazardous';
                     var badge = isBad
                         ? 'text-error bg-error-container/50'
                         : 'text-status-success-text bg-status-success/50';
                     var tr = document.createElement("tr");
                     tr.className = "hover:bg-surface-container-lowest transition-colors";
                     tr.innerHTML =
-                        '<td class="p-md py-sm">' + D.esc(r.category) + '</td>' +
+                        '<td class="p-md py-sm">' + D.esc(category) + '</td>' +
                         '<td class="p-md py-sm text-right">' + D.esc(D.fmtNum(a)) + '</td>' +
                         '<td class="p-md py-sm text-right">' + D.esc(D.fmtNum(b)) + '</td>' +
                         '<td class="p-md py-sm text-right">' +
@@ -439,6 +455,35 @@ var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
                         '</span></td>';
                     tbody.appendChild(tr);
                 });
+            }
+
+            function renderKpiDeltas() {
+                function setDelta(id, value) {
+                    var el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                }
+                var lastYear = stats.years[0];
+                var prevYear = stats.years[1];
+                if (!lastYear || !prevYear) {
+                    setDelta("waste-delta", "—");
+                    setDelta("rate-delta", "—");
+                    setDelta("co2-delta", "—");
+                    return;
+                }
+                var aCat = stats.byYearCategory[prevYear] || {};
+                var bCat = stats.byYearCategory[lastYear] || {};
+                var sum = function (c) {
+                    return (c["General Waste"] || 0) + (c["Recyclables"] || 0) + (c["Organic"] || 0) + (c["Hazardous"] || 0);
+                };
+                var aTotal = sum(aCat) / 1000;
+                var bTotal = sum(bCat) / 1000;
+                var aRec = (aCat["Recyclables"] || 0) / 1000;
+                var bRec = (bCat["Recyclables"] || 0) / 1000;
+                var aRate = aTotal > 0 ? (aRec / aTotal) * 100 : 0;
+                var bRate = bTotal > 0 ? (bRec / bTotal) * 100 : 0;
+                setDelta("waste-delta", (aTotal > 0 ? ((bTotal - aTotal) / aTotal) * 100 : (bTotal > 0 ? 100 : 0)).toFixed(1) + "%");
+                setDelta("rate-delta", (bRate - aRate).toFixed(1) + " pts");
+                setDelta("co2-delta", (aRec > 0 ? ((bRec - aRec) / aRec) * 100 : (bRec > 0 ? 100 : 0)).toFixed(1) + "%");
             }
 
 load().catch(function (err) {

@@ -84,9 +84,7 @@
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Reporting Period</label>
 <select id="environment-period" class="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-3 py-2 font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">
-<option>2023 Annual</option>
-<option>Q3 2023</option>
-<option>Q2 2023</option>
+<option value="">Loading periods&hellip;</option>
 </select>
 </div>
 <div>
@@ -153,6 +151,7 @@ var allReports = [];
 
   async function load() {
     allReports = await D.list("reports", "id,report_name,type,generated_at,generated_by", "generated_at.desc");
+    populateEnvironmentPeriods();
     render();
   }
 
@@ -208,7 +207,7 @@ function reportName(type) {
     } else {
       parts.push("Environmental Impact");
       var metric = selectValue("environment-metric", "Comprehensive");
-      parts.push(metric + " - " + selectValue("environment-period", "2023 Annual"));
+      parts.push(metric + " - " + selectValue("environment-period", ""));
     }
     return parts.join(" — ");
   }
@@ -224,6 +223,58 @@ function reportName(type) {
     var d = new Date(iso);
     if (isNaN(d.getTime())) return false;
     return (Date.now() - d.getTime()) <= days * 86400000;
+  }
+
+  function filterByPeriod(records, period) {
+    var now = new Date();
+    var start = null, end = null;
+    if (period === "Last Quarter") start = now.getTime() - 90 * 86400000;
+    else if (period === "Year to Date") start = new Date(now.getFullYear(), 0, 1).getTime();
+    else if (period === "All Time") start = null;
+    else if (period === "Last 30 Days") start = now.getTime() - 30 * 86400000;
+    else {
+      var y = parseInt(period, 10);
+      if (!isNaN(y)) {
+        start = new Date(y, 0, 1).getTime();
+        end = new Date(y + 1, 0, 1).getTime();
+      } else {
+        start = now.getTime() - 30 * 86400000;
+      }
+    }
+    return (records || []).filter(function (r) {
+      var t = r.recorded_at ? new Date(r.recorded_at).getTime() : NaN;
+      if (isNaN(t)) return false;
+      if (start && t < start) return false;
+      if (end && t >= end) return false;
+      return true;
+    });
+  }
+
+  async function populateEnvironmentPeriods() {
+    var sel = document.getElementById("environment-period");
+    if (!sel) return;
+    var records;
+    try {
+      records = await D.list("recycling_records", "recorded_at");
+    } catch (e) {
+      records = [];
+    }
+    var years = [];
+    (records || []).forEach(function (r) {
+      var y = r.recorded_at ? new Date(r.recorded_at).getFullYear() : NaN;
+      if (!isNaN(y) && years.indexOf(y) === -1) years.push(y);
+    });
+    years.sort(function (a, b) { return b - a; });
+    var options = ["Last 30 Days", "Last Quarter", "Year to Date", "All Time"];
+    years.forEach(function (y) { options.push(String(y)); });
+    sel.innerHTML = "";
+    options.forEach(function (label) {
+      var opt = document.createElement("option");
+      opt.value = label;
+      opt.textContent = label;
+      sel.appendChild(opt);
+    });
+    sel.value = "Last 30 Days";
   }
 
   function flatMetrics(metrics) {
@@ -304,17 +355,13 @@ function reportName(type) {
   }
 
   async function computeEnvironmental() {
-    var periodLabel = selectValue("environment-period", "2023 Annual");
+    var periodLabel = selectValue("environment-period", "Last 30 Days");
     var metricLabel = selectValue("environment-metric", "Comprehensive");
-    var volume = await D.list("monthly_volume", "year,month,total_waste_tons,recycled_tons", "year.asc,month.asc");
-    var records = await D.list("recycling_records", "weight_kg,status", null, "limit=1000");
-    var totalWaste = 0, recycled = 0;
-    volume.forEach(function (r) {
-      totalWaste += Number(r.total_waste_tons) || 0;
-      recycled += Number(r.recycled_tons) || 0;
-    });
-    var recordKg = 0;
-    records.forEach(function (r) { recordKg += Number(r.weight_kg) || 0; });
+    var records = await D.list("recycling_records", "weight_kg,recorded_at,material_type");
+    var inPeriod = filterByPeriod(records, periodLabel);
+    var st = D.computeWasteStats(inPeriod);
+    var totalWaste = Math.round((st.totalKg / 1000) * 10) / 10;
+    var recycled = Math.round((st.recycledKg / 1000) * 10) / 10;
     var diversionRate = totalWaste > 0 ? Math.round((recycled / totalWaste) * 1000) / 10 : 0;
     return {
       period: periodLabel,
@@ -323,7 +370,7 @@ function reportName(type) {
       recycled_tons: recycled,
       diversion_rate_pct: diversionRate,
       co2_avoided_mt: Math.round(recycled * CO2_FACTOR * 10) / 10,
-      recycling_records_kg: Math.round(recordKg),
+      recycling_records_kg: Math.round(st.totalKg),
       co2_factor_used_mt_per_ton: CO2_FACTOR
     };
   }
