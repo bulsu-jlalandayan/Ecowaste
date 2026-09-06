@@ -112,7 +112,7 @@ Rinsing your recyclables before tossing them in the bin significantly reduces co
       (isRecycling ? "bg-tertiary-container/20 text-tertiary-container" : "bg-surface-container-high text-on-surface-variant") + '">' + icon + "</span>" +
       '<div class="flex-1 min-w-0">' +
       '<p class="font-body-md text-body-md text-on-surface font-semibold">' + D.esc(s.waste_type || "Collection") + "</p>" +
-      '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDay(s.collection_date)) + "</p>" +
+      '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDay(s.scheduled_date)) + "</p>" +
       '<p class="font-label-sm text-label-sm text-on-surface-variant">' +
         D.esc(D.fmtTime(s.time_start)) + " - " + D.esc(D.fmtTime(s.time_end)) + "</p>" +
       "</div>";
@@ -122,7 +122,7 @@ Rinsing your recyclables before tossing them in the bin significantly reduces co
   async function load() {
     var requests = await D.list(
       "collection_requests",
-      "id,request_number,waste_type,status,requested_at,scheduled_date",
+      "id,request_number,waste_type,status,requested_at,scheduled_date,time_start,time_end",
       "requested_at.desc",
       "user_id=eq." + uid
     ).catch(function () { return []; });
@@ -151,24 +151,25 @@ Rinsing your recyclables before tossing them in the bin significantly reduces co
       setText("active-req-time", "Start a new request anytime.");
     }
 
-    var today = new Date().toISOString().slice(0, 10);
-    var schedules = await D.list(
-      "collection_schedules",
-      "zone,waste_type,collection_date,time_start,time_end,status",
-      "collection_date.asc",
-      "collection_date=gte." + today
-    ).catch(function () { return []; });
+    var now = new Date();
+    var today = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+    var upcoming = (requests || []).filter(function (r) {
+      if (!r.scheduled_date || String(r.scheduled_date).slice(0, 10) < today) return false;
+      return r.status === "Unassigned" || r.status === "Scheduled" || r.status === "In Transit" || r.status === "Completed";
+    }).sort(function (a, b) {
+      return String(a.scheduled_date).localeCompare(String(b.scheduled_date));
+    });
 
     var listEl = document.getElementById("upcoming-schedule");
     if (!listEl) return;
     listEl.innerHTML = "";
-    if (!schedules.length) {
+    if (!upcoming.length) {
       listEl.innerHTML = '<div class="p-6 text-center">' +
         '<span class="material-symbols-outlined text-[36px] text-on-surface-variant">event_busy</span>' +
         '<p class="font-body-md text-body-md text-on-surface-variant mt-2">No upcoming collections.</p></div>';
       return;
     }
-    schedules.slice(0, 3).forEach(function (s) { listEl.appendChild(schedCard(s)); });
+    upcoming.slice(0, 3).forEach(function (s) { listEl.appendChild(schedCard(s)); });
   }
 
   load().catch(function (err) {

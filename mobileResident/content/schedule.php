@@ -75,6 +75,11 @@
   }
   function isRecyclingType(wt) { return /recycl/i.test(wt || ""); }
   function isGeneralType(wt) { return /general|household/i.test(wt || ""); }
+  function isValidStatus(st) { return st === "Unassigned" || st === "Scheduled" || st === "In Transit" || st === "Completed"; }
+  function anyType(r, test) {
+    var types = r.waste_types && r.waste_types.length ? r.waste_types : [r.waste_type];
+    return types.some(function (t) { return test(t); });
+  }
   function monthLabel(d) { return d.toLocaleString("en-US", { month: "long", year: "numeric" }); }
   function keyFor(isoDate) { return (isoDate || "").slice(0, 10); }
   function localDateKey(d) {
@@ -85,15 +90,28 @@
     if (!window.EcoWasteUI) return;
     var UI = window.EcoWasteUI;
     var label = new Date(dayKey + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-    var rows = items.map(function (s) {
-      var color = typeColor(s.waste_type);
+    var rows = items.map(function (r) {
+      var types = r.waste_types && r.waste_types.length ? r.waste_types : [r.waste_type || "General Waste"];
+      var primary = types[0];
+      var color = typeColor(primary);
+      var chip = '<div class="flex flex-wrap gap-1 mt-1">' + types.map(function (t) {
+        var c = typeColor(t);
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-label-caps" style="border-color:' + c + "55;color:" + c + '">' +
+          '<span class="w-1.5 h-1.5 rounded-full" style="background:' + c + '"></span>' + D.esc(t) + "</span>";
+      }).join("") + "</div>";
+      var statusCls = r.status === "Completed"
+        ? "bg-secondary-container text-on-secondary-container"
+        : r.status === "In Transit"
+          ? "bg-tertiary-container/10 text-tertiary"
+          : "border border-outline text-on-surface-variant";
       return '<div class="flex items-start gap-3 p-3 border border-border-subtle rounded-xl bg-surface-container-low">' +
-        '<span class="material-symbols-outlined w-9 h-9 rounded-full shrink-0 flex items-center justify-center" style="background:' + color + "22;color:" + color + '">' + typeIcon(s.waste_type) + "</span>" +
+        '<span class="material-symbols-outlined w-9 h-9 rounded-full shrink-0 flex items-center justify-center" style="background:' + color + "22;color:" + color + '">' + typeIcon(primary) + "</span>" +
         '<div class="flex-1 min-w-0">' +
-        '<div class="flex items-center justify-between gap-2"><p class="font-body-md text-body-md font-semibold text-on-surface">' + D.esc(s.waste_type || "Collection") + "</p>" +
-        '<span class="px-2 py-0.5 rounded-full font-label-caps text-[10px] ' + (s.status === "Confirmed" ? "bg-secondary-container text-on-secondary-container" : "border border-outline text-on-surface-variant") + '">' + D.esc((s.status || "Scheduled").toUpperCase()) + "</span></div>" +
-        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtTime(s.time_start) + " - " + D.fmtTime(s.time_end)) + (s.zone ? " · " + D.esc(s.zone) : "") + "</p>" +
-        (s.notes ? '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(s.notes) + "</p>" : "") +
+        '<div class="flex items-center justify-between gap-2"><p class="font-body-md text-body-md font-semibold text-on-surface">' + D.esc(r.request_number || "Collection Request") + "</p>" +
+        '<span class="px-2 py-0.5 rounded-full font-label-caps text-[10px] ' + statusCls + '">' + D.esc((r.status || "Scheduled").toUpperCase()) + "</span></div>" +
+        chip +
+        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end)) + (r.location ? " · " + D.esc(r.location) : "") + "</p>" +
+        (r.description ? '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(r.description) + "</p>" : "") +
         "</div></div>";
     }).join("");
     var overlay = document.createElement("div");
@@ -129,12 +147,12 @@
     var monthKey = year + "-" + String(month + 1).padStart(2, "0");
 
     var byDate = {};
-    all.forEach(function (s) {
-      var dk = keyFor(s.collection_date);
+    all.forEach(function (r) {
+      var dk = keyFor(r.scheduled_date);
       if (dk.slice(0, 7) !== monthKey) return;
-      if (activeType === "GENERAL" && !isGeneralType(s.waste_type)) return;
-      if (activeType === "RECYCLING" && !isRecyclingType(s.waste_type)) return;
-      (byDate[dk] = byDate[dk] || []).push(s);
+      if (activeType === "GENERAL" && !anyType(r, isGeneralType)) return;
+      if (activeType === "RECYCLING" && !anyType(r, isRecyclingType)) return;
+      (byDate[dk] = byDate[dk] || []).push(r);
     });
 
     for (var i = 0; i < startDow; i++) {
@@ -146,22 +164,32 @@
       var items = byDate[dk] || [];
       var isToday = localDateKey(new Date()) === dk;
       var cell = document.createElement("div");
-      cell.className = "aspect-square p-0.5 flex flex-col items-center justify-start rounded-lg " +
+      cell.className = "group aspect-square p-0.5 flex flex-col items-center justify-start rounded-lg " +
         (isToday ? "border-2 border-primary bg-surface-container-low" : "border border-outline-variant bg-surface-bright");
       cell.innerHTML = '<span class="font-data-mono text-data-mono text-[12px] ' + (isToday ? "font-bold text-primary" : "text-on-surface-variant") + ' mt-0.5">' + day + "</span>";
       if (items.length) {
+        var seen = {};
+        var dayTypes = [];
+        items.forEach(function (r) {
+          var types = r.waste_types && r.waste_types.length ? r.waste_types : [r.waste_type || "General Waste"];
+          types.forEach(function (t) {
+            if (!t || seen[t]) return;
+            seen[t] = 1;
+            dayTypes.push(t);
+          });
+        });
         cell.innerHTML += '<div class="mt-auto mb-0.5 flex flex-col items-center gap-0.5 w-full">' +
-          '<span class="flex gap-0.5">' + items.slice(0, 3).map(function (s) {
-            return '<span class="w-1.5 h-1.5 rounded-full" style="background:' + typeColor(s.waste_type) + '"></span>';
+          '<span class="flex gap-0.5">' + dayTypes.slice(0, 3).map(function (t) {
+            return '<span class="w-1.5 h-1.5 rounded-full transition-transform group-hover:scale-125" style="background:' + typeColor(t) + '" title="' + D.esc(t) + '"></span>';
           }).join("") + "</span>" +
-          '<span class="text-[9px] font-label-caps text-primary underline">View</span></div>';
+          '<span class="text-[11px] font-label-md text-primary underline">View</span></div>';
         cell.classList.add("cursor-pointer", "hover:bg-surface-container-low");
         cell.addEventListener("click", function (dk2) {
           return function () {
-            var dayItems = all.filter(function (s) {
-              if (keyFor(s.collection_date) !== dk2) return false;
-              if (activeType === "GENERAL" && !isGeneralType(s.waste_type)) return false;
-              if (activeType === "RECYCLING" && !isRecyclingType(s.waste_type)) return false;
+            var dayItems = all.filter(function (r) {
+              if (keyFor(r.scheduled_date) !== dk2) return false;
+              if (activeType === "GENERAL" && !anyType(r, isGeneralType)) return false;
+              if (activeType === "RECYCLING" && !anyType(r, isRecyclingType)) return false;
               return true;
             });
             if (dayItems.length) showDayDetail(dk2, dayItems);
@@ -182,29 +210,32 @@
     var listEl = document.getElementById("sched-upcoming-list");
     if (!listEl) return;
     listEl.innerHTML = "";
-    var rows = all.filter(function (s) {
-      if (activeType === "GENERAL" && !isGeneralType(s.waste_type)) return false;
-      if (activeType === "RECYCLING" && !isRecyclingType(s.waste_type)) return false;
+    var rows = all.filter(function (r) {
+      if (!r.scheduled_date || r.scheduled_date < localDateKey(new Date())) return false;
+      if (activeType === "GENERAL" && !anyType(r, isGeneralType)) return false;
+      if (activeType === "RECYCLING" && !anyType(r, isRecyclingType)) return false;
       return true;
     }).sort(function (a, b) {
-      return String(a.collection_date).localeCompare(String(b.collection_date));
+      return String(a.scheduled_date).localeCompare(String(b.scheduled_date));
     }).slice(0, 8);
 
     if (!rows.length) {
       listEl.innerHTML = '<div class="p-6 text-center"><span class="material-symbols-outlined text-[32px] text-on-surface-variant">event_busy</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-2">No upcoming collections.</p></div>';
       return;
     }
-    rows.forEach(function (s) {
-      var color = typeColor(s.waste_type);
+    rows.forEach(function (r) {
+      var types = r.waste_types && r.waste_types.length ? r.waste_types : [r.waste_type || "General Waste"];
+      var primary = types[0] || "General Waste";
+      var color = typeColor(primary);
       var item = document.createElement("div");
       item.className = "flex items-start gap-3 p-4 hover:bg-surface-container-low transition-colors border-b border-border-subtle last:border-b-0";
       item.innerHTML =
-        '<span class="material-symbols-outlined w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background:' + color + "22;color:" + color + '">' + typeIcon(s.waste_type) + "</span>" +
+        '<span class="material-symbols-outlined w-10 h-10 rounded-full shrink-0 flex items-center justify-center" style="background:' + color + "22;color:" + color + '">' + typeIcon(primary) + "</span>" +
         '<div class="flex-1 min-w-0">' +
-        '<div class="flex items-center justify-between gap-2"><p class="font-body-md text-body-md font-semibold text-on-surface">' + D.esc(s.waste_type || "Collection") + "</p>" +
-        '<span class="px-2 py-0.5 rounded-full font-label-caps text-[10px] ' + (s.status === "Confirmed" ? "bg-secondary-container text-on-secondary-container" : "border border-outline text-on-surface-variant") + '">' + D.esc((s.status || "Scheduled").toUpperCase()) + "</span></div>" +
-        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDay(s.collection_date)) + "</p>" +
-        '<p class="font-label-sm text-label-sm text-on-surface-variant">' + D.esc(D.fmtTime(s.time_start) + " - " + D.fmtTime(s.time_end)) + "</p></div>";
+        '<div class="flex items-center justify-between gap-2"><p class="font-body-md text-body-md font-semibold text-on-surface">' + D.esc(types.join(", ")) + "</p>" +
+        '<span class="px-2 py-0.5 rounded-full font-label-caps text-[10px] ' + (r.status === "Completed" ? "bg-secondary-container text-on-secondary-container" : "border border-outline text-on-surface-variant") + '">' + D.esc((r.status || "Scheduled").toUpperCase()) + "</span></div>" +
+        '<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">' + D.esc(D.fmtDay(r.scheduled_date)) + "</p>" +
+        '<p class="font-label-sm text-label-sm text-on-surface-variant">' + D.esc(D.fmtTime(r.time_start) + " - " + D.fmtTime(r.time_end)) + "</p></div>";
       listEl.appendChild(item);
     });
   }
@@ -215,12 +246,40 @@
   }
 
   async function load() {
-    all = await D.list(
-      "collection_schedules",
-      "zone,waste_type,collection_date,time_start,time_end,status,notes",
-      "collection_date.asc",
-      "collection_date=gte." + localDateKey(new Date())
+    var uid = D.currentUserId();
+    all = [];
+    if (!uid) {
+      renderAll();
+      return;
+    }
+    var reqs = await D.list(
+      "collection_requests",
+      "id,request_number,location,waste_type,status,scheduled_date,time_start,time_end,description",
+      "scheduled_date.asc",
+      "user_id=eq." + uid
     ).catch(function () { return []; });
+    var ids = reqs.map(function (r) { return r.id; });
+    var items = [];
+    if (ids.length) {
+      items = await D.request("/rest/v1/collection_request_items?select=request_id,waste_type&request_id=in.(" + ids.join(",") + ")").catch(function () { return []; });
+    }
+    all = reqs.map(function (r) {
+      var wts = items.filter(function (i) { return i.request_id === r.id; }).map(function (i) { return i.waste_type; });
+      return {
+        id: r.id,
+        request_number: r.request_number,
+        location: r.location,
+        description: r.description,
+        status: r.status,
+        scheduled_date: r.scheduled_date ? String(r.scheduled_date).slice(0, 10) : null,
+        time_start: r.time_start,
+        time_end: r.time_end,
+        waste_type: r.waste_type,
+        waste_types: wts.length ? wts : [r.waste_type || "General Waste"]
+      };
+    }).filter(function (r) {
+      return r.scheduled_date && isValidStatus(r.status);
+    });
     renderAll();
   }
 

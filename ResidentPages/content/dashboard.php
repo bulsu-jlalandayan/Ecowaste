@@ -113,7 +113,7 @@
   async function load() {
     var requests = await D.list(
       "collection_requests",
-      "id,request_number,waste_type,status,requested_at,scheduled_date",
+      "id,request_number,waste_type,status,requested_at,scheduled_date,time_start,time_end",
       "requested_at.desc",
       "user_id=eq." + uid
     ).catch(function () { return []; });
@@ -140,18 +140,19 @@
       setText("active-req-time", "Start a new request anytime.");
     }
 
-    var today = new Date().toISOString().slice(0, 10);
-    var schedules = await D.list(
-      "collection_schedules",
-      "zone,waste_type,collection_date,time_start,time_end,status",
-      "collection_date.asc",
-      "collection_date=gte." + today
-    ).catch(function () { return []; });
+    var now = new Date();
+    var today = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+    var upcoming = (requests || []).filter(function (r) {
+      if (!r.scheduled_date || String(r.scheduled_date).slice(0, 10) < today) return false;
+      return r.status === "Unassigned" || r.status === "Scheduled" || r.status === "In Transit" || r.status === "Completed";
+    }).sort(function (a, b) {
+      return String(a.scheduled_date).localeCompare(String(b.scheduled_date));
+    });
 
     var listEl = document.getElementById("upcoming-schedule");
     if (!listEl) return;
     listEl.innerHTML = "";
-    if (!schedules.length) {
+    if (!upcoming.length) {
       listEl.innerHTML =
         '<div class="bg-surface-container flex items-center p-sm rounded-lg border border-outline-variant">' +
         '<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">' +
@@ -160,7 +161,7 @@
         '<p class="font-body-sm text-body-sm text-on-surface-variant">Check back later.</p></div></div>';
       return;
     }
-    schedules.slice(0, 2).forEach(function (s) {
+    upcoming.slice(0, 2).forEach(function (s) {
       var isRecycling = /recycl|plastic|metal|glass|paper/i.test(s.waste_type || "");
       var icon = isRecycling ? "recycling" : "delete";
       var card = document.createElement("div");
@@ -171,7 +172,7 @@
         '<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mr-md">' +
         '<span class="material-symbols-outlined text-[24px] ' + (isRecycling ? "text-tertiary" : "text-on-surface") + '">' + icon + "</span></div>" +
         "<div><h4 class='font-headline-sm font-semibold text-on-surface'>" + D.esc(s.waste_type || "Collection") + "</h4>" +
-        "<p class='font-body-sm text-body-sm text-on-surface-variant'>" + D.esc(D.fmtDay(s.collection_date)) + "</p></div>";
+        "<p class='font-body-sm text-body-sm text-on-surface-variant'>" + D.esc(D.fmtDay(s.scheduled_date)) + "</p></div>";
       listEl.appendChild(card);
     });
   }

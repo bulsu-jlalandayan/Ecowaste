@@ -172,7 +172,7 @@ Continue
     "E-Waste": "Hazardous / E-Waste"
   };
 
-  // Block past dates.
+  // Block past dates and dates too far in advance (max 7 days).
   function localToday() {
     var d = new Date();
     var mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -180,8 +180,14 @@ Continue
     return d.getFullYear() + "-" + mm + "-" + dd;
   }
   var today = localToday();
+  var maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 7);
+  var maxDateStr = maxDate.getFullYear() + "-" + String(maxDate.getMonth() + 1).padStart(2, "0") + "-" + String(maxDate.getDate()).padStart(2, "0");
   var dateInput = document.getElementById("req-date");
-  if (dateInput) dateInput.min = today;
+  if (dateInput) {
+    dateInput.min = today;
+    dateInput.max = maxDateStr;
+  }
 
   var dots = Array.prototype.slice.call(document.querySelectorAll(".step-dot"))
     .concat(Array.prototype.slice.call(document.querySelectorAll("[data-step-marker]")).map(function (m) {
@@ -252,6 +258,7 @@ Continue
       state.time_end = document.getElementById("req-end").value;
       if (!state.scheduled_date) { UI.toast("Please pick a preferred date.", "error"); return; }
       if (state.scheduled_date < today) { UI.toast("Please select today or a future date.", "error"); return; }
+      if (state.scheduled_date > maxDateStr) { UI.toast("Requests can only be scheduled up to 7 days in advance.", "error"); return; }
       if (!state.time_start || !state.time_end) { UI.toast("Please pick a time window.", "error"); return; }
     } else if (step === 3) {
       submit();

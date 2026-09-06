@@ -76,6 +76,7 @@
         if (bar) bar.remove();
         var dot = wrapper.querySelector("[data-unread-dot]");
         if (dot) dot.innerHTML = "";
+        if (window.EcoWasteRefreshBadge) window.EcoWasteRefreshBadge();
       });
     }
     return wrapper;
@@ -114,7 +115,7 @@
   var markBtn = document.getElementById("mark-all-read");
   if (markBtn) markBtn.addEventListener("click", function () {
     D.update("notifications", "recipient_id=eq." + uid + "&read_at=is.null", { read_at: new Date().toISOString() })
-      .then(function () { load(); UI.toast("All notifications marked as read."); })
+      .then(function () { load(); UI.toast("All notifications marked as read."); if (window.EcoWasteRefreshBadge) window.EcoWasteRefreshBadge(); })
       .catch(function (err) { UI.toast(err.message || "Failed to mark all as read.", "error"); });
   });
 

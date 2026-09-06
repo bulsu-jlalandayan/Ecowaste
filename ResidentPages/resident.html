@@ -215,9 +215,9 @@
 <h2 class="text-headline-md font-headline-md text-on-surface" id="app-title">Dashboard</h2>
 </div>
 <div class="flex items-center gap-md">
-<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<button id="notif-btn" class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors relative" aria-label="Notifications" type="button">
 <span class="material-symbols-outlined">notifications</span>
-<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+<span id="notif-badge" class="hidden absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-error text-on-error text-[10px] font-bold flex items-center justify-center"></span>
 </button>
 <div class="relative">
 <button id="user-menu-btn" class="w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-outline-variant hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" aria-haspopup="menu" aria-expanded="false" type="button">

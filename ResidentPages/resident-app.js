@@ -116,6 +116,21 @@
     });
   }
 
+  function refreshNotifBadge() {
+    var badge = document.getElementById("notif-badge");
+    var D = window.EcoWasteData;
+    if (!badge || !D) return;
+    var uid = D.currentUserId();
+    if (!uid) return;
+    D.list("notifications", "id", null, "recipient_id=eq." + uid + "&read_at=is.null")
+      .then(function (rows) {
+        var n = rows ? rows.length : 0;
+        badge.textContent = n > 9 ? "9+" : String(n);
+        badge.classList.toggle("hidden", n === 0);
+      })
+      .catch(function () { /* ignore */ });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     go("dashboard");
     bindUserMenu();
@@ -123,6 +138,14 @@
     window.EcoWasteData.loadProfileAvatar().catch(function (err) {
       console.error("EcoWaste profile avatar failed to load:", err);
     });
+
+    var notifBtn = document.getElementById("notif-btn");
+    if (notifBtn) {
+      notifBtn.addEventListener("click", function () {
+        go("notification");
+      });
+    }
+    refreshNotifBadge();
 
     // Re-bind data-view triggers whenever #app content changes asynchronously
     // (e.g. request list rows are injected after their async fetch completes).
@@ -245,4 +268,5 @@
 
   window.EcoWasteRouter = { go: go };
   window.EcoWasteAppState = appState;
+  window.EcoWasteRefreshBadge = refreshNotifBadge;
 })();

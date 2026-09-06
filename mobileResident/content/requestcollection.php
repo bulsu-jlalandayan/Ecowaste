@@ -311,9 +311,10 @@
     var box = label.querySelector("div.waste-card-box");
     if (!box) box = label.querySelector("div");
     var checked = cb.checked;
-    box.classList.toggle("ring-2", checked);
-    box.classList.toggle("ring-primary/40", checked);
-    box.classList.toggle("bg-primary/5", checked);
+    box.classList.toggle("border-2", checked);
+    box.classList.toggle("border-primary", checked);
+    box.classList.toggle("border", !checked);
+    box.classList.toggle("border-outline-variant", !checked);
     var ic = box.querySelector(".check-ic");
     if (ic) ic.style.visibility = checked ? "visible" : "hidden";
   }

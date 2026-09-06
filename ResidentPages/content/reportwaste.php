@@ -46,8 +46,8 @@
 <textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10 resize-y" id="description" name="description" placeholder="Please provide specific details about the issue..." rows="4"></textarea>
 </div>
 <div class="flex flex-col gap-xs md:col-span-2">
-<label class="font-label-caps text-label-caps text-on-surface" for="dateTime">Date &amp; Time of Observation</label>
-<input class="w-full md:w-1/2 bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="dateTime" name="dateTime" type="datetime-local" max="">
+<label class="font-label-caps text-label-caps text-on-surface" for="dateTime">Date &amp; Time of Observation *</label>
+<input class="w-full md:w-1/2 bg-surface-container-lowest border border-outline-variant rounded-lg px-sm py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/10" id="dateTime" name="dateTime" type="datetime-local" max="" required>
 </div>
 </div>
 </div>
@@ -210,7 +210,8 @@
       if (!type || !type.value) { UI.toast("Please select a report type.", "error"); return; }
       if (!desc || !desc.value.trim()) { UI.toast("Please provide a description.", "error"); return; }
       if (!addr || !addr.value.trim()) { UI.toast("Please provide a street address or landmark.", "error"); return; }
-      if (dt && dt.value && dt.value > localNowMax()) { UI.toast("Observation date cannot be in the future.", "error"); return; }
+      if (!dt || !dt.value) { UI.toast("Please select the date and time of observation.", "error"); return; }
+      if (dt.value > localNowMax()) { UI.toast("Observation date cannot be in the future.", "error"); return; }
 
       var btn = document.getElementById("report-submit-btn");
       if (btn) {
