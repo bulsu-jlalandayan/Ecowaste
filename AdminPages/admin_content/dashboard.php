@@ -121,7 +121,32 @@
 <span class="material-symbols-outlined text-sm">group_add</span>
                                     Add User
                                 </button>
+<button data-view="waste_reports" class="w-full flex items-center justify-start gap-md bg-surface text-primary px-4 py-3 rounded-lg font-title-md text-title-md hover:bg-surface-container-high transition-colors shadow-card">
+<span class="material-symbols-outlined text-sm">fact_check</span>
+                                    Manage Waste Reports
+                                </button>
 </div>
+</div>
+<!-- Waste Reports Summary -->
+<div class="bg-surface border border-outline-variant rounded-xl p-md shadow-card">
+<h3 class="font-title-md text-title-md text-on-surface mb-sm">Waste Reports</h3>
+<div class="grid grid-cols-3 gap-sm text-center">
+<div class="bg-surface-container-low rounded-lg py-3 px-2">
+<div id="report-sum-submitted" class="font-display-md text-title-lg font-semibold text-on-surface">—</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-1">Submitted</div>
+</div>
+<div class="bg-surface-container-low rounded-lg py-3 px-2">
+<div id="report-sum-review" class="font-display-md text-title-lg font-semibold text-on-surface">—</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-1">In Review</div>
+</div>
+<div class="bg-surface-container-low rounded-lg py-3 px-2">
+<div id="report-sum-assigned" class="font-display-md text-title-lg font-semibold text-on-surface">—</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-1">Assigned</div>
+</div>
+</div>
+<button data-view="waste_reports" class="mt-md w-full flex items-center justify-center gap-sm bg-primary-container text-on-primary-container py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-sm">visibility</span> View All Reports
+</button>
 </div>
 </div>
 </div>
@@ -277,10 +302,29 @@
       "request_number,location,zone,waste_type,status,requested_at,collector_name",
       "requested_at.desc");
 
+    updateReportSummary();
     renderKpiChanges(stats, profiles, allRequests);
     renderDistribution(stats);
     renderVolumeChart(stats.months);
     renderActivity(getVisibleRequests());
+  }
+
+  function updateReportSummary() {
+    D.list("waste_reports", "id,status")
+      .then(function (rows) {
+        var counts = { submitted: 0, review: 0, assigned: 0 };
+        (rows || []).forEach(function (r) {
+          if (r.status === "Submitted") counts.submitted++;
+          else if (r.status === "Under Review") counts.review++;
+          else if (r.status === "Assigned") counts.assigned++;
+        });
+        var map = { "report-sum-submitted": counts.submitted, "report-sum-review": counts.review, "report-sum-assigned": counts.assigned };
+        Object.keys(map).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = D.fmtNum(map[id]);
+        });
+      })
+      .catch(function () {});
   }
 
   function load() {

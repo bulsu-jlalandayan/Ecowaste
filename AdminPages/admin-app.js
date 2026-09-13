@@ -10,6 +10,7 @@
     users: "User Management",
     waste_categories: "Waste Categories",
     collection_request: "Collection Requests",
+    waste_reports: "Waste Issue Reports",
     collectors: "Collectors",
     recycling_record: "Recycling Records",
     reports: "System Reports",
@@ -205,7 +206,8 @@
     "collection_requests": "collection_request",
     "recycling_records": "recycling_record",
     "collectors": "collectors",
-    "profiles": "users"
+    "profiles": "users",
+    "waste_reports": "waste_reports"
   };
 
   function bindNotifications() {
@@ -243,7 +245,8 @@
     Promise.all([
       D.list("collection_requests", "id,request_number,location", null, "status=eq.Unassigned&limit=50"),
       D.list("recycling_records", "id,log_number,status", null, "or=(status.eq.Pending Audit,status.eq.Discrepancy)&limit=50"),
-      D.list("collectors", "id,full_name,status", null, "status=eq.Vehicle Issue&limit=50")
+      D.list("collectors", "id,full_name,status", null, "status=eq.Vehicle Issue&limit=50"),
+      D.list("waste_reports", "id,report_number,report_type,status", null, "or=(status.eq.Submitted,status.eq.Under Review)&limit=50")
     ]).then(function (results) {
       var items = [];
       results[0].forEach(function (r) {
@@ -254,6 +257,9 @@
       });
       results[2].forEach(function (c) {
         items.push({ icon: "build", view: "collectors", title: c.full_name, sub: "Vehicle Issue", tone: "warn" });
+      });
+      results[3].forEach(function (w) {
+        items.push({ icon: "report", view: "waste_reports", title: w.report_number, sub: (w.report_type || "Issue") + " — " + w.status, tone: "warn" });
       });
 
       var badge = document.getElementById("notif-badge");

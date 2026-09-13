@@ -10,6 +10,7 @@
     dashboard: "Dashboard",
     assigned_collections: "Assigned Collections",
     collection_details: "Collection Details",
+    assigned_reports: "Assigned Waste Reports",
     completed_collections: "Completed Collections",
     records: "My Records",
     waste_records: "Waste Records",
@@ -22,6 +23,7 @@
   var NAV_GROUP = {
     assigned_collections: "assigned_collections",
     collection_details: "assigned_collections",
+    assigned_reports: "assigned_reports",
     waste_records: "records"
   };
 

@@ -4,6 +4,7 @@ $links = array(
     'side' => array(
         array('label' => 'Dashboard',               'icon' => 'dashboard',      'href' => 'collector.html', 'view' => 'dashboard'),
         array('label' => 'Assigned Collections',    'icon' => 'event_note',     'href' => 'collector.html', 'view' => 'assigned_collections'),
+        array('label' => 'Assigned Reports',         'icon' => 'fact_check',       'href' => 'collector.html', 'view' => 'assigned_reports'),
         array('label' => 'Completed Collections',   'icon' => 'task_alt',       'href' => 'collector.html', 'view' => 'completed_collections'),
         array('label' => 'My Records',             'icon' => 'delete_sweep',   'href' => 'collector.html', 'view' => 'records'),
         array('label' => 'Notifications',           'icon' => 'notifications',  'href' => 'collector.html', 'view' => 'notifications'),

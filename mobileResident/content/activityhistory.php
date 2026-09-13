@@ -49,6 +49,8 @@
   var ACTION_META = {
     request_submitted: { icon: "add_task", title: "Collection Request Submitted", status: "Pending", cls: "bg-secondary-container text-on-secondary-container" },
     report_submitted: { icon: "report_problem", title: "Waste Report Submitted", status: "Submitted", cls: "bg-amber-100 text-amber-800" },
+    report_resolved: { icon: "task_alt", title: "Waste Report Resolved", status: "Resolved", cls: "bg-emerald-100 text-emerald-800" },
+    report_dismissed: { icon: "block", title: "Waste Report Dismissed", status: "Dismissed", cls: "bg-surface-container-high text-on-surface-variant" },
     collection_completed: { icon: "local_shipping", title: "Collection Completed", status: "Completed", cls: "bg-tertiary-container/15 text-tertiary-container" }
   };
 
@@ -56,7 +58,13 @@
 
   function applyFilterState() {
     filtered = all.filter(function (r) {
-      if (activeFilter !== "All" && r.action !== activeFilter) return false;
+      if (activeFilter !== "All") {
+        if (activeFilter === "report_submitted") {
+          if (r.action !== "report_submitted" && r.action !== "report_resolved" && r.action !== "report_dismissed") return false;
+        } else if (r.action !== activeFilter) {
+          return false;
+        }
+      }
       var qEl = document.getElementById("act-search");
       var q = (qEl ? qEl.value : "") || "";
       q = q.trim().toLowerCase();
@@ -70,7 +78,7 @@
     var m = ACTION_META[r.action] || { icon: "event", title: r.action, status: "—", cls: "bg-surface-container-high text-on-surface-variant" };
     var d = r.created_at ? new Date(r.created_at) : null;
     var hasRequest = r.request_id && (r.action === "request_submitted" || r.action === "collection_completed");
-    var hasReport = r.report_id && r.action === "report_submitted";
+    var hasReport = r.report_id && (r.action === "report_submitted" || r.action === "report_resolved" || r.action === "report_dismissed");
     var div = document.createElement("div");
     div.className = "flex items-start gap-3 p-4 bg-surface-container-lowest border border-border-subtle rounded-xl transition-colors";
     div.innerHTML =
