@@ -172,20 +172,21 @@ Continue
     "E-Waste": "Hazardous / E-Waste"
   };
 
-  // Block past dates and dates too far in advance (max 7 days).
-  function localToday() {
-    var d = new Date();
+  // Block today/past dates and dates too far in advance (min tomorrow, max 7 days).
+  function localDateStr(d) {
     var mm = String(d.getMonth() + 1).padStart(2, "0");
     var dd = String(d.getDate()).padStart(2, "0");
     return d.getFullYear() + "-" + mm + "-" + dd;
   }
-  var today = localToday();
+  var minDate = new Date();
+  minDate.setDate(minDate.getDate() + 1);
+  var minDateStr = localDateStr(minDate);
   var maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 7);
-  var maxDateStr = maxDate.getFullYear() + "-" + String(maxDate.getMonth() + 1).padStart(2, "0") + "-" + String(maxDate.getDate()).padStart(2, "0");
+  var maxDateStr = localDateStr(maxDate);
   var dateInput = document.getElementById("req-date");
   if (dateInput) {
-    dateInput.min = today;
+    dateInput.min = minDateStr;
     dateInput.max = maxDateStr;
   }
 
@@ -257,7 +258,7 @@ Continue
       state.time_start = document.getElementById("req-start").value;
       state.time_end = document.getElementById("req-end").value;
       if (!state.scheduled_date) { UI.toast("Please pick a preferred date.", "error"); return; }
-      if (state.scheduled_date < today) { UI.toast("Please select today or a future date.", "error"); return; }
+      if (state.scheduled_date < minDateStr) { UI.toast("Please select a date starting tomorrow.", "error"); return; }
       if (state.scheduled_date > maxDateStr) { UI.toast("Requests can only be scheduled up to 7 days in advance.", "error"); return; }
       if (!state.time_start || !state.time_end) { UI.toast("Please pick a time window.", "error"); return; }
     } else if (step === 3) {
